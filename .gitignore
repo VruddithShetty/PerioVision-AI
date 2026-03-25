@@ -1,0 +1,47 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
+runs/
+storage/
+dentex-2/
+*.log
+
+# Weights and models
+# Generic weight files
+yolov8n.pt
+yolov8n-pose.pt
+yolov8n-seg.pt
+
+# If you want to exclude all weights except the ones required for the app:
+# *.pt
+# !dental_bone_yolov8n-seg.pt
+# !dental_landmark_yolov8n-pose.pt
+# !tooth_detection_yolov8n.pt
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+bin/
+lib/
+share/
+include/

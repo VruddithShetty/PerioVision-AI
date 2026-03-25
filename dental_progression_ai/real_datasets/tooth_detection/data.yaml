@@ -1,0 +1,12 @@
+names:
+- Premolars
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: dental-x-rays-wwauy
+  url: https://universe.roboflow.com/dental-xrays-htswv/dental-x-rays-wwauy/dataset/1
+  version: 1
+  workspace: dental-xrays-htswv
+test: test/images
+train: train/images
+val: valid/images

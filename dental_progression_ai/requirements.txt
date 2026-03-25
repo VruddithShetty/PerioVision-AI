@@ -1,0 +1,16 @@
+streamlit
+pymongo
+opencv-python-headless
+ultralytics
+scikit-learn
+pandas
+numpy
+matplotlib
+fpdf2
+pyotp
+qrcode[pil]
+plotly
+python-dateutil
+Pillow
+roboflow
+kaggle

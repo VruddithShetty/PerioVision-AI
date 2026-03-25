@@ -1,0 +1,5 @@
+names:
+  0: tooth
+path: C:\Users\vrudd\Downloads\Dental_progression\dental_progression_ai\custom_datasets\seg
+train: images/train
+val: images/valid

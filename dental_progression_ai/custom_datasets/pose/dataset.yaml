@@ -1,0 +1,8 @@
+kpt_shape:
+- 3
+- 3
+names:
+  0: tooth
+path: C:\Users\vrudd\Downloads\Dental_progression\dental_progression_ai\custom_datasets\pose
+train: images/train
+val: images/valid
