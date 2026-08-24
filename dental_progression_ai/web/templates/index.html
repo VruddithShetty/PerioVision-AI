@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PerioVision AI | Dental Diagnostic Center</title>
+    
+    <!-- Clean, Medical Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS Built Output -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+    
+    <!-- Custom overriding styles if needed -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.60);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 24px 80px -24px rgba(15, 23, 42, 0.28);
+            color: #0f172a;
+            position: relative;
+            isolation: isolate;
+        }
+        .auth-card h2,
+        .auth-card h3,
+        .auth-card p,
+        .auth-card span,
+        .auth-card label {
+            color: #0f172a;
+        }
+        .auth-card .text-slate-400,
+        .auth-card .text-slate-500,
+        .auth-card .text-slate-600,
+        .auth-card .text-slate-700 {
+            color: #0f172a !important;
+        }
+        .auth-card .text-medical-600,
+        .auth-card .text-medical-700,
+        .auth-card .text-medical-900 {
+            color: #0ea5e9 !important;
+        }
+        .auth-card input,
+        .auth-card select,
+        .auth-card textarea {
+            color: #0f172a;
+            background: rgba(255, 255, 255, 0.98);
+            border-color: #cbd5e1;
+        }
+        .auth-card input::placeholder,
+        .auth-card textarea::placeholder {
+            color: #64748b;
+            opacity: 1;
+        }
+        .auth-card label {
+            color: #334155;
+            font-weight: 600;
+        }
+        .auth-card button,
+        .auth-card [type="submit"] {
+            min-height: 48px;
+        }
+        .brand-copy {
+            text-shadow: 0 1px 18px rgba(255,255,255,0.75);
+        }
+        .auth-panel-title {
+            font-size: 0.72rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #64748b !important;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+        /* Hide element utility */
+        .hidden-view { display: none !important; }
+    </style>
+</head>
+<body class="bg-transparent text-slate-800 font-sans antialiased min-h-screen flex flex-col relative">
+    
+    <!-- Live Interactive Neural Network Background -->
+    <div id="particles-js" class="fixed inset-0 z-[-1] bg-gradient-to-br from-slate-50 to-blue-50"></div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed top-6 right-6 bg-white border-l-4 border-medical-500 shadow-lg rounded p-4 z-50 transform transition-all duration-300 translate-x-full opacity-0">
+        <div class="flex items-center gap-3">
+            <span id="toast-icon" class="text-medical-500">✨</span>
+            <span id="toast-msg" class="font-medium text-slate-700"></span>
+        </div>
+    </div>
+
+    <!-- Auth View -->
+    <div id="auth-view" class="flex-1 flex flex-col lg:flex-row min-h-screen relative z-10">
+        
+        <!-- Left Side Branding (Image Overlay) -->
+        <div class="hidden lg:flex flex-1 flex-col justify-center px-16 relative overflow-hidden text-medical-900 border-r border-white/40 shadow-2xl">
+            <!-- Restored Dental Clinic Image Overlay -->
+            <div class="absolute inset-0 z-0 bg-cover bg-center mix-blend-overlay opacity-80" style="background-image: url('{{ url_for('static', filename='images/bg.png') }}');"></div>
+            <!-- Glass Frosting -->
+            <div class="absolute inset-0 z-0 bg-white/30 backdrop-blur-[2px]"></div>
+            
+            <div class="relative z-10 brand-copy">
+                <img src="{{ url_for('static', filename='images/tooth.png') }}" class="w-32 h-32 mb-8 mix-blend-darken opacity-90 drop-shadow-xl" alt="Tooth Logo">
+                <h1 class="text-5xl font-display font-bold tracking-widest mb-4 text-medical-900 drop-shadow-sm">PERIOVISION <span class="text-medical-600">AI</span></h1>
+                <p class="text-xl font-medium text-slate-700 max-w-md leading-relaxed drop-shadow-sm">
+                    Advanced periodontal diagnostics and longitudinal bone loss tracking for the modern dental practice.
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Side Auth Forms -->
+        <div class="flex-1 flex items-center justify-center p-8 lg:p-0">
+            <div class="w-full max-w-md auth-card rounded-3xl p-8 lg:mr-16">
+                <div class="mb-6">
+                    <div class="auth-panel-title">Secure access</div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-2">Welcome back</h2>
+                    <p class="text-sm text-slate-600 leading-relaxed">Sign in to review patients, analyze radiographs, and manage reports.</p>
+                </div>
+                
+                <div class="flex border-b border-slate-200 mb-8">
+                    <button id="tab-login" class="flex-1 pb-4 font-semibold text-medical-600 border-b-2 border-medical-600 transition" onclick="switchAuthTab('login')">Sign In</button>
+                    <button id="tab-register" class="flex-1 pb-4 font-medium text-slate-400 border-b-2 border-transparent hover:text-slate-600 transition" onclick="switchAuthTab('register')">Register Clinic</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" onsubmit="handleLogin(event)" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Email Address</label>
+                        <input type="email" id="login-email" required placeholder="doctor@clinic.com" class="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-medical-500 focus:border-medical-500 transition outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Password</label>
+                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-medical-500 focus:border-medical-500 transition outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-medical-600 hover:bg-medical-700 text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg transition">Secure Login</button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" onsubmit="handleRegister(event)" class="space-y-5 hidden-view">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Full Name</label>
+                        <input type="text" id="reg-name" required placeholder="Dr. Sarah Jenkins" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-medical-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Email Address</label>
+                        <input type="email" id="reg-email" required placeholder="doctor@clinic.com" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-medical-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Clinic Name</label>
+                        <input type="text" id="reg-clinic" placeholder="Advanced Dental Group" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-medical-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Password</label>
+                        <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-medical-500 outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 rounded-lg shadow transition mt-2">Register Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- App View (Hidden by default until authenticated) -->
+    <div id="app-view" class="hidden-view flex-1 flex flex-col min-h-screen relative z-10">
+        
+        <!-- Header -->
+        <header class="glass-header sticky top-0 z-40 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <div class="flex items-center gap-3">
+                        <img src="{{ url_for('static', filename='images/tooth.png') }}" class="w-8 h-8 mix-blend-darken" alt="Logo">
+                        <h1 class="text-xl font-display font-bold tracking-wider text-medical-900">PERIOVISION <span class="text-medical-600">AI</span></h1>
+                    </div>
+                    
+                    <nav class="hidden md:flex space-x-8">
+                        <button class="nav-btn text-medical-600 border-b-2 border-medical-600 font-medium px-1 py-5 transition" onclick="switchNav('dashboard', this)">Dashboard</button>
+                        <button class="nav-btn text-slate-500 hover:text-slate-700 border-b-2 border-transparent font-medium px-1 py-5 transition" onclick="switchNav('analyze', this)">Analyze X-Ray</button>
+                    </nav>
+                    
+                    <div class="flex items-center gap-6">
+                        <span class="text-sm font-medium text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full" id="user-profile-name">
+                            Loading...
+                        </span>
+                        <button onclick="handleLogout()" class="text-sm font-medium text-red-600 hover:text-red-800 transition">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- Dashboard Section -->
+            <section id="section-dashboard" class="page-section animate-fade-in">
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-slate-900">Patient Roster</h2>
+                        <p class="text-slate-500 mt-1">Manage clinical records and patient history.</p>
+                    </div>
+                    <button onclick="openAddPatientModal()" class="bg-medical-600 hover:bg-medical-700 text-white px-5 py-2.5 rounded-lg shadow-sm font-medium transition flex items-center gap-2">
+                        <span>+</span> New Patient
+                    </button>
+                </div>
+                
+                <div class="glass-panel rounded-2xl overflow-hidden">
+                    <table class="min-w-full divide-y divide-slate-200/50">
+                        <thead class="bg-slate-50/50">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Patient ID</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Age/Gender</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Registration Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patients-tbody" class="divide-y divide-slate-200/50 bg-transparent">
+                            <tr><td colspan="4" class="px-6 py-12 text-center text-slate-500">Loading records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Analyze Section -->
+            <section id="section-analyze" class="page-section hidden-view animate-fade-in">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-semibold text-slate-900">Radiograph Analysis</h2>
+                    <p class="text-slate-500 mt-1">Upload an image to trigger the AI diagnostic pipeline.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Config Pane -->
+                    <div class="lg:col-span-1">
+                        <div class="glass-panel rounded-2xl p-6">
+                            <h3 class="text-lg font-medium text-slate-900 border-b border-slate-200/50 pb-4 mb-4">Configuration</h3>
+                            
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Select Patient</label>
+                                <select id="patient-select" class="w-full px-4 py-2.5 rounded-xl border border-white/60 bg-white/50 focus:bg-white focus:ring-2 focus:ring-medical-500 outline-none backdrop-blur-sm transition-all shadow-sm">
+                                    <option value="">-- Select Patient --</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Radiograph Upload</label>
+                                <div id="drop-zone" class="border-2 border-dashed border-medical-300 bg-white/40 backdrop-blur-sm rounded-2xl p-8 text-center cursor-pointer hover:bg-white/60 hover:border-medical-500 transition group relative overflow-hidden shadow-sm">
+                                    <input type="file" id="file-input" accept="image/png, image/jpeg, image/jpg" class="hidden">
+                                    
+                                    <div class="upload-placeholder flex flex-col items-center">
+                                        <svg class="w-10 h-10 text-slate-400 group-hover:text-medical-500 mb-3 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                        <p class="text-sm font-medium text-slate-600">Click to upload</p>
+                                        <p class="text-xs text-slate-400 mt-1">or drag and drop</p>
+                                    </div>
+                                    <img id="preview-image" class="hidden-view absolute inset-0 w-full h-full object-cover rounded-lg z-10" />
+                                </div>
+                            </div>
+
+                            <button id="analyze-btn" disabled class="w-full bg-medical-600 hover:bg-medical-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg shadow-sm transition">
+                                Execute Diagnostic Pipeline
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Results Pane -->
+                    <div class="lg:col-span-2">
+                        <div class="glass-panel rounded-2xl p-6 min-h-[500px] flex flex-col relative overflow-hidden">
+                            <!-- Background decorative glow -->
+                            <div class="absolute -top-32 -right-32 w-64 h-64 bg-medical-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+                            
+                            <h3 class="text-lg font-medium text-slate-900 border-b border-slate-200/50 pb-4 mb-4 relative z-10">Diagnostic Results</h3>
+                            
+                            <div class="flex-1 flex flex-col relative" id="results-area">
+                                
+                                <!-- Empty State -->
+                                <div class="empty-state m-auto text-center py-16">
+                                    <img src="{{ url_for('static', filename='images/tooth.png') }}" class="w-20 h-20 mx-auto opacity-40 mix-blend-darken grayscale mb-4" alt="Empty">
+                                    <h4 class="text-lg font-medium text-slate-400">Awaiting Radiograph</h4>
+                                    <p class="text-sm text-slate-400 max-w-sm mx-auto mt-2">Select a patient and upload an image to view bone loss extractions and AI annotations.</p>
+                                </div>
+
+                                <!-- Loading State -->
+                                <div id="loading-state" class="hidden-view m-auto text-center py-16">
+                                    <svg class="animate-spin h-10 w-10 text-medical-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <p class="font-medium text-medical-700 animate-pulse">Running Orchestrator Pipeline...</p>
+                                </div>
+                                
+                                <!-- Results State -->
+                                <div id="results-content" class="hidden-view">
+                                    <div class="flex justify-between items-center mb-6">
+                                        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-center gap-3">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                            <span class="font-medium text-sm">Analysis complete. Findings extracted.</span>
+                                        </div>
+                                        <button id="download-report-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow-sm font-medium transition flex items-center gap-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                            Download Report
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="mb-6">
+                                        <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">AI Annotated Output</h4>
+                                        <img id="annotated-result-img" src="" class="w-full rounded-xl border border-slate-200 shadow-sm" alt="Annotated Result" />
+                                    </div>
+
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Longitudinal Bone Loss Metrics</h4>
+                                        <div class="overflow-hidden border border-slate-200/50 rounded-xl bg-white/40 backdrop-blur-md">
+                                            <table class="min-w-full divide-y divide-slate-200/50">
+                                                <thead class="bg-slate-50/50">
+                                                    <tr>
+                                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Tooth</th>
+                                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Bone Loss</th>
+                                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Severity</th>
+                                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Velocity/Yr</th>
+                                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">TALPA Grade</th>
+                                                        <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Risk Level</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="metrics-tbody" class="divide-y divide-slate-200/30">
+                                                    <!-- Populated via JS -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Patient Modal Overlay -->
+    <div id="patient-modal" class="hidden-view fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+        <div class="glass-panel rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-slide-up border-white/60">
+            <div class="px-6 py-4 border-b border-slate-200/50 flex justify-between items-center bg-white/40">
+                <h3 class="text-lg font-semibold text-slate-800">Register New Patient</h3>
+                <button onclick="closeAddPatientModal()" class="text-slate-500 hover:text-slate-800 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <form id="add-patient-form" onsubmit="handleAddPatient(event)" class="p-6 space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                    <input type="text" id="pat-name" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-medical-500 outline-none">
+                </div>
+                
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Age</label>
+                        <input type="number" id="pat-age" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-medical-500 outline-none">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Gender</label>
+                        <select id="pat-gender" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-medical-500 outline-none bg-white">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Contact Number</label>
+                    <input type="text" id="pat-contact" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-medical-500 outline-none">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Clinical Notes</label>
+                    <textarea id="pat-notes" rows="3" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-medical-500 outline-none"></textarea>
+                </div>
+                
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-medical-600 hover:bg-medical-700 text-white font-medium py-3 rounded-lg shadow-sm transition">Create Patient Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom inline animations -->
+    <style>
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-slide-up { animation: slideUp 0.3s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        // Initialize the Futuristic Neural Network Background
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 100, density: { enable: true, value_area: 800 } },
+                color: { value: '#0ea5e9' }, // medical blue
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: false },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: '#38bdf8', opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 2, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' }, resize: true },
+                modes: { grab: { distance: 140, line_linked: { opacity: 1 } }, push: { particles_nb: 4 } }
+            },
+            retina_detect: true
+        });
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
