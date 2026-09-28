@@ -110,11 +110,11 @@ Response:
 ```json
 {
   "data": {
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ…AY9f9hCrGJAI",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ…dm-Cg9iowqjs",
     "token_type": "Bearer",
     "expires_in": 900,
     "user": {
-      "doctor_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+      "doctor_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
       "name": "Demo Dentist",
       "email": "dentist@example.test",
       "role": "dentist",
@@ -165,7 +165,7 @@ Response:
 ```json
 {
   "data": {
-    "doctor_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+    "doctor_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
     "name": "Demo Dentist",
     "email": "dentist@example.test",
     "specialization": null,
@@ -173,8 +173,8 @@ Response:
     "phone": null,
     "role": "dentist",
     "active": true,
-    "created_date": "2026-09-28T15:07:15.848351+00:00",
-    "last_login": "2026-09-28T15:07:20.841450+00:00",
+    "created_date": "2026-09-28T15:48:24.457463+00:00",
+    "last_login": "2026-09-28T15:48:29.537927+00:00",
     "failed_attempts": 1,
     "locked_until": null,
     "mfa_enabled": false,
@@ -201,7 +201,7 @@ Response:
 ```json
 {
   "data": {
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ…h9OLjjT12TDI",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ…M9O_kWTt8Up4",
     "token_type": "Bearer",
     "expires_in": 900
   },
@@ -239,12 +239,12 @@ Response:
 {
   "data": [
     {
-      "sid": "e8fd692e...",
-      "user_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+      "sid": "86c09252...",
+      "user_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
       "fp": "829781c17ff10cbe6b5de4ce844099a9",
-      "ip_hash": "5510eba559d0adfc",
-      "created": "2026-09-28T15:07:21.112695+00:00",
-      "last_seen": "2026-09-28T15:07:21.381961+00:00",
+      "ip_hash": "a41f3c44f605a783",
+      "created": "2026-09-28T15:48:29.798148+00:00",
+      "last_seen": "2026-09-28T15:48:30.085041+00:00",
       "revoked": false,
       "current": true
     }
@@ -329,18 +329,18 @@ Response:
     },
     "recent": [
       {
-        "analysis_id": "AN-ea2ab09f4ac8",
-        "pseudo_id": "P-5584ae81dc",
+        "analysis_id": "AN-07da9263551c",
+        "pseudo_id": "P-088c9090fa",
         "visit_date": "2026-01-21",
-        "created": "2026-09-28T15:07:19.743995+00:00",
+        "created": "2026-09-28T15:48:28.648142+00:00",
         "review_status": "review_required",
         "mode": "demo"
       },
       {
-        "analysis_id": "AN-e86ad4be6ca5",
-        "pseudo_id": "P-5584ae81dc",
+        "analysis_id": "AN-897fd6602f26",
+        "pseudo_id": "P-088c9090fa",
         "visit_date": "2025-01-21",
-        "created": "2026-09-28T15:07:19.496632+00:00",
+        "created": "2026-09-28T15:48:28.391531+00:00",
         "review_status": "review_required",
         "mode": "demo"
       },
@@ -417,7 +417,7 @@ Response:
 {
   "data": {
     "patient_id": 1008,
-    "pseudo_id": "P-52b1f4b7f9",
+    "pseudo_id": "P-c91308ce2c",
     "patient_name": "Example Patient",
     "contact_number": "",
     "notes": "",
@@ -428,9 +428,9 @@ Response:
     "diabetic": true,
     "hba1c": 7.2,
     "teeth_lost_perio": null,
-    "doctor_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+    "doctor_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
     "care_team": [
-      "f7feb37f-631f-483c-8a7c-08031a9fdfce"
+      "422e5452-0a76-4306-88d2-1ed73e370e1a"
     ],
     "…": "2 more fields"
   },
@@ -492,7 +492,7 @@ Response:
   "data": [
     {
       "patient_id": 1008,
-      "pseudo_id": "P-52b1f4b7f9",
+      "pseudo_id": "P-c91308ce2c",
       "patient_name": "Example Patient",
       "contact_number": "",
       "notes": "",
@@ -503,9 +503,9 @@ Response:
       "diabetic": true,
       "hba1c": 7.2,
       "teeth_lost_perio": null,
-      "doctor_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+      "doctor_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
       "care_team": [
-        "f7feb37f-631f-483c-8a7c-08031a9fdfce"
+        "422e5452-0a76-4306-88d2-1ed73e370e1a"
       ],
       "…": "2 more fields"
     }
@@ -528,7 +528,7 @@ Response:
 {
   "data": {
     "patient_id": 1008,
-    "pseudo_id": "P-52b1f4b7f9",
+    "pseudo_id": "P-c91308ce2c",
     "patient_name": "Example Patient",
     "contact_number": "",
     "notes": "",
@@ -539,9 +539,9 @@ Response:
     "diabetic": true,
     "hba1c": 7.2,
     "teeth_lost_perio": null,
-    "doctor_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+    "doctor_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
     "care_team": [
-      "f7feb37f-631f-483c-8a7c-08031a9fdfce"
+      "422e5452-0a76-4306-88d2-1ed73e370e1a"
     ],
     "…": "3 more fields"
   },
@@ -569,7 +569,7 @@ Response:
 {
   "data": {
     "patient_id": 1008,
-    "pseudo_id": "P-52b1f4b7f9",
+    "pseudo_id": "P-c91308ce2c",
     "patient_name": "Example Patient",
     "contact_number": "",
     "notes": "",
@@ -580,9 +580,9 @@ Response:
     "diabetic": true,
     "hba1c": 6.8,
     "teeth_lost_perio": null,
-    "doctor_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+    "doctor_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
     "care_team": [
-      "f7feb37f-631f-483c-8a7c-08031a9fdfce"
+      "422e5452-0a76-4306-88d2-1ed73e370e1a"
     ],
     "…": "2 more fields"
   },
@@ -630,7 +630,7 @@ Response:
 ```json
 {
   "data": {
-    "upload_id": "ee417279de6c7eb93b481dffad4f30a4",
+    "upload_id": "d6b2d7e0a53b3dbf1dab450383ae2927",
     "kind": "png",
     "width": 1400,
     "height": 700,
@@ -691,7 +691,7 @@ Request:
 
 ```json
 {
-  "upload_id": "ee417279de6c7eb93b481dffad4f30a4",
+  "upload_id": "d6b2d7e0a53b3dbf1dab450383ae2927",
   "patient_id": 1008,
   "visit_date": "2026-09-01"
 }
@@ -702,13 +702,13 @@ Response:
 ```json
 {
   "data": {
-    "analysis_id": "AN-4733c9bbbc9f",
-    "created": "2026-09-28T15:07:22.541466+00:00",
+    "analysis_id": "AN-ddb734cbbc1b",
+    "created": "2026-09-28T15:48:31.158333+00:00",
     "patient_id": 1008,
-    "pseudo_id": "P-52b1f4b7f9",
+    "pseudo_id": "P-c91308ce2c",
     "visit_date": "2026-09-01",
     "mode": "demo",
-    "created_by": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+    "created_by": "422e5452-0a76-4306-88d2-1ed73e370e1a",
     "image_size": [
       1400,
       700
@@ -757,20 +757,20 @@ Response:
 
 #### Analysis detail
 
-`GET /api/analyses/AN-4733c9bbbc9f` → **200**
+`GET /api/analyses/AN-ddb734cbbc1b` → **200**
 
 Response:
 
 ```json
 {
   "data": {
-    "analysis_id": "AN-4733c9bbbc9f",
-    "created": "2026-09-28T15:07:22.541466+00:00",
+    "analysis_id": "AN-ddb734cbbc1b",
+    "created": "2026-09-28T15:48:31.158333+00:00",
     "patient_id": 1008,
-    "pseudo_id": "P-52b1f4b7f9",
+    "pseudo_id": "P-c91308ce2c",
     "visit_date": "2026-09-01",
     "mode": "demo",
-    "created_by": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+    "created_by": "422e5452-0a76-4306-88d2-1ed73e370e1a",
     "image_size": [
       1400,
       700
@@ -819,7 +819,7 @@ Response:
 
 #### Image layer (decrypted on the fly)
 
-`GET /api/analyses/AN-4733c9bbbc9f/image/annotated` → **200**
+`GET /api/analyses/AN-ddb734cbbc1b/image/annotated` → **200**
 
 Layers: radiograph, annotated, gradcam (when a verified model ran). Sent with Cache-Control: no-store.
 
@@ -839,23 +839,23 @@ Response:
 {
   "data": [
     {
-      "analysis_id": "AN-4733c9bbbc9f",
-      "pseudo_id": "P-52b1f4b7f9",
+      "analysis_id": "AN-ddb734cbbc1b",
+      "pseudo_id": "P-c91308ce2c",
       "patient_id": 1008,
       "visit_date": "2026-09-01",
       "mode": "demo",
-      "created": "2026-09-28T15:07:22.541466+00:00",
+      "created": "2026-09-28T15:48:31.158333+00:00",
       "review_status": "review_required",
       "stage": "II",
       "risk": "high"
     },
     {
-      "analysis_id": "AN-ea2ab09f4ac8",
-      "pseudo_id": "P-5584ae81dc",
+      "analysis_id": "AN-07da9263551c",
+      "pseudo_id": "P-088c9090fa",
       "patient_id": 1007,
       "visit_date": "2026-01-21",
       "mode": "demo",
-      "created": "2026-09-28T15:07:19.743995+00:00",
+      "created": "2026-09-28T15:48:28.648142+00:00",
       "review_status": "review_required",
       "stage": "II",
       "risk": "moderate"
@@ -881,7 +881,7 @@ Response:
   "data": {
     "visits": [
       {
-        "analysis_id": "AN-4733c9bbbc9f",
+        "analysis_id": "AN-ddb734cbbc1b",
         "visit_date": "2026-09-01",
         "review_status": "review_required"
       }
@@ -890,7 +890,7 @@ Response:
       "46": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.55,
           "stage": "II"
         }
@@ -898,7 +898,7 @@ Response:
       "45": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.55,
           "stage": "II"
         }
@@ -906,7 +906,7 @@ Response:
       "44": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.55,
           "stage": "II"
         }
@@ -914,7 +914,7 @@ Response:
       "43": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.55,
           "stage": "II"
         }
@@ -922,7 +922,7 @@ Response:
       "42": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.55,
           "stage": "II"
         }
@@ -930,7 +930,7 @@ Response:
       "41": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.4,
           "stage": "II"
         }
@@ -938,7 +938,7 @@ Response:
       "31": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.55,
           "stage": "II"
         }
@@ -946,7 +946,7 @@ Response:
       "32": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.55,
           "stage": "II"
         }
@@ -954,7 +954,7 @@ Response:
       "33": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.55,
           "stage": "II"
         }
@@ -962,7 +962,7 @@ Response:
       "34": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.55,
           "stage": "II"
         }
@@ -970,7 +970,7 @@ Response:
       "35": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.4,
           "stage": "II"
         }
@@ -978,7 +978,7 @@ Response:
       "36": [
         {
           "date": "2026-09-01",
-          "analysis_id": "AN-4733c9bbbc9f",
+          "analysis_id": "AN-ddb734cbbc1b",
           "bone_loss_pct": 18.55,
           "stage": "II"
         }
@@ -1015,11 +1015,11 @@ Response:
 {
   "data": [
     {
-      "analysis_id": "AN-8e2db4610b0c",
+      "analysis_id": "AN-b2758283ed42",
       "patient_id": 1004,
-      "pseudo_id": "P-c28af0a77d",
+      "pseudo_id": "P-cd609a429f",
       "visit_date": "2025-04-21",
-      "created": "2026-09-28T15:07:18.010679+00:00",
+      "created": "2026-09-28T15:48:26.775666+00:00",
       "mode": "demo",
       "reasons": [
         {
@@ -1040,11 +1040,11 @@ Response:
       "teeth": 12
     },
     {
-      "analysis_id": "AN-9edecd4ce197",
+      "analysis_id": "AN-3f21a70ff13e",
       "patient_id": 1005,
-      "pseudo_id": "P-4ac852dc87",
+      "pseudo_id": "P-c951d17f02",
       "visit_date": "2024-09-08",
-      "created": "2026-09-28T15:07:18.599043+00:00",
+      "created": "2026-09-28T15:48:27.465990+00:00",
       "mode": "demo",
       "reasons": [
         {
@@ -1076,7 +1076,7 @@ Response:
 
 #### Sign off with a correction
 
-`POST /api/review/AN-4733c9bbbc9f` → **200**
+`POST /api/review/AN-ddb734cbbc1b` → **200**
 
 Request:
 
@@ -1100,13 +1100,13 @@ Response:
 ```json
 {
   "data": {
-    "analysis_id": "AN-4733c9bbbc9f",
+    "analysis_id": "AN-ddb734cbbc1b",
     "review": {
       "status": "corrected",
-      "reviewer_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+      "reviewer_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
       "reviewer_name": "Demo Dentist",
       "reviewer_role": "dentist",
-      "at": "2026-09-28T15:07:22.635089+00:00",
+      "at": "2026-09-28T15:48:31.189960+00:00",
       "comment": "Crest confirmed clinically",
       "corrections": [
         {
@@ -1126,7 +1126,7 @@ Response:
 
 #### Technician cannot sign off
 
-`POST /api/review/AN-4733c9bbbc9f` → **403**
+`POST /api/review/AN-ddb734cbbc1b` → **403**
 
 Request:
 
@@ -1161,7 +1161,7 @@ Request:
 
 ```json
 {
-  "analysis_id": "AN-4733c9bbbc9f"
+  "analysis_id": "AN-ddb734cbbc1b"
 }
 ```
 
@@ -1170,16 +1170,16 @@ Response:
 ```json
 {
   "data": {
-    "report_id": "RPT-0f14020b713384c9",
-    "analysis_id": "AN-4733c9bbbc9f",
+    "report_id": "RPT-e18d3e577887a063",
+    "analysis_id": "AN-ddb734cbbc1b",
     "patient_id": 1008,
-    "pseudo_id": "P-52b1f4b7f9",
-    "created": "2026-09-28T15:07:23.294821+00:00",
-    "sha256": "ada3a0908a3fd24315669882ff886fd903483e2e4aa862667e63244b057a41e7",
+    "pseudo_id": "P-c91308ce2c",
+    "created": "2026-09-28T15:48:31.870974+00:00",
+    "sha256": "0d21297105bec4cbbd227187606e2bc9fb900f8e448a952ac99b203fa1fc45a9",
     "signature_algorithm": "RSA-PSS-SHA256",
-    "key_fingerprint": "be3c1659b7d271ea",
+    "key_fingerprint": "9a441a5d1dfeabdc",
     "mode": "demo",
-    "size_bytes": 1157346
+    "size_bytes": 1157441
   },
   "meta": {},
   "error": null,
@@ -1197,28 +1197,28 @@ Response:
 {
   "data": [
     {
-      "report_id": "RPT-0f14020b713384c9",
-      "analysis_id": "AN-4733c9bbbc9f",
+      "report_id": "RPT-e18d3e577887a063",
+      "analysis_id": "AN-ddb734cbbc1b",
       "patient_id": 1008,
-      "pseudo_id": "P-52b1f4b7f9",
-      "created": "2026-09-28T15:07:23.294821+00:00",
-      "sha256": "ada3a0908a3fd24315669882ff886fd903483e2e4aa862667e63244b057a41e7",
+      "pseudo_id": "P-c91308ce2c",
+      "created": "2026-09-28T15:48:31.870974+00:00",
+      "sha256": "0d21297105bec4cbbd227187606e2bc9fb900f8e448a952ac99b203fa1fc45a9",
       "signature_algorithm": "RSA-PSS-SHA256",
-      "key_fingerprint": "be3c1659b7d271ea",
+      "key_fingerprint": "9a441a5d1dfeabdc",
       "mode": "demo",
-      "size_bytes": 1157346
+      "size_bytes": 1157441
     },
     {
-      "report_id": "RPT-0144229788cdbca2",
-      "analysis_id": "AN-dbc7bb2e3885",
+      "report_id": "RPT-5e2494dc42069b3a",
+      "analysis_id": "AN-cee1d39bc10a",
       "patient_id": 1004,
-      "pseudo_id": "P-c28af0a77d",
-      "created": "2026-09-28T15:07:20.805104+00:00",
-      "sha256": "386174dc9e104bd51eb19febd09d017650396bb1322cfe4b7e229dea65b1e365",
+      "pseudo_id": "P-cd609a429f",
+      "created": "2026-09-28T15:48:29.487761+00:00",
+      "sha256": "49b565a3044b2a21f4e08e0660f76dd3ce9fb17ff7aea7d12068774e77cac027",
       "signature_algorithm": "RSA-PSS-SHA256",
-      "key_fingerprint": "be3c1659b7d271ea",
+      "key_fingerprint": "9a441a5d1dfeabdc",
       "mode": "demo",
-      "size_bytes": 1165609
+      "size_bytes": 1165015
     }
   ],
   "meta": {},
@@ -1229,17 +1229,17 @@ Response:
 
 #### Download the PDF
 
-`GET /api/reports/RPT-0f14020b713384c9/download` → **200**
+`GET /api/reports/RPT-e18d3e577887a063/download` → **200**
 
 Response:
 
 ```
-<application/pdf, 1157346 bytes>
+<application/pdf, 1157441 bytes>
 ```
 
 #### Public verification by ID (QR code)
 
-`GET /api/reports/verify/RPT-0f14020b713384c9` → **200**
+`GET /api/reports/verify/RPT-e18d3e577887a063` → **200**
 
 Response:
 
@@ -1247,12 +1247,12 @@ Response:
 {
   "data": {
     "valid": true,
-    "report_id": "RPT-0f14020b713384c9",
-    "created": "2026-09-28T15:07:23.294821+00:00",
-    "sha256": "ada3a0908a3fd24315669882ff886fd903483e2e4aa862667e63244b057a41e7",
+    "report_id": "RPT-e18d3e577887a063",
+    "created": "2026-09-28T15:48:31.870974+00:00",
+    "sha256": "0d21297105bec4cbbd227187606e2bc9fb900f8e448a952ac99b203fa1fc45a9",
     "signature_valid": true,
     "hash_matches": true,
-    "key_fingerprint": "be3c1659b7d271ea",
+    "key_fingerprint": "9a441a5d1dfeabdc",
     "mode": "demo",
     "reason": null
   },
@@ -1308,10 +1308,10 @@ Response:
 ```json
 {
   "data": {
-    "chart_id": "PC-2369b4ddba0c",
-    "created": "2026-09-28T15:07:23.329056+00:00",
+    "chart_id": "PC-a9848b1e5f01",
+    "created": "2026-09-28T15:48:31.923582+00:00",
     "patient_id": 1008,
-    "pseudo_id": "P-52b1f4b7f9",
+    "pseudo_id": "P-c91308ce2c",
     "exam_date": "2026-09-01",
     "teeth": {
       "46": {
@@ -1341,7 +1341,7 @@ Response:
       }
     },
     "notes": null,
-    "examiner_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+    "examiner_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
     "examiner_name": "Demo Dentist",
     "summary": {
       "teeth": {
@@ -1400,10 +1400,10 @@ Response:
 {
   "data": [
     {
-      "chart_id": "PC-2369b4ddba0c",
-      "created": "2026-09-28T15:07:23.329056+00:00",
+      "chart_id": "PC-a9848b1e5f01",
+      "created": "2026-09-28T15:48:31.923582+00:00",
       "patient_id": 1008,
-      "pseudo_id": "P-52b1f4b7f9",
+      "pseudo_id": "P-c91308ce2c",
       "exam_date": "2026-09-01",
       "teeth": {
         "46": {
@@ -1433,7 +1433,7 @@ Response:
         }
       },
       "notes": null,
-      "examiner_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+      "examiner_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
       "examiner_name": "Demo Dentist",
       "summary": {
         "teeth": {
@@ -1463,7 +1463,7 @@ Response:
     }
   ],
   "meta": {
-    "radiographic_analysis_id": "AN-4733c9bbbc9f"
+    "radiographic_analysis_id": "AN-ddb734cbbc1b"
   },
   "error": null,
   "mode": "demo"
@@ -1570,7 +1570,7 @@ Response:
     "disclaimer": "Decision support based on the 2017 AAP/E… clinically.",
     "patient": {
       "patient_id": 1008,
-      "pseudo_id": "P-52b1f4b7f9",
+      "pseudo_id": "P-c91308ce2c",
       "patient_name": "Example Patient",
       "age": 47,
       "sex": "female",
@@ -1599,7 +1599,7 @@ Response:
   "data": [
     {
       "patient_id": 1007,
-      "pseudo_id": "P-5584ae81dc",
+      "pseudo_id": "P-088c9090fa",
       "patient_name": "Demo Patient D (synthetic)",
       "stage": "II",
       "grade": "B",
@@ -1613,7 +1613,7 @@ Response:
     },
     {
       "patient_id": 1004,
-      "pseudo_id": "P-c28af0a77d",
+      "pseudo_id": "P-cd609a429f",
       "patient_name": "Demo Patient A (synthetic)",
       "stage": "II",
       "grade": "B",
@@ -1649,27 +1649,27 @@ Response:
   "data": [
     {
       "seq": 36,
-      "timestamp": "2026-09-28T15:07:23.357464+00:00",
-      "actor": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+      "timestamp": "2026-09-28T15:48:31.954039+00:00",
+      "actor": "422e5452-0a76-4306-88d2-1ed73e370e1a",
       "action": "RECALL_BOARD_VIEWED",
       "outcome": "success",
       "resource": null,
       "details": {
         "patients": 5
       },
-      "prev_hash": "758dc8e01dc3c9bef84f25de15121b726279a247bce3b1e656e1dab77d2ae9d1",
-      "entry_hash": "3a4f022750457af2f251b249039f0e148d8cc247bbffb583518da33d36ae07dc"
+      "prev_hash": "38af9c729657df476d889ad309408886dd43ae59b0d645ce68cf060b7d3da2bc",
+      "entry_hash": "73df3714b468eafb58eee606c6dd13977fc18fbcf75ee1ad7b9b93fa01af54a7"
     },
     {
       "seq": 35,
-      "timestamp": "2026-09-28T15:07:23.340296+00:00",
-      "actor": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+      "timestamp": "2026-09-28T15:48:31.932716+00:00",
+      "actor": "422e5452-0a76-4306-88d2-1ed73e370e1a",
       "action": "CARE_PLAN_VIEWED",
       "outcome": "success",
-      "resource": "P-52b1f4b7f9",
+      "resource": "P-c91308ce2c",
       "details": {},
-      "prev_hash": "9814a85e7e102b4792adeb4806e5a96811bfea5c294af2ca246ba6865a3aa0b4",
-      "entry_hash": "758dc8e01dc3c9bef84f25de15121b726279a247bce3b1e656e1dab77d2ae9d1"
+      "prev_hash": "763e58f1e5723b1809b55ab12e2f90403bcbc718bcbaf3973a40671f56c737db",
+      "entry_hash": "38af9c729657df476d889ad309408886dd43ae59b0d645ce68cf060b7d3da2bc"
     },
     "… 1 more"
   ],
@@ -1692,22 +1692,22 @@ Response:
     "first_tampered_seq": null,
     "reason": null,
     "entries_verified": 37,
-    "current_root": "7f8f1a4a14318c639993eebec2a5f55fdd7c088de6321b19572464d89f1c2f8a",
+    "current_root": "3248cb5ab54329b5589056c52e6e7162fd4f27dfad450a22089ba06b9a027ce2",
     "anchors_checked": 1,
     "anchors": [
       {
         "count": 20,
-        "timestamp": "2026-09-28T15:07:22.146635+00:00",
+        "timestamp": "2026-09-28T15:48:30.833927+00:00",
         "anchor_genuine": true,
         "root_matches": true
       }
     ],
     "latest_anchor": {
       "count": 20,
-      "root": "af22eb8de9c19b37f55e31973964db56eeca471258f06dae4075422e8e6e19e2",
-      "timestamp": "2026-09-28T15:07:22.146635+00:00",
+      "root": "a07fbe64df3f0f6f647f468534234614da11951b4520b2b1296e93630ec635f1",
+      "timestamp": "2026-09-28T15:48:30.833927+00:00",
       "published_by": "system",
-      "hmac": "560a2b3e5059c965eb3ca3a23f38779c4e22dd4acdda5465e4f679eddf7bf4cd"
+      "hmac": "beac2c578d8c2224b652c03368f61c9927e2492fdbbbe9a3efddf54b08844025"
     }
   },
   "meta": {},
@@ -1726,10 +1726,10 @@ Response:
 {
   "data": {
     "count": 38,
-    "root": "e5680137a4b2f1dbf21d7a3aa37d03eca04051aa8699d36d388e20426354c168",
-    "timestamp": "2026-09-28T15:07:23.363341+00:00",
-    "published_by": "65cb78b4-715b-427b-b51e-2c53f8893994",
-    "hmac": "2f7d296b00ab7f436fe5a456eb066ed8e927a92efe17442feccdc031dce4544d"
+    "root": "b6d91afc73005ffd3144a06f76be5f91a403f9c0867bc2e8ded759d553d34d4c",
+    "timestamp": "2026-09-28T15:48:31.963463+00:00",
+    "published_by": "38e63b72-78b8-40a2-9084-9ee5869439e5",
+    "hmac": "1e9a54a2b7cee5ba73735c76beb7c531666cc652e86d1f7250a58a3dd7f49deb"
   },
   "meta": {},
   "error": null,
@@ -1855,21 +1855,21 @@ Response:
 {
   "data": [
     {
-      "sid": "988f5810...",
-      "user_id": "65cb78b4-715b-427b-b51e-2c53f8893994",
+      "sid": "06918542...",
+      "user_id": "38e63b72-78b8-40a2-9084-9ee5869439e5",
       "fp": "829781c17ff10cbe6b5de4ce844099a9",
-      "ip_hash": "5510eba559d0adfc",
-      "created": "2026-09-28T15:07:21.882232+00:00",
-      "last_seen": "2026-09-28T15:07:23.364772+00:00",
+      "ip_hash": "a41f3c44f605a783",
+      "created": "2026-09-28T15:48:30.534509+00:00",
+      "last_seen": "2026-09-28T15:48:31.967271+00:00",
       "revoked": false
     },
     {
-      "sid": "e8fd692e...",
-      "user_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+      "sid": "86c09252...",
+      "user_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
       "fp": "829781c17ff10cbe6b5de4ce844099a9",
-      "ip_hash": "5510eba559d0adfc",
-      "created": "2026-09-28T15:07:21.112695+00:00",
-      "last_seen": "2026-09-28T15:07:23.342296+00:00",
+      "ip_hash": "a41f3c44f605a783",
+      "created": "2026-09-28T15:48:29.798148+00:00",
+      "last_seen": "2026-09-28T15:48:31.935244+00:00",
       "revoked": false
     },
     "… 2 more"
@@ -1925,7 +1925,7 @@ Response:
       {
         "label": "Write 10 log entries and anchor the Merkle root",
         "passed": true,
-        "detail": "10 entries, root 6786f9ca288f..."
+        "detail": "10 entries, root a35dbee2fe0e..."
       },
       {
         "label": "Attacker edits entry #4 in the database",
@@ -1936,8 +1936,8 @@ Response:
     ],
     "defended": true,
     "error": null,
-    "duration_ms": 3,
-    "ran_at": "2026-09-28T15:07:23.371986+00:00"
+    "duration_ms": 5,
+    "ran_at": "2026-09-28T15:48:31.979479+00:00"
   },
   "meta": {},
   "error": null,
@@ -1980,7 +1980,7 @@ Response:
         "extra": {}
       }
     ],
-    "public_key_fingerprint": "be3c1659b7d271ea"
+    "public_key_fingerprint": "9a441a5d1dfeabdc"
   },
   "meta": {},
   "error": null,
@@ -2056,7 +2056,7 @@ Response:
 {
   "data": [
     {
-      "doctor_id": "f7feb37f-631f-483c-8a7c-08031a9fdfce",
+      "doctor_id": "422e5452-0a76-4306-88d2-1ed73e370e1a",
       "name": "Demo Dentist",
       "email": "dentist@example.test",
       "specialization": null,
@@ -2064,15 +2064,15 @@ Response:
       "phone": null,
       "role": "dentist",
       "active": true,
-      "created_date": "2026-09-28T15:07:15.848351+00:00",
-      "last_login": "2026-09-28T15:07:20.841450+00:00",
+      "created_date": "2026-09-28T15:48:24.457463+00:00",
+      "last_login": "2026-09-28T15:48:29.537927+00:00",
       "failed_attempts": 1,
       "locked_until": null,
       "mfa_enabled": false,
-      "mfa_pending_secret": "enc:v1:d1:Ghp0CVayfi5EyAQvhrvyh1QWUlc3sm…JbsqcdgtHU5j"
+      "mfa_pending_secret": "enc:v1:d1:gOt/JCWCjP+UsRTs9DeLw4UdCaqXc+…xOdg2RZMNEQ2"
     },
     {
-      "doctor_id": "ec1ce453-9836-458e-912e-6a4b00a5a335",
+      "doctor_id": "0c468fc2-06ad-488a-8e20-87a15b39d770",
       "name": "Demo Technician",
       "email": "technician@example.test",
       "specialization": null,
@@ -2080,8 +2080,8 @@ Response:
       "phone": null,
       "role": "technician",
       "active": true,
-      "created_date": "2026-09-28T15:07:16.249564+00:00",
-      "last_login": "2026-09-28T15:07:21.383217+00:00",
+      "created_date": "2026-09-28T15:48:24.695858+00:00",
+      "last_login": "2026-09-28T15:48:30.086041+00:00",
       "failed_attempts": 0,
       "locked_until": null,
       "mfa_enabled": false
@@ -2115,7 +2115,7 @@ Response:
 ```json
 {
   "data": {
-    "doctor_id": "7e579134-8888-4c28-abc1-917eb16028ef",
+    "doctor_id": "83e33eb1-ff03-47d6-b23f-7245bd902520",
     "name": "New Hygienist",
     "email": "hygienist@example.test",
     "specialization": null,
@@ -2123,7 +2123,7 @@ Response:
     "phone": null,
     "role": "technician",
     "active": true,
-    "created_date": "2026-09-28T15:07:23.628728+00:00",
+    "created_date": "2026-09-28T15:48:32.238363+00:00",
     "last_login": null,
     "failed_attempts": 0,
     "locked_until": null,
@@ -2137,7 +2137,7 @@ Response:
 
 #### Change role / disable
 
-`PATCH /api/admin/users/7e579134-8888-4c28-abc1-917eb16028ef` → **200**
+`PATCH /api/admin/users/83e33eb1-ff03-47d6-b23f-7245bd902520` → **200**
 
 Request:
 
@@ -2152,7 +2152,7 @@ Response:
 ```json
 {
   "data": {
-    "doctor_id": "7e579134-8888-4c28-abc1-917eb16028ef",
+    "doctor_id": "83e33eb1-ff03-47d6-b23f-7245bd902520",
     "name": "New Hygienist",
     "email": "hygienist@example.test",
     "specialization": null,
@@ -2160,7 +2160,7 @@ Response:
     "phone": null,
     "role": "dentist",
     "active": true,
-    "created_date": "2026-09-28T15:07:23.628728+00:00",
+    "created_date": "2026-09-28T15:48:32.238363+00:00",
     "last_login": null,
     "failed_attempts": 0,
     "locked_until": null,
@@ -2253,7 +2253,7 @@ Response:
     },
     "signing": {
       "algorithm": "RSA-PSS-SHA256",
-      "public_key_fingerprint": "be3c1659b7d271ea",
+      "public_key_fingerprint": "9a441a5d1dfeabdc",
       "private_key_available": true
     },
     "mode": "demo"

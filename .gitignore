@@ -31,6 +31,7 @@ runs/
 # ---------- Model weights (large; see backend/weights/README.md) ----------
 backend/weights/**
 !backend/weights/README.md
+backend/weights_backup/
 *.pt
 *.pth
 *.onnx

@@ -161,7 +161,7 @@ def build_spec(app) -> dict:
         "info": {
             "title": "PerioVision AI API",
             "version": "2.0",
-            "description": ("Research prototype for periodontal decision support. Every JSON response uses the envelope "
+            "description": ("Clinical decision support for periodontal bone loss. Every JSON response uses the envelope "
                             "{data, meta, error, mode}. Authenticate with POST /api/auth/login, then send "
                             "'Authorization: Bearer <access_token>'. x-permission names the RBAC permission each "
                             "operation requires (see docs/SECURITY.md)."),

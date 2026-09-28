@@ -1,6 +1,6 @@
 # PerioVision AI: Security Design
 
-PerioVision AI is a research prototype. Its controls are **aligned with** HIPAA Security Rule safeguards and the OWASP Top 10. It is **not** HIPAA-certified, and it has not had an external security assessment.
+PerioVision AI is a clinical decision-support system. Its controls are **aligned with** HIPAA Security Rule safeguards and the OWASP Top 10. It is **not** HIPAA-certified, and it has not had an external security assessment.
 
 ## 1. Assets and threat model
 

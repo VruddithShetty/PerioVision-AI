@@ -1,6 +1,10 @@
 # PerioVision AI - Windows helper with the same targets as the Makefile.
 # Usage (from the repository root):  .\run.ps1 setup | backend | frontend | test | demo | lint | docs
-param([Parameter(Mandatory = $true)][ValidateSet("setup", "backend", "frontend", "test", "demo", "lint", "docs")][string]$Target)
+#                                    .\run.ps1 install-models -From <folder downloaded from Colab>
+param(
+    [Parameter(Mandatory = $true)][ValidateSet("setup", "backend", "frontend", "test", "demo", "lint", "docs", "install-models")][string]$Target,
+    [string]$From
+)
 $ErrorActionPreference = "Stop"
 $Root = $PSScriptRoot
 switch ($Target) {
@@ -18,4 +22,11 @@ switch ($Target) {
     }
     "docs" { Push-Location "$Root\backend"; python scripts/generate_api_docs.py; Pop-Location }
     "demo" { $env:DB_MODE = "demo"; Push-Location "$Root\backend"; python wsgi.py; Pop-Location }
+    "install-models" {
+        if (-not $From) { throw "Pass the export folder: .\run.ps1 install-models -From `"$HOME\Downloads\export`"" }
+        Push-Location "$Root\backend"
+        python scripts/install_trained_weights.py --from "$From"
+        if ($LASTEXITCODE -eq 0) { python -m pytest -q }
+        Pop-Location
+    }
 }

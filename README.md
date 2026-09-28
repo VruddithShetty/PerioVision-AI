@@ -2,7 +2,7 @@
 
 **Secure, explainable decision support for periodontal bone-loss detection.** PerioVision reads dental radiographs tooth by tooth: it finds each tooth by FDI number, locates the cemento-enamel junction and the alveolar crest, measures bone loss, suggests a periodontitis stage and grade, tracks every tooth across visits, and puts an honest uncertainty range on each finding. Anything doubtful goes to a dentist for sign-off before a signed report can be issued. Around it sits a security layer built for a cybersecurity thesis: AES-256-GCM encryption, RSA-PSS signed models and reports, JWT + TOTP MFA, four-role RBAC with Zero Trust checks on every request, and a hash-chained, Merkle-anchored audit trail.
 
-> **Research prototype.** Not a certified medical device; no clinical accuracy is claimed. Security controls are *aligned with* HIPAA safeguards, not certified.
+> **Decision support, clinician in the loop.** Not a certified medical device. Model accuracy is reported only from held-out test data (see the model card). Security controls are *aligned with* HIPAA safeguards, not certified.
 
 ![Screenshots placeholder: add images of the landing page, analysis viewer and Security Lab here](docs/reference/screenshots-placeholder.png)
 

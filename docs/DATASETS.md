@@ -28,3 +28,13 @@ Check each dataset's licence and data-use terms before downloading.
 3. Sign: `python scripts/sign_model.py` (the app refuses unsigned weights).
 4. Calibrate uncertainty on a held-out split that was **not** used in training:
    `python scripts/calibrate_conformal.py --images <split>/images --labels <split>/labels --source "<where the labels came from>"`
+
+## Training on public data (Colab)
+
+| Dataset | Used for | Access | Licence |
+|---|---|---|---|
+| [DENTEX](https://huggingface.co/datasets/ibrahimhamamci/DENTEX), `quadrant_enumeration` subset (634 panoramic X-rays, per-tooth FDI boxes) | tooth detector (`notebooks/train_periovision_colab.ipynb`, Part A) | open download, fetched inside Colab only | CC BY-NC-SA 4.0 (academic, non-commercial, attribution) |
+| [BoneLoss-PAN769](https://zenodo.org/records/21939261) (769 panoramic X-rays, crowns + alveolar-ridge lines) | candidate for bone-level training | access request on Zenodo | CC BY 4.0 |
+| [perio-KPT](https://zenodo.org/records/17272200) (CEJ, bone-level, apex keypoints, YOLO-pose) | candidate for Part B keypoints | university access request | CC BY-NC-SA 2.0 |
+
+The notebook splits DENTEX once (seed 42) into 80 % train, 10 % val and 10 % test and saves the split to Drive. Metrics in `docs/MODEL_CARD.md` come only from the test part.

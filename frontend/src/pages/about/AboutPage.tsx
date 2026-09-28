@@ -41,7 +41,7 @@ export default function AboutPage({ embedded = false }: { embedded?: boolean }) 
       <PageHeader
         eyebrow="About"
         title="PerioVision AI architecture"
-        subtitle="A secure, explainable clinical decision-support system for periodontal bone-loss detection. Final-year cybersecurity project, research prototype."
+        subtitle="A secure, explainable clinical decision-support system for periodontal bone-loss detection. Final-year cybersecurity project."
       />
       <Card strong>
         <CardTitle>How a request flows (click any block)</CardTitle>
@@ -89,7 +89,7 @@ export default function AboutPage({ embedded = false }: { embedded?: boolean }) 
       <Card className="mt-6">
         <p className="label">Honest limitations</p>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-mist-300">
-          <li>Research prototype for decision support; not a certified medical device.</li>
+          <li>Decision-support tool; not a certified medical device.</li>
           <li>Controls are aligned with HIPAA safeguards, not certified.</li>
           <li>No accuracy figures are claimed: the models still need a clinician-annotated test set.</li>
           <li>The risk score is a documented rule-assisted demo, not a trained clinical model.</li>

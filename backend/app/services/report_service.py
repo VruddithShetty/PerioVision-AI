@@ -76,7 +76,7 @@ def build_pdf(analysis: dict, patient: dict, progression: dict, reviewer: dict |
     story = [Paragraph("<b>PerioVision AI: Periodontal Radiograph Report</b>", styles["Title"])]
     mode_note = "DEMO MODE: placeholder results, not model output. " if analysis.get("mode") == "demo" else ""
     story.append(Paragraph(
-        f"<b>{mode_note}Research prototype for clinical decision support; not a certified medical device.</b> "
+        f"<b>{mode_note}Clinical decision-support tool; not a certified medical device.</b> "
         "Findings must be confirmed by a qualified clinician.", warn))
     story.append(Spacer(1, 6))
 

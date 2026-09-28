@@ -120,7 +120,7 @@ export default function LandingPage() {
         <div className="mx-auto grid min-h-[92vh] max-w-7xl items-center gap-10 px-5 md:grid-cols-2 md:px-8">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <span className="inline-flex items-center gap-2 rounded-full border border-brand-400/25 bg-brand-400/10 px-3 py-1 text-xs text-brand-300">
-              <Sparkles className="h-3.5 w-3.5" /> Explainable periodontal AI · research prototype
+              <Sparkles className="h-3.5 w-3.5" /> Explainable periodontal AI · clinician in the loop
             </span>
             <h1 className="mt-6 text-5xl font-extrabold leading-[1.02] md:text-6xl xl:text-7xl">
               See bone loss
@@ -272,7 +272,7 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 text-xs text-mist-500 md:flex-row md:px-8">
           <Logo />
           <p className="max-w-xl text-center md:text-right">
-            Research prototype for clinical decision support. Not a certified medical device. Security controls are aligned with
+            Clinical decision support. Not a certified medical device. Security controls are aligned with
             HIPAA safeguards, not certified. Findings must be confirmed by a qualified dentist.{" "}
             <Link to="/about" className="text-brand-300 hover:underline">About the project</Link>
           </p>
