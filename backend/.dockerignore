@@ -1,0 +1,7 @@
+storage/
+logs/
+weights/
+keys/*.pem
+__pycache__/
+legacy/
+tests/.pytest_cache/

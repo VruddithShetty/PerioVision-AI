@@ -1,0 +1,63 @@
+{
+  "_comment": "All tunable clinical/ML thresholds in one place. Edit and restart the backend. Values are engineering defaults, not clinically validated cut-offs.",
+  "preprocessing": {
+    "clahe_clip_limit": 2.0,
+    "clahe_tile": 8
+  },
+  "quality": {
+    "min_side_reject": 256,
+    "min_side_warn": 600,
+    "blur_reject": 10.0,
+    "blur_warn": 25.0,
+    "contrast_reject": 12.0,
+    "contrast_warn": 25.0,
+    "clipped_warn": 0.35,
+    "_note": "sharpness = variance of the Laplacian measured at 1024 px width; real panoramic radiographs in DP_datasets measured 38-110"
+  },
+  "detection": {
+    "min_confidence": 0.25,
+    "low_confidence": 0.5
+  },
+  "landmarks": {
+    "min_keypoint_confidence": 0.3,
+    "match_iou": 0.3
+  },
+  "explainability": {
+    "min_roi_attention": 0.25,
+    "roi_margin_fraction": 0.15
+  },
+  "uncertainty": {
+    "coverage": 0.9,
+    "max_interval_width_pct": 20.0
+  },
+  "ood": {
+    "mean_intensity_range": [
+      25,
+      220
+    ],
+    "min_contrast": 12.0,
+    "aspect_ratio_range": [
+      0.8,
+      4.0
+    ],
+    "min_teeth_detected": 1
+  },
+  "staging": {
+    "stage_ii_min_pct": 15.0,
+    "stage_iii_min_pct": 33.0,
+    "stage_iv_min_teeth_lost": 5,
+    "grade_b_min_ratio": 0.25,
+    "grade_c_min_ratio": 1.0
+  },
+  "progression": {
+    "stable_band_pct_per_year": 1.0,
+    "rapid_pct_per_year": 5.0,
+    "min_interval_days": 30,
+    "spatial_match_max_distance": 0.08,
+    "min_alignment_score": 0.5
+  },
+  "risk": {
+    "moderate_min_probability": 0.35,
+    "high_min_probability": 0.65
+  }
+}

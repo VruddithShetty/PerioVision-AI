@@ -1,0 +1,2883 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "PerioVision AI API",
+    "version": "2.0",
+    "description": "Research prototype for periodontal decision support. Every JSON response uses the envelope {data, meta, error, mode}. Authenticate with POST /api/auth/login, then send 'Authorization: Bearer <access_token>'. x-permission names the RBAC permission each operation requires (see docs/SECURITY.md)."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:5000"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "AnalyzeIn": {
+        "additionalProperties": false,
+        "properties": {
+          "upload_id": {
+            "pattern": "^[a-f0-9]{32}$",
+            "title": "Upload Id",
+            "type": "string"
+          },
+          "patient_id": {
+            "minimum": 1,
+            "title": "Patient Id",
+            "type": "integer"
+          },
+          "visit_date": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Visit Date"
+          }
+        },
+        "required": [
+          "upload_id",
+          "patient_id"
+        ],
+        "title": "AnalyzeIn",
+        "type": "object"
+      },
+      "Envelope": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta",
+          "error",
+          "mode"
+        ],
+        "properties": {
+          "data": {
+            "description": "Payload (object, list or null on error)"
+          },
+          "meta": {
+            "type": "object",
+            "description": "Extra information such as counts"
+          },
+          "error": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {}
+            }
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "demo",
+              "live"
+            ]
+          }
+        }
+      },
+      "LoginIn": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "maxLength": 254,
+            "minLength": 3,
+            "title": "Email",
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginIn",
+        "type": "object"
+      },
+      "MfaIn": {
+        "additionalProperties": false,
+        "properties": {
+          "mfa_token": {
+            "maxLength": 4096,
+            "minLength": 10,
+            "title": "Mfa Token",
+            "type": "string"
+          },
+          "code": {
+            "pattern": "^\\d{6}$",
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mfa_token",
+          "code"
+        ],
+        "title": "MfaIn",
+        "type": "object"
+      },
+      "PatientIn": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "age": {
+            "anyOf": [
+              {
+                "maximum": 120,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Age"
+          },
+          "sex": {
+            "anyOf": [
+              {
+                "enum": [
+                  "female",
+                  "male",
+                  "other",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sex"
+          },
+          "contact": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Contact"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Notes"
+          },
+          "smoking_status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "never",
+                  "former",
+                  "current",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "unknown",
+            "title": "Smoking Status"
+          },
+          "cigarettes_per_day": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cigarettes Per Day"
+          },
+          "diabetic": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Diabetic"
+          },
+          "hba1c": {
+            "anyOf": [
+              {
+                "maximum": 20.0,
+                "minimum": 3.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Hba1C"
+          },
+          "teeth_lost_perio": {
+            "anyOf": [
+              {
+                "maximum": 32,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Teeth Lost Perio"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "PatientIn",
+        "type": "object"
+      },
+      "PatientUpdateIn": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Name"
+          },
+          "age": {
+            "anyOf": [
+              {
+                "maximum": 120,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Age"
+          },
+          "sex": {
+            "anyOf": [
+              {
+                "enum": [
+                  "female",
+                  "male",
+                  "other",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sex"
+          },
+          "contact": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Contact"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Notes"
+          },
+          "smoking_status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "never",
+                  "former",
+                  "current",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Smoking Status"
+          },
+          "cigarettes_per_day": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cigarettes Per Day"
+          },
+          "diabetic": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Diabetic"
+          },
+          "hba1c": {
+            "anyOf": [
+              {
+                "maximum": 20.0,
+                "minimum": 3.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Hba1C"
+          },
+          "teeth_lost_perio": {
+            "anyOf": [
+              {
+                "maximum": 32,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Teeth Lost Perio"
+          }
+        },
+        "title": "PatientUpdateIn",
+        "type": "object"
+      },
+      "PerioChartIn": {
+        "additionalProperties": false,
+        "properties": {
+          "exam_date": {
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "title": "Exam Date",
+            "type": "string"
+          },
+          "teeth": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ToothChart"
+            },
+            "maxProperties": 32,
+            "title": "Teeth",
+            "type": "object"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Notes"
+          }
+        },
+        "required": [
+          "exam_date",
+          "teeth"
+        ],
+        "title": "PerioChartIn",
+        "type": "object"
+      },
+      "ReportIn": {
+        "additionalProperties": false,
+        "properties": {
+          "analysis_id": {
+            "pattern": "^AN-[a-f0-9]{12}$",
+            "title": "Analysis Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "analysis_id"
+        ],
+        "title": "ReportIn",
+        "type": "object"
+      },
+      "ReviewIn": {
+        "additionalProperties": false,
+        "properties": {
+          "decision": {
+            "enum": [
+              "approve",
+              "correct",
+              "reject"
+            ],
+            "title": "Decision",
+            "type": "string"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Comment"
+          },
+          "corrections": {
+            "items": {
+              "$ref": "#/components/schemas/ToothCorrection"
+            },
+            "maxItems": 40,
+            "title": "Corrections",
+            "type": "array"
+          }
+        },
+        "required": [
+          "decision"
+        ],
+        "title": "ReviewIn",
+        "type": "object"
+      },
+      "ToothChart": {
+        "additionalProperties": false,
+        "properties": {
+          "pd": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 6,
+            "minItems": 6,
+            "title": "Pd",
+            "type": "array"
+          },
+          "rec": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 6,
+            "minItems": 6,
+            "title": "Rec",
+            "type": "array"
+          },
+          "bop": {
+            "items": {
+              "type": "boolean"
+            },
+            "maxItems": 6,
+            "minItems": 6,
+            "title": "Bop",
+            "type": "array"
+          },
+          "plaque": {
+            "items": {
+              "type": "boolean"
+            },
+            "maxItems": 6,
+            "minItems": 6,
+            "title": "Plaque",
+            "type": "array"
+          },
+          "mobility": {
+            "default": 0,
+            "maximum": 3,
+            "minimum": 0,
+            "title": "Mobility",
+            "type": "integer"
+          },
+          "furcation": {
+            "default": 0,
+            "maximum": 3,
+            "minimum": 0,
+            "title": "Furcation",
+            "type": "integer"
+          },
+          "missing": {
+            "default": false,
+            "title": "Missing",
+            "type": "boolean"
+          }
+        },
+        "title": "ToothChart",
+        "type": "object"
+      },
+      "ToothCorrection": {
+        "additionalProperties": false,
+        "properties": {
+          "tooth_id": {
+            "maxLength": 8,
+            "title": "Tooth Id",
+            "type": "string"
+          },
+          "bone_loss_pct": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Bone Loss Pct"
+          },
+          "stage": {
+            "anyOf": [
+              {
+                "enum": [
+                  "I",
+                  "II",
+                  "III",
+                  "IV"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Stage"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Note"
+          }
+        },
+        "required": [
+          "tooth_id"
+        ],
+        "title": "ToothCorrection",
+        "type": "object"
+      },
+      "TotpCodeIn": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "pattern": "^\\d{6}$",
+            "title": "Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "TotpCodeIn",
+        "type": "object"
+      },
+      "UserCreateIn": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 254,
+            "minLength": 3,
+            "title": "Email",
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 256,
+            "minLength": 10,
+            "title": "Password",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "admin",
+              "dentist",
+              "technician",
+              "auditor"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "clinic_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Clinic Name"
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "password",
+          "role"
+        ],
+        "title": "UserCreateIn",
+        "type": "object"
+      },
+      "UserUpdateIn": {
+        "additionalProperties": false,
+        "properties": {
+          "role": {
+            "anyOf": [
+              {
+                "enum": [
+                  "admin",
+                  "dentist",
+                  "technician",
+                  "auditor"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Role"
+          },
+          "active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Active"
+          }
+        },
+        "title": "UserUpdateIn",
+        "type": "object"
+      }
+    }
+  },
+  "paths": {
+    "/api/admin/config": {
+      "get": {
+        "summary": "Thresholds, key IDs and signing status",
+        "operationId": "security_get_config_get",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "admin:config"
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "summary": "List user accounts",
+        "operationId": "security_list_users_get",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "admin:users"
+      },
+      "post": {
+        "summary": "Create a user account",
+        "operationId": "security_create_user_post",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "admin:users",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreateIn"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/{user_id}": {
+      "patch": {
+        "summary": "Change a user's role or disable them",
+        "operationId": "security_update_user_patch",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "admin:users",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateIn"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/{user_id}/lock": {
+      "post": {
+        "summary": "Lock a user for a number of minutes",
+        "operationId": "security_lock_user_post",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "admin:users",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/analyses": {
+      "post": {
+        "summary": "Run the full analysis pipeline on an upload",
+        "operationId": "analysis_create_analysis_post",
+        "tags": [
+          "analysis"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "analysis:run",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeIn"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Recent analyses visible to you",
+        "operationId": "analysis_list_analyses_get",
+        "tags": [
+          "analysis"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "analysis:read"
+      }
+    },
+    "/api/analyses/{analysis_id}": {
+      "get": {
+        "summary": "Analysis detail: teeth, uncertainty, risk, review status",
+        "operationId": "analysis_get_analysis_get",
+        "tags": [
+          "analysis"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "analysis:read",
+        "parameters": [
+          {
+            "name": "analysis_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/analyses/{analysis_id}/image/{layer}": {
+      "get": {
+        "summary": "Decrypted image layer (radiograph, annotated, gradcam)",
+        "operationId": "analysis_analysis_image_get",
+        "tags": [
+          "analysis"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "analysis:read",
+        "parameters": [
+          {
+            "name": "analysis_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "layer",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/audit/anchor": {
+      "post": {
+        "summary": "Publish (anchor) a Merkle root now",
+        "operationId": "audit_anchor_post",
+        "tags": [
+          "audit"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "audit:verify"
+      }
+    },
+    "/api/audit/logs": {
+      "get": {
+        "summary": "Browse the tamper-evident audit log",
+        "operationId": "audit_logs_get",
+        "tags": [
+          "audit"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "audit:read"
+      }
+    },
+    "/api/audit/verify": {
+      "get": {
+        "summary": "Verify the hash chain and Merkle anchors",
+        "operationId": "audit_verify_get",
+        "tags": [
+          "audit"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "audit:verify"
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Sign in with email and password (returns an access token or an MFA challenge)",
+        "operationId": "auth_login_post",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "Sign out and revoke this session",
+        "operationId": "auth_logout_post",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "self:manage"
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "summary": "Current user and their permissions",
+        "operationId": "auth_me_get",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "self:manage"
+      }
+    },
+    "/api/auth/mfa": {
+      "post": {
+        "summary": "Complete sign-in with a 6-digit TOTP code",
+        "operationId": "auth_mfa_step_post",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaIn"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/mfa/confirm": {
+      "post": {
+        "summary": "Confirm TOTP enrolment with a code",
+        "operationId": "auth_mfa_confirm_post",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "self:manage",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TotpCodeIn"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/mfa/disable": {
+      "post": {
+        "summary": "Turn TOTP off (needs a current code)",
+        "operationId": "auth_mfa_disable_post",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "self:manage",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TotpCodeIn"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/mfa/enroll": {
+      "post": {
+        "summary": "Start TOTP enrolment (QR code)",
+        "operationId": "auth_mfa_enroll_post",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "self:manage"
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "summary": "Get a new access token from the refresh cookie (rotates it)",
+        "operationId": "auth_refresh_post",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/auth/sessions": {
+      "get": {
+        "summary": "My active sessions",
+        "operationId": "auth_my_sessions_get",
+        "tags": [
+          "auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "self:manage"
+      }
+    },
+    "/api/dashboard": {
+      "get": {
+        "summary": "Role-aware dashboard numbers",
+        "operationId": "health_dashboard_get",
+        "tags": [
+          "health"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "self:manage"
+      }
+    },
+    "/api/docs": {
+      "get": {
+        "summary": "OpenAPI 3.0 description of this API.",
+        "operationId": "docs_openapi_get",
+        "tags": [
+          "docs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Liveness and database check (no sensitive detail)",
+        "operationId": "health_health_get",
+        "tags": [
+          "health"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/models/status": {
+      "get": {
+        "summary": "Model files and signature status",
+        "operationId": "security_models_status_get",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "model:read"
+      }
+    },
+    "/api/models/trust": {
+      "get": {
+        "summary": "Calibration, flagged share and model integrity",
+        "operationId": "security_model_trust_get",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "model:read"
+      }
+    },
+    "/api/patients": {
+      "get": {
+        "summary": "List or search patients (exact name or pseudonym)",
+        "operationId": "patients_list_patients_get",
+        "tags": [
+          "patients"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "patient:read"
+      },
+      "post": {
+        "summary": "Create a patient (identity fields are encrypted)",
+        "operationId": "patients_create_patient_post",
+        "tags": [
+          "patients"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "patient:write",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatientIn"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/patients/{patient_id}": {
+      "get": {
+        "summary": "Patient detail with visit history",
+        "operationId": "patients_get_patient_get",
+        "tags": [
+          "patients"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "patient:read",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      },
+      "patch": {
+        "summary": "Update patient details or clinical risk factors",
+        "operationId": "patients_update_patient_patch",
+        "tags": [
+          "patients"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "patient:write",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatientUpdateIn"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/patients/{patient_id}/care-plan": {
+      "get": {
+        "summary": "EFP step therapy, per-tooth prognosis, recall interval and referral suggestion.",
+        "operationId": "clinical_get_care_plan_get",
+        "tags": [
+          "clinical"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "care:read",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/patients/{patient_id}/care-team": {
+      "post": {
+        "summary": "Add a clinician to a patient's care team",
+        "operationId": "patients_add_care_team_post",
+        "tags": [
+          "patients"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "admin:users",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/patients/{patient_id}/perio-charts": {
+      "get": {
+        "summary": "All periodontal charts for a patient (newest first), each with computed indices.",
+        "operationId": "clinical_list_charts_get",
+        "tags": [
+          "clinical"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "chart:read",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      },
+      "post": {
+        "summary": "Save a six-point periodontal chart.",
+        "operationId": "clinical_create_chart_post",
+        "tags": [
+          "clinical"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "chart:write",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PerioChartIn"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/patients/{patient_id}/progression": {
+      "get": {
+        "summary": "Tooth-by-tooth progression across visits",
+        "operationId": "progression_progression_get",
+        "tags": [
+          "progression"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "analysis:read",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/radiographs": {
+      "post": {
+        "summary": "Upload a radiograph (upload guard + quality preview)",
+        "operationId": "radiographs_upload_post",
+        "tags": [
+          "radiographs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "radiograph:upload",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "image"
+                ],
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "PNG, JPEG or DICOM radiograph (\u2264 16 MB)"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recall": {
+      "get": {
+        "summary": "Clinic-wide supportive-care recall list: who is due or overdue, ranked by risk.",
+        "operationId": "clinical_recall_board_get",
+        "tags": [
+          "clinical"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "care:read"
+      }
+    },
+    "/api/reports": {
+      "post": {
+        "summary": "Generate a signed PDF report (needs sign-off first)",
+        "operationId": "reports_generate_post",
+        "tags": [
+          "reports"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "report:generate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportIn"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Signed reports visible to you",
+        "operationId": "reports_list_reports_get",
+        "tags": [
+          "reports"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "report:read"
+      }
+    },
+    "/api/reports/verify": {
+      "post": {
+        "summary": "Public: verify an uploaded PDF",
+        "operationId": "reports_verify_upload_post",
+        "tags": [
+          "reports"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The signed PDF report to verify"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reports/verify/{report_id}": {
+      "get": {
+        "summary": "Public: verify a report by its ID (QR code)",
+        "operationId": "reports_verify_by_id_get",
+        "tags": [
+          "reports"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/reports/{report_id}/download": {
+      "get": {
+        "summary": "Download a report PDF",
+        "operationId": "reports_download_get",
+        "tags": [
+          "reports"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "report:read",
+        "parameters": [
+          {
+            "name": "report_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/review/queue": {
+      "get": {
+        "summary": "Cases waiting for mandatory clinician review",
+        "operationId": "progression_review_queue_get",
+        "tags": [
+          "progression"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "review:read"
+      }
+    },
+    "/api/review/{analysis_id}": {
+      "post": {
+        "summary": "Approve, correct or reject an analysis. Corrections are stored for future retraining.",
+        "operationId": "progression_sign_off_post",
+        "tags": [
+          "progression"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          },
+          "422": {
+            "description": "Validation failed; error.details lists each field"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "review:signoff",
+        "parameters": [
+          {
+            "name": "analysis_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewIn"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/security-lab": {
+      "get": {
+        "summary": "List Security Lab attack simulations",
+        "operationId": "security_lab_scenarios_get",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "security_lab:run"
+      }
+    },
+    "/api/security-lab/run-all": {
+      "post": {
+        "summary": "Run every attack simulation",
+        "operationId": "security_lab_run_all_post",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "security_lab:run"
+      }
+    },
+    "/api/security-lab/{scenario_id}/run": {
+      "post": {
+        "summary": "Run one attack simulation",
+        "operationId": "security_lab_run_post",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "security_lab:run",
+        "parameters": [
+          {
+            "name": "scenario_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/security/rbac-matrix": {
+      "get": {
+        "summary": "Role permission matrix",
+        "operationId": "security_rbac_matrix_get",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "self:manage"
+      }
+    },
+    "/api/security/sessions": {
+      "get": {
+        "summary": "Active sessions of all users",
+        "operationId": "security_all_sessions_get",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "security:read"
+      }
+    },
+    "/api/system/status": {
+      "get": {
+        "summary": "System status widget: DB, model signatures, audit chain, calibration",
+        "operationId": "health_status_get",
+        "tags": [
+          "health"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "self:manage"
+      }
+    }
+  }
+}

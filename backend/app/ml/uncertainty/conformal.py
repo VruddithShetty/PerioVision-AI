@@ -1,0 +1,51 @@
+"""Split-conformal prediction for per-tooth bone-loss %.
+
+Calibration (offline, scripts/calibrate_conformal.py): run the pipeline on a
+held-out calibration set with known landmarks, and record the nonconformity
+score |predicted % - reference %| for every tooth. For coverage 1 - alpha the
+threshold q is the ceil((n + 1)(1 - alpha))-th smallest score
+(Vovk et al.; Angelopoulos & Bates 2021).
+
+Prediction: interval = [pred - q, pred + q] clipped to 0-100, and the stage
+*prediction set* is every stage whose band overlaps that interval. A set with
+more than one stage means the model cannot tell the stages apart at the chosen
+coverage, which sends the tooth to clinician review.
+
+Without a calibration file nothing is invented: q is unknown, the interval is
+the whole 0-100 % range, every stage is in the set, and the case is routed to
+review with the reason "uncalibrated".
+"""
+from __future__ import annotations
+
+import math
+
+import numpy as np
+
+from app.ml.measurement.staging import stages_overlapping
+
+
+def conformal_quantile(scores, coverage: float) -> float:
+    scores = np.sort(np.asarray(scores, dtype=float))
+    n = len(scores)
+    if n == 0:
+        raise ValueError("No calibration scores.")
+    k = math.ceil((n + 1) * coverage)
+    if k > n:
+        return float("inf")  # too few calibration points for this coverage level
+    return float(scores[k - 1])
+
+
+def predict_interval(pred_pct: float | None, q: float | None) -> dict:
+    if pred_pct is None:
+        return {"interval": None, "stage_set": [], "set_size": 0, "calibrated": q is not None}
+    if q is None or not math.isfinite(q):
+        return {"interval": [0.0, 100.0], "stage_set": ["I", "II", "III"], "set_size": 3, "calibrated": False}
+    low, high = max(0.0, pred_pct - q), min(100.0, pred_pct + q)
+    stage_set = stages_overlapping(low, high)
+    return {"interval": [round(low, 2), round(high, 2)], "stage_set": stage_set, "set_size": len(stage_set),
+            "calibrated": True}
+
+
+def empirical_coverage(preds, refs, q: float) -> float:
+    preds, refs = np.asarray(preds, float), np.asarray(refs, float)
+    return float(np.mean(np.abs(preds - refs) <= q)) if len(preds) else float("nan")

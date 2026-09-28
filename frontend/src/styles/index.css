@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-ink-950 font-sans text-mist-100 antialiased;
+    background-image:
+      radial-gradient(60rem 40rem at 85% -10%, rgba(34, 211, 238, 0.1), transparent 60%),
+      radial-gradient(50rem 30rem at -10% 110%, rgba(20, 184, 166, 0.08), transparent 60%);
+    background-attachment: fixed;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-400 ring-offset-2 ring-offset-ink-950;
+  }
+  ::selection {
+    background: rgba(34, 211, 238, 0.35);
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #1a3050 transparent;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply rounded-2xl border border-white/[0.07] bg-ink-800/55 shadow-glass backdrop-blur-xl;
+  }
+  .glass-strong {
+    @apply rounded-2xl border border-brand-400/15 bg-ink-800/80 shadow-glass backdrop-blur-xl;
+  }
+  .label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-mist-400;
+  }
+  .hash {
+    @apply break-all font-mono text-xs text-brand-300;
+  }
+  .input {
+    @apply w-full rounded-xl border border-white/10 bg-ink-900/70 px-3.5 py-2.5 text-sm text-mist-100 transition placeholder:text-mist-500 focus:border-brand-400/60 focus:outline-none focus:ring-2 focus:ring-brand-400/25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

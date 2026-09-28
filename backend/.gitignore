@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.py[cod]
+*.cache
+datasets/**/images/
+datasets/**/labels/
+datasets/real/
+runs/
+logs/*.log
+storage/

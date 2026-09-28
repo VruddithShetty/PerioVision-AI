@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "periovision-ai"
+version = "1.0.0"
+description = "AI-Driven Longitudinal Periodontal Disease Progression Tracking & Clinical Risk Stratification"
+readme = "README.md"
+requires-python = ">=3.10"
+# Dependencies are pinned in requirements.txt (single source of truth).
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["legacy"]
+
+[tool.ruff.lint]
+# Errors that break code or hide bugs: syntax errors, undefined names, invalid comparisons, unused imports.
+select = ["E9", "F63", "F7", "F82", "F401"]
+
+[tool.ruff.lint.per-file-ignores]
+# Training scripts written earlier by the team are kept as-is.
+"scripts/train_*.py" = ["F401"]
+"scripts/generate_custom_datasets.py" = ["F401"]
+
+[tool.black]
+line-length = 120
+target-version = ["py311"]
+extend-exclude = "legacy"

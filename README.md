@@ -1,56 +1,116 @@
-# PerioVision AI: Dental Progression Prediction System
+# PerioVision AI
 
-PerioVision AI is a production-level, AI-powered dental software designed for dentists to automatically analyze dental radiographs over time, measure periodontal bone loss, track disease progression, and predict future deterioration risks for each tooth.
+**Secure, explainable decision support for periodontal bone-loss detection.** PerioVision reads dental radiographs tooth by tooth: it finds each tooth by FDI number, locates the cemento-enamel junction and the alveolar crest, measures bone loss, suggests a periodontitis stage and grade, tracks every tooth across visits, and puts an honest uncertainty range on each finding. Anything doubtful goes to a dentist for sign-off before a signed report can be issued. Around it sits a security layer built for a cybersecurity thesis: AES-256-GCM encryption, RSA-PSS signed models and reports, JWT + TOTP MFA, four-role RBAC with Zero Trust checks on every request, and a hash-chained, Merkle-anchored audit trail.
 
-## 🚀 Key Features
+> **Research prototype.** Not a certified medical device; no clinical accuracy is claimed. Security controls are *aligned with* HIPAA safeguards, not certified.
 
-*   **Automated X-Ray Analysis**: Uses YOLOv8 (pose and segmentation) to detect teeth and extract key periodontal landmarks.
-*   **Bone Loss Measurement**: Calculates percentage of bone loss based on alveolar bone levels and cemento-enamel junctions (CEJ).
-*   **Longitudinal Tracking (TALPA)**: Measures progression velocity (%/year) by comparing current scans with historical patient data.
-*   **Risk Prediction**: AI-driven risk assessment (Low, Medium, High) for future deterioration based on longitudinal trends and patient age.
-*   **Interactive Disease Map**: Color-coded visual overlay showing severity levels (Healthy, Mild, Moderate, Severe) across all detected teeth.
-*   **Practice Management**: Full-featured dashboard for managing patients, doctor appointments, and historical records using MongoDB.
-*   **Secure Authentication**: Multi-factor authentication (2FA) for doctors and administrative role management.
-*   **Clinical Reporting**: Instant generation of comprehensive PDF and CSV reports for patients.
+![Screenshots placeholder: add images of the landing page, analysis viewer and Security Lab here](docs/reference/screenshots-placeholder.png)
 
-## 🛠️ Technology Stack
+## Features
 
-*   **Frontend**: Streamlit (with custom Modern Glassmorphism UI).
-*   **AI/CV**: Ultralytics YOLOv8, OpenCV, Scikit-learn.
-*   **Database**: MongoDB.
-*   **Reporting**: fpdf2, Plotly, Pandas.
-*   **Security**: PyOTP for 2FA.
+**Clinical AI (synopsis objectives O1–O5)**
+- Image-quality gate, CLAHE, YOLOv8 tooth detection with FDI numbers, CEJ / crest / apex landmarks
+- Per-tooth bone loss %, Stage I–IV and Grade A–C suggestions (2017 AAP/EFP)
+- Grad-CAM heatmaps with a periodontal-region attention check
+- Split-conformal uncertainty intervals and stage sets; mandatory clinician review router
+- Longitudinal progression with registration-aware tooth matching and reliability flags
+- Multimodal risk (clinical + image) with plain-language reasons (documented rule-assisted demo)
 
-## 📦 Installation & Setup
+**Security (O6)**
+- AES-256-GCM with key IDs and rotation for fields, radiographs and reports
+- RSA-PSS signed model manifest (unsigned models refused) and signed, QR-verifiable PDF reports
+- bcrypt, 15-minute JWT + rotating refresh cookie, TOTP MFA, lockout, rate limits
+- Admin / dentist / technician / auditor permission matrix, Zero Trust request guard, decoy records
+- Tamper-evident audit log that pinpoints the first edited entry; Security Lab with 7 live attack demos
 
-1.  **Clone the Repository**:
-    ```bash
-    git clone <your-repository-url>
-    cd Dental_progression
-    ```
+**Clinical workflow (O7) and chairside tools**
+- Login → patient → upload → analysis → review → signed report → audit, in a React app with 3D visuals
+- Six-point periodontal chart with clinical-vs-radiographic concordance, EFP care plan with prognosis and referral letter, patient explainer with a "what if" forecast, clinic recall board
 
-2.  **Install Dependencies**:
-    ```bash
-    pip install -r dental_progression_ai/requirements.txt
-    ```
+## Architecture
 
-3.  **Environment Configuration**:
-    Ensure MongoDB is running and update the connection URI if necessary in `dental_progression_ai/database/mongodb_connection.py`.
+```
+React app (frontend/) ──HTTPS──▶ Flask API (backend/app)
+                                  ├─ Zero Trust guard → RBAC permission → route
+                                  ├─ ml/: quality → CLAHE → YOLOv8 → landmarks → staging → Grad-CAM → conformal → risk
+                                  ├─ security/: AES-GCM · RSA-PSS · JWT/MFA · audit chain · upload guard
+                                  └─ MongoDB (or in-memory demo DB) + encrypted blob store + external audit anchors
+```
+Full diagram and data flow: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-4.  **Run the Application**:
-    ```bash
-    cd dental_progression_ai
-    streamlit run web_app/streamlit_app.py
-    ```
+## Run it (step by step, Windows)
 
-## 📁 Repository Structure
+1. **Install the tools** (once):
+   - Python 3.11 or newer: https://www.python.org/downloads/ (tick "Add python.exe to PATH")
+   - Node.js 20 or newer (LTS): https://nodejs.org/
+2. **Open PowerShell in the project folder** (`Dental_progression`).
+3. **Create your settings file:**
+   ```powershell
+   copy .env.example .env
+   ```
+   Open `.env` and set `DB_MODE=demo`. Generate each secret with `python -c "import secrets; print(secrets.token_hex(32))"` and paste it in. Then fill in the `DEMO_*` accounts. Passwords need 10+ characters with upper- and lower-case letters and a digit, and these accounts are for demos only.
+4. **Install everything:**
+   ```powershell
+   .\run.ps1 setup
+   ```
+5. **Start the backend** (terminal 1):
+   ```powershell
+   .\run.ps1 demo
+   ```
+6. **Start the web app** (terminal 2):
+   ```powershell
+   .\run.ps1 frontend
+   ```
+7. **Open http://localhost:5173** and sign in with a `DEMO_*_EMAIL` / `DEMO_*_PASSWORD` from your `.env`.
 
-*   `analysis/`: Logic for bone loss, progression, and risk assessment.
-*   `database/`: MongoDB managers for patients, doctors, and records.
-*   `image_processing/`: Pre-processing and alignment utilities.
-*   `models/`: Pre-trained YOLOv8 weights and inference logic.
-*   `report_generation/`: PDF/CSV export modules.
-*   `web_app/`: Streamlit page modules and premium UI components.
+On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 
----
-*Developed for advanced clinical periodontal analysis.*
+**Ports:** backend `5000`, frontend `5173`. **API docs:** http://127.0.0.1:5000/api/docs (OpenAPI) and [docs/API.md](docs/API.md).
+**Tests:** `.\run.ps1 test` (backend) and `cd frontend; npm run build; npm run lint`.
+
+### Demo tour
+1. Landing page: drag the scan bar across the panoramic X-ray; move the staging slider.
+2. Sign in as the **dentist**: Dashboard → Patients → *Demo Patient B* → Progression, Perio chart (see the discordant teeth), Care plan, Explain to patient.
+3. Open an analysis: switch between Radiograph, Dental chart and 3D arch; click teeth.
+4. Review queue: correct a tooth and sign off; then generate a **Signed report** and verify it.
+5. Sign in as the **auditor**: Security center → Verify chain; Security lab → Run all attacks.
+
+### Optional: real models and HTTPS
+- Put trained weights in `backend/weights/`, then `cd backend; python scripts/sign_model.py`. Unsigned files are refused.
+- Calibrate uncertainty on a held-out, per-tooth-annotated set: `python scripts/calibrate_conformal.py --images … --labels …`.
+- Local HTTPS: `python scripts/make_dev_cert.py`, then set `TLS_CERT=keys/dev-tls.crt` and `TLS_KEY=keys/dev-tls.key` in `.env`.
+
+## Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `Cannot reach the PerioVision server` in the browser | The backend isn't running: start `.\run.ps1 demo` first. |
+| Backend exits saying a key is missing | Fill in `JWT_SECRET_KEY`, `AUDIT_ANCHOR_KEY` and `FIELD_ENCRYPTION_KEY` in `.env` (demo mode tolerates missing ones). |
+| Login says "Invalid email or password" | Use the exact `DEMO_*` values from `.env`; demo data resets on every backend restart. |
+| "Account locked" | 5 wrong passwords lock an account for 15 minutes; restart the demo backend to reset. |
+| Everything says "Mandatory clinician review" / "uncalibrated" | Expected until the model is calibrated on annotated data; see the model card. |
+| 3D scenes don't show | Your device has no WebGL, few CPU cores, or reduced motion on; a static image is shown instead. |
+| `.\run.ps1` is blocked | Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once, or run the commands inside `run.ps1` by hand. |
+
+## Known limitations (honest)
+
+- The trained detector and keypoint weights are weak: on a real panoramic image they find few teeth, and landmarks often fall back to a labelled estimate. They need retraining on clinician-annotated data ([docs/MODEL_CARD.md](docs/MODEL_CARD.md)).
+- Uncertainty is not calibrated yet (no per-tooth annotated calibration set), so every case is routed to review.
+- The risk score is a documented rule-assisted demo, not a trained model.
+- Demo mode uses an in-memory database; nothing persists after a restart.
+- The development server is HTTP unless you enable the local certificate; production needs a TLS reverse proxy.
+
+## Documentation
+
+[Audit report](docs/AUDIT_REPORT.md) · [Restructure changelog](docs/CHANGELOG_RESTRUCTURE.md) · [Architecture](docs/ARCHITECTURE.md) · [Security](docs/SECURITY.md) · [API](docs/API.md) · [Traceability](docs/TRACEABILITY.md) · [Model card](docs/MODEL_CARD.md) · [Datasets](docs/DATASETS.md) · [Key rotation](docs/KEY_ROTATION.md) · [Viva cheat sheet](docs/VIVA_CHEAT_SHEET.md)
+
+## Repository layout
+
+```
+backend/    Flask API: app/ (api, services, ml, security, models, schemas), scripts/, tests/, weights/, keys/
+frontend/   React 18 + Vite + TypeScript web app
+docs/       all documentation (reference/ holds the synopsis and slides)
+data/       local data, gitignored (sample/ = synthetic demo images)
+notebooks/  experiments only
+tools/      optional extras (streamlit_prototype/ = the old UI, frozen)
+```

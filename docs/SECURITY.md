@@ -1,0 +1,98 @@
+# PerioVision AI: Security Design
+
+PerioVision AI is a research prototype. Its controls are **aligned with** HIPAA Security Rule safeguards and the OWASP Top 10. It is **not** HIPAA-certified, and it has not had an external security assessment.
+
+## 1. Assets and threat model
+
+| Asset | Threat | Main controls |
+|---|---|---|
+| Patient identity (name, contact, notes) | Database theft, insider browsing | AES-256-GCM field encryption, blind indexes, pseudonyms in logs, RBAC + object-level checks, decoy records |
+| Radiographs, overlays, PDF reports | Disk theft, file swapping | AES-256-GCM blob encryption with purpose-bound associated data, random blob IDs |
+| Model weights | Poisoned or swapped model | RSA-PSS signed SHA-256 manifest; the registry refuses unsigned or altered files |
+| Clinical report | Forged or edited PDF | SHA-256 of the PDF signed with RSA-PSS; public `/verify` endpoint; QR verification ID |
+| Audit trail | Covering tracks after misuse | Hash chain over every entry + HMAC-authenticated Merkle anchors stored outside the database |
+| Accounts / sessions | Credential stuffing, token theft, replay | bcrypt, lockout, rate limits, TOTP MFA, short-lived JWT bound to device + server-side session, refresh-token rotation with reuse detection |
+| Inference | Adversarial or out-of-distribution images | Upload guard, quality gate, perturbation heuristics, OOD checks; flagged cases forced into clinician review |
+| API surface | Injection, IDOR, info leaks | Strict pydantic schemas, no raw request data in queries, deny-by-default routing, safe error messages, security headers, CORS allow-list |
+
+## 2. Controls, and what each one defends against
+
+| Control | Where | Defends against |
+|---|---|---|
+| **AES-256-GCM**, fresh 96-bit random nonce per message, authenticated | `backend/app/security/crypto.py` | Reading or silently modifying stored PHI/images |
+| **Key IDs + key ring + rotation** (`FIELD_ENCRYPTION_KEYS`, KMS-style key file, `scripts/rotate_keys.py`) | `crypto.py` | Long-lived key exposure; lets old keys be retired |
+| **HKDF-separated keys** for blind index and pseudonyms | `crypto.py` | Reusing the encryption key for hashing |
+| **bcrypt** (cost 12) + password policy | `security/auth.py`, `models/doctors.py` | Offline password cracking |
+| **JWT access (15 min) + refresh (7 days, httpOnly SameSite=Strict cookie, rotated)** | `security/auth.py`, `api/auth.py` | Token theft (short lifetime), refresh replay (reuse revokes the session) |
+| **TOTP MFA** with QR enrolment and replay protection | `security/auth.py`, `api/auth.py` | Stolen passwords |
+| **Account lockout** (5 failures, 15 min) + **rate limiting** (login 5/min, API 120/min) | `models/doctors.py`, `extensions.py` | Brute force, credential stuffing |
+| **RBAC**: 4 roles, explicit permission matrix, enforced by `@secured(...)` | `security/rbac.py` | Privilege misuse |
+| **Zero Trust guard** (NIST SP 800-207 principles): every request re-checks token, session, device fingerprint, account state and policy; deny by default | `security/zero_trust.py` | Stolen/replayed tokens, revoked users, forgotten decorators |
+| **Object-level access**: users only see patients they own or are on the care team for | `rbac.can_access_patient` | IDOR / horizontal privilege escalation |
+| **RSA-PSS model signing** + hash manifest; registry refuses to load and logs `MODEL_LOAD_REFUSED` | `security/model_signing.py`, `ml/registry.py`, `scripts/sign_model.py` | Model tampering / supply-chain swap |
+| **Signed reports** + `/api/reports/verify` | `services/report_service.py` | Forged or edited reports |
+| **Tamper-evident audit log**: hash chain (genesis included), unique sequence numbers, Merkle roots every 20 entries authenticated with `AUDIT_ANCHOR_KEY` and written to `backend/logs/merkle_anchors.jsonl` | `security/audit_log.py`, `scripts/verify_audit.py` | Undetected log edits, deletions, full rewrites |
+| **Upload guard**: size, extension, magic bytes, pixel limits, re-encode (drops EXIF), DICOM PHI tags removed, random names | `security/upload_guard.py` | Disguised files, decompression bombs, metadata leaks, path traversal |
+| **Adversarial / OOD heuristics** routed to review | `security/adversarial.py`, `ml/uncertainty/ood.py` | Manipulated inputs silently changing results |
+| **Decoy (honeypot) patients**: realistic, unflagged, tracked by HMAC tag; access revokes sessions and locks the account for 60 min | `security/honeypot.py` | ID enumeration, insider browsing |
+| **Security headers** (CSP `default-src 'none'`, nosniff, frame DENY, no-referrer, HSTS on HTTPS), `Cache-Control: no-store` | `app/__init__.py` | Clickjacking, MIME sniffing, caching PHI |
+| **CORS allow-list** (`CORS_ORIGINS`) | `app/__init__.py` | Cross-site API use |
+| **Strict input validation** (pydantic, extra fields forbidden) | `app/schemas/` | NoSQL operator injection (`{"$ne": null}`), mass assignment |
+| **Safe errors**: generic messages, no stack traces, debug off | `app/__init__.py`, `wsgi.py` | Information disclosure |
+| **Secrets only in `.env`** (gitignored); private key password-protected and gitignored | `.gitignore`, `config.py` | Secret leakage via git |
+| **Pinned dependencies** | `backend/requirements.txt` | Unexpected upstream changes |
+
+### Transport security (TLS/HTTPS)
+
+The Flask development server speaks HTTP on 127.0.0.1 only. For anything beyond one laptop, put it behind a TLS terminator. For a local demo with a self-signed certificate:
+
+```bash
+openssl req -x509 -newkey rsa:3072 -nodes -keyout backend/keys/dev-tls.key -out backend/keys/dev-tls.crt -days 30 -subj "/CN=localhost"
+cd backend && python -c "from wsgi import app; app.run(ssl_context=('keys/dev-tls.crt','keys/dev-tls.key'), port=5443)"
+```
+
+The browser will warn that the certificate is self-signed, which is expected for local development. With HTTPS, the API also sends `Strict-Transport-Security`, and the refresh cookie gets the `Secure` flag.
+
+## 3. RBAC permission matrix
+
+Enforced by `@secured("<permission>")` on every route (`backend/app/security/rbac.py`). It is also served live at `GET /api/security/rbac-matrix`. Roles from older data are mapped as superadmin→admin, doctor→dentist and viewer→auditor.
+
+| Permission | admin | dentist | technician | auditor |
+|---|:-:|:-:|:-:|:-:|
+| patient:read | ✅ | ✅ (own/care team) | ✅ (own/care team) | ❌ |
+| patient:write | ✅ | ✅ | ❌ | ❌ |
+| radiograph:upload | ❌ | ✅ | ✅ | ❌ |
+| analysis:run | ❌ | ✅ | ✅ | ❌ |
+| analysis:read | ✅ | ✅ | ✅ | ❌ |
+| chart:read (perio charts) | ✅ | ✅ (own/care team) | ✅ (own/care team) | ❌ |
+| chart:write | ❌ | ✅ | ✅ | ❌ |
+| care:read (care plan, recall board) | ✅ | ✅ | ✅ | ❌ |
+| review:read | ✅ | ✅ | ❌ | ❌ |
+| review:signoff | ❌ | ✅ | ❌ | ❌ |
+| report:generate | ❌ | ✅ | ❌ | ❌ |
+| report:read | ✅ | ✅ | ❌ | ❌ |
+| audit:read / audit:verify | ✅ | ❌ | ❌ | ✅ |
+| model:read | ✅ | ✅ | ❌ | ✅ |
+| security:read, security_lab:run | ✅ | ❌ | ❌ | ✅ |
+| admin:users, admin:config | ✅ | ❌ | ❌ | ❌ |
+| self:manage (own profile, MFA, sessions) | ✅ | ✅ | ✅ | ✅ |
+
+Design choices: auditors can verify the audit trail but never see PHI. Admins manage the system but do not make clinical decisions. Only dentists sign off and issue reports.
+
+## 4. HIPAA Security Rule: aligned controls (not certified)
+
+| Safeguard (45 CFR §164.312) | How PerioVision aligns |
+|---|---|
+| Access control (a)(1): unique user IDs, automatic logoff, encryption | Per-user accounts, 30-minute idle session timeout, AES-256-GCM at rest |
+| Audit controls (b) | Hash-chained, anchored audit log of logins, access, uploads, predictions, reports, model loads and denials |
+| Integrity (c)(1) | GCM authentication tags, signed models and reports, tamper-evident log |
+| Person or entity authentication (d) | bcrypt passwords + TOTP MFA |
+| Transmission security (e)(1) | TLS termination required outside local development (see above) |
+| Minimum necessary (§164.502(b)) | Role- and care-team-scoped access; auditors see no PHI; pseudonyms in logs |
+
+## 5. Known limitations
+
+- Decoy records are excluded from normal lists by a system owner ID. Someone with direct database access could spot them. The design targets API-level probing.
+- In demo mode, data and audit anchors live in memory and disappear on restart.
+- The rate limiter's in-memory store is per process. Use `REDIS_URL` with multiple workers.
+- The adversarial checks are heuristics tuned on 30 real radiographs, not a certified defence.

@@ -1,47 +1,62 @@
-# Byte-compiled / optimized / DLL files
+# ---------- Secrets (never commit) ----------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+backend/keys/*
+!backend/keys/README.md
+!backend/keys/*.pub
+
+# ---------- Python ----------
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+venv/
+.venv/
+env/
 
-# OS-specific files
+# ---------- Runtime data (may contain patient images / reports) ----------
+backend/storage/
+backend/logs/*
+!backend/logs/README.md
+*.log
+runs/
+
+# ---------- Model weights (large; see backend/weights/README.md) ----------
+backend/weights/**
+!backend/weights/README.md
+*.pt
+*.pth
+*.onnx
+*.pkl
+
+# ---------- Datasets / real data (never commit patient data) ----------
+data/*
+!data/README.md
+!data/sample/
+datasets/
+dentex-2/
+custom_datasets/
+real_datasets/
+
+# ---------- Frontend ----------
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ---------- OS / editors ----------
 .DS_Store
-.DS_Store?
 ._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
-
-# IDEs and editors
+ehthumbs.db
 .idea/
 .vscode/
 *.swp
 *.swo
-
-# Project specific
-runs/
-storage/
-dentex-2/
-*.log
-
-# Weights and models
-# Generic weight files
-yolov8n.pt
-yolov8n-pose.pt
-yolov8n-seg.pt
-
-# If you want to exclude all weights except the ones required for the app:
-# *.pt
-# !dental_bone_yolov8n-seg.pt
-# !dental_landmark_yolov8n-pose.pt
-# !tooth_detection_yolov8n.pt
-
-# Virtual environments
-venv/
-.venv/
-env/
-.env/
-bin/
-lib/
-share/
-include/
+powershell.bat
