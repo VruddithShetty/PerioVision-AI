@@ -37,7 +37,11 @@ PerioVision is a secure, explainable decision-support system that measures perio
 
 **What is Zero Trust here?** No request is trusted because of where it comes from. Every call re-verifies the token, the server-side session, the device fingerprint, the account state and the role permission, and routes without an explicit rule are denied.
 
-**How accurate is the model?** We deliberately don't quote a number. We have no clinician-annotated test set, and inventing metrics would be dishonest. The system instead reports uncertainty and routes doubtful cases to a dentist. The trained weights we have are weak (few teeth detected on a real image); retraining on annotated data is the main future work.
+**How accurate is the model?** The tooth detector (YOLO11m, trained on the public DENTEX panoramic dataset on a free Colab GPU) scores **94 % precision, 94.5 % recall and 95.8 % mAP@0.5** on 63 held-out test X-rays it never saw during training. About 95 % of teeth are found with the correct FDI number. We do *not* quote a number for landmarks or bone-loss %, because we have no clinician-annotated keypoint test set, and inventing one would be dishonest. Those teeth go to a dentist instead.
+
+**Why is mAP@0.5:0.95 only 56 %?** It demands very tight boxes (up to 95 % overlap). Tooth edges are fuzzy on X-rays, so 50-60 % is typical; mAP@0.5 (95.8 %) is the usual headline figure for detection.
+
+**How did you avoid cheating on the test set?** The split is made once with a fixed seed and saved. The test images are never used for training or for picking the best epoch, and near-duplicates of test images are removed from the extra training data.
 
 **What is conformal prediction, in one line?** Use a held-out set to learn how wrong the model usually is, then widen each prediction by that amount so the true value falls inside the range at the chosen rate (e.g. 90 %).
 
@@ -60,4 +64,5 @@ PerioVision is a secure, explainable decision-support system that measures perio
 - 4 roles, ~20 permissions, 50 API operations, all documented at `/api/docs`.
 - 74 automated backend tests; the frontend type-checks, lints and builds cleanly.
 - 7 of 7 Security Lab attacks blocked.
+- Tooth detector on held-out test X-rays: 94.1 % precision, 94.5 % recall, 95.8 % mAP@0.5, tooth-level F1 94.8 %.
 - Adversarial screen: 0 false alarms on 30 real radiographs; catches ±8 grey-level perturbation.

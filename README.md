@@ -76,7 +76,7 @@ On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 5. Sign in as the **auditor**: Security center → Verify chain; Security lab → Run all attacks.
 
 ### Optional: real models and HTTPS
-- Put trained weights in `backend/weights/`, then `cd backend; python scripts/sign_model.py`. Unsigned files are refused.
+- Train on a free Colab GPU with `notebooks/train_periovision_colab.ipynb`, then run `.\run.ps1 install-models -From <export folder>` (installs, signs, tests). Or put weights in `backend/weights/` and run `cd backend; python scripts/sign_model.py`. Unsigned files are refused.
 - Calibrate uncertainty on a held-out, per-tooth-annotated set: `python scripts/calibrate_conformal.py --images … --labels …`.
 - Local HTTPS: `python scripts/make_dev_cert.py`, then set `TLS_CERT=keys/dev-tls.crt` and `TLS_KEY=keys/dev-tls.key` in `.env`.
 
@@ -94,7 +94,7 @@ On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 
 ## Known limitations (honest)
 
-- The trained detector and keypoint weights are weak: on a real panoramic image they find few teeth, and landmarks often fall back to a labelled estimate. They need retraining on clinician-annotated data ([docs/MODEL_CARD.md](docs/MODEL_CARD.md)).
+- The tooth detector is trained (94 % precision, 94.5 % recall, 95.8 % mAP@0.5 on held-out DENTEX test X-rays). The landmark model still lacks clinician-drawn CEJ / crest / apex labels, so landmarks fall back to a labelled estimate ([docs/MODEL_CARD.md](docs/MODEL_CARD.md)).
 - Uncertainty is not calibrated yet (no per-tooth annotated calibration set), so every case is routed to review.
 - The risk score is a documented rule-assisted demo, not a trained model.
 - Demo mode uses an in-memory database; nothing persists after a restart.

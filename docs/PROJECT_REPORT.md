@@ -27,7 +27,7 @@ A premium React web application with 3D dental visuals exposes the whole workflo
 
 The main limitations are honest ones:
 
-- the supplied AI weights are weak;
+- the tooth detector is trained and measured (95.8 % mAP@0.5 on held-out test X-rays), but the landmark model still lacks clinician-drawn labels;
 - uncertainty is not yet calibrated;
 - the risk score is a transparent rule-assisted demo rather than a trained model.
 
@@ -225,10 +225,10 @@ This was verified end to end both in the browser and in `tests/test_api.py::test
 
 ## 10. Honest limitations
 
-1. **Weak trained weights.** On a real panoramic image the detector found only 2 teeth at confidence 0.25. The keypoint model predicted one box spanning many teeth, so landmarks fall back to labelled estimates. The pose training labels were generated geometrically, not drawn by clinicians.
+1. **Landmarks not yet trained on real labels.** The tooth detector was retrained (YOLO11m on public DENTEX data, free Colab GPU). It scores 94.1 % precision, 94.5 % recall, 95.8 % mAP@0.5 and 94.8 % tooth-level F1 on 63 held-out test X-rays, and it found 26 teeth on a real image where the old model found 2. The keypoint model still predicts one box spanning many teeth, so landmarks fall back to labelled estimates; its training labels were generated geometrically, not drawn by clinicians.
 2. **Uncertainty not calibrated.** Calibration on the available pose split matched 0 teeth, because the labels are not per tooth. No calibration file is written, and every case is routed to review, which is safe by design.
 3. **Risk model is a rule-assisted demo**, because there is no outcome data.
-4. **No accuracy metrics are claimed.** No clinician-annotated test set exists; inventing metrics would be dishonest.
+4. **Accuracy is claimed only where it was measured.** Detector metrics come from a held-out test set. No figures are claimed for landmarks or bone-loss %, because no clinician-annotated keypoint test set exists.
 5. **Demo mode is in-memory**, so its data resets on restart. The development server is HTTP unless the local certificate is used.
 6. **Decoy records** are hidden from normal lists by a system owner ID that someone with direct database access could notice. They are designed against API-level probing.
 7. **The public repository history** still contains the patient-named Roboflow images (audit finding G2).

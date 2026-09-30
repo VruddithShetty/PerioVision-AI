@@ -18,7 +18,7 @@
 
 | # | Objective / feature | Status | Evidence |
 |---|---|---|---|
-| O1 | Quality gate, CLAHE, YOLOv8 FDI detection, CEJ/crest landmarks, bone loss %, Stage/Grade, per-tooth output | ✅ implemented / ⚠️ model quality | `backend/app/ml/*`, `services/analysis_service.py`; viewer page. The trained weights are weak (see below) |
+| O1 | Quality gate, CLAHE, YOLOv8 FDI detection, CEJ/crest landmarks, bone loss %, Stage/Grade, per-tooth output | ✅ detector trained / ⚠️ landmarks | `backend/app/ml/*`, `services/analysis_service.py`; viewer page. Detector: 95.8 % mAP@0.5 on held-out test X-rays (model card). Landmarks still heuristic |
 | O2 | Longitudinal progression with registration-aware matching, velocity, labels, unreliable flags | ✅ | `services/progression_service.py`, Progression page, `test_ml_logic.py` |
 | O3 | Grad-CAM heatmap, opacity slider, ROI attention flag → review | ✅ (live model only) | `ml/explainability/gradcam.py`, viewer heatmap layer. In demo mode no heatmap exists because no model ran |
 | O4 | Split-conformal intervals, stage sets, review router, coverage report | ✅ code / ❌ calibration | `ml/uncertainty/*`, Model trust page. **Not calibrated**: no per-tooth annotated calibration set exists, so every case is routed to review |
@@ -33,7 +33,7 @@
 
 ### What is ❌ or limited, and what you must supply
 
-1. **Model quality:** `dental_yolov8n.pt` found only 2 teeth on a real panoramic image, and the keypoint model returns one large box, so landmarks fall back to labelled estimates. **Needed:** a clinician-annotated dataset (per-tooth boxes + CEJ/crest/apex points) and GPU time to retrain.
+1. **Landmark quality:** the detector is now trained (YOLO11m on DENTEX: 94.1 % precision, 94.5 % recall, 95.8 % mAP@0.5 on held-out test X-rays; 26 teeth found on a real image, against 2 before). The keypoint model still returns one large box, so landmarks fall back to labelled estimates. **Needed:** per-tooth CEJ/crest/apex labels, then notebook Part B.
 2. **Uncertainty calibration:** needs a held-out split with per-tooth keypoint labels. Then run `scripts/calibrate_conformal.py`.
 3. **Risk model:** needs longitudinal outcome data (who progressed) to train and validate. Until then it stays a labelled rule-assisted demo.
 4. **Synopsis wording:** `docs/reference/` is still empty. Add the PDF and PPT so the traceability table can quote them.
