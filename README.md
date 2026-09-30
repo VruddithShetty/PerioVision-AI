@@ -4,7 +4,13 @@
 
 > **Decision support, clinician in the loop.** Not a certified medical device. Model accuracy is reported only from held-out test data (see the model card). Security controls are *aligned with* HIPAA safeguards, not certified.
 
-![Screenshots placeholder: add images of the landing page, analysis viewer and Security Lab here](docs/reference/screenshots-placeholder.png)
+![Analysis viewer: a real panoramic X-ray with 26 FDI-numbered teeth, landmarks, per-tooth bone loss, conformal interval and the review banner](docs/reference/screenshots/analysis-viewer.jpg)
+
+| | |
+|---|---|
+| ![Landing page](docs/reference/screenshots/landing.jpg) | ![Clinician dashboard](docs/reference/screenshots/dashboard.jpg) |
+| ![3D dental arch](docs/reference/screenshots/3d-arch.jpg) | ![Progression across visits](docs/reference/screenshots/progression.jpg) |
+| ![Six-point periodontal chart](docs/reference/screenshots/perio-chart.jpg) | ![Security Lab: 7 of 7 attacks blocked](docs/reference/screenshots/security-lab.jpg) |
 
 ## Features
 
