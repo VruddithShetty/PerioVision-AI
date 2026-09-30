@@ -1,13 +1,14 @@
-# PerioVision AI - local stack (backend + MongoDB). The React frontend is added in Phase 4.
-# All secrets come from the root .env file (copy .env.example to .env first). Nothing secret lives here.
+# PerioVision AI - production stack (backend + MongoDB).
+# Secrets come from .env.production (create it with: cd backend; python scripts/make_production_env.py).
+# Start with:  docker compose --env-file .env.production up -d --build
 services:
   mongodb:
     image: mongo:7.0
     container_name: periovision_mongodb
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:?set MONGO_ROOT_USER in .env}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?set MONGO_ROOT_PASSWORD in .env}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:?set MONGO_ROOT_USER in .env.production}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?set MONGO_ROOT_PASSWORD in .env.production}
       MONGO_INITDB_DATABASE: periovision_db
     ports:
       - "127.0.0.1:27017:27017"
@@ -25,21 +26,26 @@ services:
       dockerfile: Dockerfile
     container_name: periovision_api
     restart: unless-stopped
-    env_file: .env
+    env_file: .env.production
     environment:
       DB_MODE: production
       HOST: 0.0.0.0
       MONGO_URI: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/periovision_db?authSource=admin
+      MONGO_REQUIRE_TLS: "false"   # database traffic stays on the private Docker network
+      KEYS_DIR: /app/keys
+      WEIGHTS_DIR: /app/weights
+      STORAGE_DIR: /app/storage
+      LOGS_DIR: /app/logs
     ports:
       - "127.0.0.1:5000:5000"
     depends_on:
       mongodb:
         condition: service_healthy
     volumes:
-      - ./backend/storage:/app/storage
-      - ./backend/logs:/app/logs
-      - ./backend/weights:/app/weights:ro
-      - ./backend/keys:/app/keys
+      - ./backend/storage-production:/app/storage
+      - ./backend/logs-production:/app/logs
+      - ./backend/weights-production:/app/weights:ro
+      - ./backend/keys-production:/app/keys:ro
 
 volumes:
   mongodb_data:

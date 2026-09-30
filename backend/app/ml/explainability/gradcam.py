@@ -1,4 +1,4 @@
-"""Grad-CAM for YOLOv8 detections, plus the periodontal region-of-interest attention check.
+"""Grad-CAM for YOLO (v8 / 11) detections, plus the periodontal region-of-interest attention check.
 
 One backward pass explains all detections at once: for every detected tooth we
 find the anchor that produced it, sum those class scores, and back-propagate to
@@ -22,7 +22,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 INPUT_SIZE = 640
-NECK_LAYERS = (15, 18, 21)          # outputs feeding the Detect head in YOLOv8 n/s/m/l/x
+NECK_LAYERS = (15, 18, 21)          # fallback only: YOLOv8 layout. The real indices are read from the Detect head.
 LAYER_ANCHOR_RANGES = ((0, 6400), (6400, 8000), (8000, 8400))  # 80x80, 40x40, 20x20 grids at 640 px
 
 
@@ -48,7 +48,11 @@ class YOLOGradCAM:
         for p in self.net.parameters():
             p.requires_grad_(True)
         self.activations, self.gradients = {}, {}
-        for idx in NECK_LAYERS:
+        # The layers that feed the Detect head differ between architectures (YOLOv8: 15/18/21,
+        # YOLO11: 16/19/22), so take them from the head itself.
+        head_inputs = getattr(self.net.model[-1], "f", None)
+        self.layers = tuple(head_inputs) if isinstance(head_inputs, (list, tuple)) else NECK_LAYERS
+        for idx in self.layers:
             layer = self.net.model[idx]
             layer.register_forward_hook(self._capture(idx))
 
@@ -87,7 +91,7 @@ class YOLOGradCAM:
             target.backward()
 
         combined = np.zeros((INPUT_SIZE, INPUT_SIZE), dtype=np.float32)
-        for idx in NECK_LAYERS:
+        for idx in self.layers:
             if idx not in self.gradients or idx not in self.activations:
                 continue
             grad, act = self.gradients[idx], self.activations[idx]

@@ -256,7 +256,7 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
         "adversarial": adversarial,
         "ood": ood,
         "explainability": {"gradcam_available": heatmap is not None,
-                           "method": "Grad-CAM over YOLOv8 neck layers P3-P5" if heatmap is not None else None},
+                           "method": "Grad-CAM over the YOLO neck layers feeding the detection head (P3-P5)" if heatmap is not None else None},
         "teeth": teeth,
         "summary": patient_summary,
         "risk": risk,

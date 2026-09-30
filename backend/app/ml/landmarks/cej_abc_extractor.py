@@ -1,6 +1,6 @@
 """CEJ, root-apex and alveolar-bone-crest (ABC) keypoints per detected tooth.
 
-The YOLOv8-pose model predicts, for each tooth, three keypoints in this order:
+The YOLO-pose model predicts, for each tooth, three keypoints in this order:
 CEJ, root apex, bone crest (see scripts/convert_to_yolopose.py). It runs on
 the same full-resolution image as the detector, so keypoints and detection
 boxes share one coordinate system and are matched by box overlap (IoU).

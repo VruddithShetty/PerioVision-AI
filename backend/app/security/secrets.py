@@ -56,5 +56,8 @@ def enforce_mongo_tls(mongo_uri: str) -> str:
         return mongo_uri
     if "tls=true" in mongo_uri.lower() or "ssl=true" in mongo_uri.lower():
         return mongo_uri
+    # Only for a database on a private container network (docker-compose): set MONGO_REQUIRE_TLS=false.
+    if os.getenv("MONGO_REQUIRE_TLS", "true").strip().lower() == "false":
+        return mongo_uri
     separator = "&" if "?" in mongo_uri else "?"
     return f"{mongo_uri}{separator}tls=true&tlsAllowInvalidCertificates=false"

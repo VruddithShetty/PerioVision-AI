@@ -53,5 +53,5 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
   CMD curl -f http://localhost:5000/health || exit 1
 
-# Default execution: run WSGI production server
-CMD ["python", "wsgi.py"]
+# Production WSGI server (waitress); TLS is terminated by the reverse proxy in front of it
+CMD ["waitress-serve", "--host=0.0.0.0", "--port=5000", "--threads=8", "--ident=PerioVision", "wsgi:app"]

@@ -25,7 +25,7 @@ import { Badge, Button, Card, CardTitle, Field, Input, Select } from "@/componen
 
 const PIPELINE = [
   { key: "pre", label: "Preprocess", detail: "CLAHE contrast, quality gate", icon: Sparkles },
-  { key: "det", label: "Detect", detail: "YOLOv8 teeth · FDI numbers", icon: ScanLine },
+  { key: "det", label: "Detect", detail: "YOLO11m teeth · FDI numbers", icon: ScanLine },
   { key: "lm", label: "Landmarks", detail: "CEJ · alveolar crest · apex", icon: Crosshair },
   { key: "exp", label: "Explain", detail: "Grad-CAM attention check", icon: Brain },
   { key: "unc", label: "Uncertainty", detail: "Conformal interval · review routing", icon: Sigma },

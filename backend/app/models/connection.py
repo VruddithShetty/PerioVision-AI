@@ -2,10 +2,8 @@ import os
 import logging
 from pymongo import MongoClient
 import pymongo.errors
-from dotenv import load_dotenv
+from app import config  # noqa: F401  (loads ENV_FILE / .env before anything reads the environment)
 from app.security.secrets import run_secrets_audit, enforce_mongo_tls
-
-load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

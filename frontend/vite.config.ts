@@ -12,6 +12,12 @@ export default defineConfig({
     strictPort: true,
     proxy: { "/api": { target: process.env.VITE_API_TARGET ?? "http://127.0.0.1:5000", changeOrigin: false } },
   },
+  // `vite preview` serves the production build the same way (one origin, /api proxied).
+  preview: {
+    port: 4173,
+    strictPort: true,
+    proxy: { "/api": { target: process.env.VITE_API_TARGET ?? "http://127.0.0.1:5000", changeOrigin: false } },
+  },
   build: {
     sourcemap: false,
     chunkSizeWarningLimit: 1200,

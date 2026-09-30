@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 
 MODEL_SPECS = {
     "tooth_detector": {"file": "dental_yolov8n.pt", "task": "detect",
-                       "purpose": "YOLOv8 tooth detection with FDI tooth numbers"},
+                       "purpose": "YOLO11m tooth detection with FDI tooth numbers (trained on DENTEX)"},
     "landmarks": {"file": "dental_landmark_yolov8n-pose.pt", "task": "pose",
-                  "purpose": "YOLOv8-pose CEJ / root apex / bone crest keypoints"},
+                  "purpose": "YOLO-pose CEJ / root apex / bone crest keypoints"},
 }
 
 

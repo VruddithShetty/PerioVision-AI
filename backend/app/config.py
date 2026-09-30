@@ -12,8 +12,16 @@ from dotenv import load_dotenv
 BACKEND_DIR = Path(__file__).resolve().parent.parent  # .../backend
 PROJECT_ROOT = BACKEND_DIR.parent                     # repository root
 
-# .env lives at the repository root (gitignored). Existing environment variables win.
-load_dotenv(PROJECT_ROOT / ".env", override=False)
+# .env lives at the repository root (gitignored). ENV_FILE selects another file, e.g.
+# ENV_FILE=.env.production for the live deployment. Existing environment variables win.
+_env_choice = os.getenv("ENV_FILE")
+ENV_FILE = Path(_env_choice or ".env")
+if not ENV_FILE.is_absolute():
+    ENV_FILE = ENV_FILE.resolve() if (_env_choice and ENV_FILE.exists()) else PROJECT_ROOT / ENV_FILE
+if _env_choice and not ENV_FILE.exists():
+    # Fail closed: never fall back to the demo settings when a specific file was asked for.
+    raise RuntimeError(f"ENV_FILE={_env_choice} was requested but {ENV_FILE} does not exist.")
+load_dotenv(ENV_FILE, override=False)
 
 WEIGHTS_DIR = Path(os.getenv("WEIGHTS_DIR", BACKEND_DIR / "weights"))
 KEYS_DIR = Path(os.getenv("KEYS_DIR", BACKEND_DIR / "keys"))

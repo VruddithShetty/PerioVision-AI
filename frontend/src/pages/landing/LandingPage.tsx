@@ -27,7 +27,7 @@ const STEPS = [
     icon: ScanLine,
     k: "01",
     title: "Detect",
-    text: "YOLOv8 finds every tooth and names it by FDI number, then locates the cemento-enamel junction, alveolar crest and root apex.",
+    text: "A YOLO11m detector finds every tooth and names it by FDI number, then locates the cemento-enamel junction, alveolar crest and root apex.",
     chip: "CLAHE · quality gate · FDI 11–48",
   },
   {

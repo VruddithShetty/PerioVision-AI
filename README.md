@@ -78,6 +78,7 @@ On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 ### Optional: real models and HTTPS
 - Train on a free Colab GPU with `notebooks/train_periovision_colab.ipynb`, then run `.\run.ps1 install-models -From <export folder>` (installs, signs, tests). Or put weights in `backend/weights/` and run `cd backend; python scripts/sign_model.py`. Unsigned files are refused.
 - Calibrate uncertainty on a held-out, per-tooth-annotated set: `python scripts/calibrate_conformal.py --images … --labels …`.
+- Live deployment (fresh secrets, real MongoDB, production server): see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 - Local HTTPS: `python scripts/make_dev_cert.py`, then set `TLS_CERT=keys/dev-tls.crt` and `TLS_KEY=keys/dev-tls.key` in `.env`.
 
 ## Troubleshooting

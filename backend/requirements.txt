@@ -28,3 +28,4 @@ torch==2.10.0
 ultralytics==8.4.21
 # Reports
 reportlab==4.4.5
+waitress==3.0.2

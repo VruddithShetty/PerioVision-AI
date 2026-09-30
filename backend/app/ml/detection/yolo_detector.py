@@ -1,4 +1,4 @@
-"""YOLOv8 tooth detection with FDI tooth numbers.
+"""YOLO (v8 / YOLO11) tooth detection with FDI tooth numbers.
 
 The trained detector (`weights/dental_yolov8n.pt`) has 32 classes named with
 FDI numbers ("11" ... "48"), so each box's class *is* its tooth number. If the

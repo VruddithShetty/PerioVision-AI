@@ -44,7 +44,10 @@ def route(teeth: list[dict], quality: dict, ood: dict, demo_mode: bool,
     if heuristic:
         add("heuristic_landmarks", "Landmarks were estimated geometrically, not by the keypoint model.", heuristic)
     model_lms = [t["tooth_id"] for t in teeth if str(t.get("landmark_source", "")).startswith("keypoint_model")]
-    if model_lms and validated_image_type and image_type and image_type != validated_image_type:
+    if model_lms and image_type and validated_image_type is None:
+        add("landmarks_not_validated", "The landmark model has no validation record (no calibration file), "
+            "so the accuracy of its landmarks is unmeasured.", model_lms)
+    elif model_lms and validated_image_type and image_type and image_type != validated_image_type:
         add("landmarks_not_validated", f"The landmark model was validated on {validated_image_type} radiographs, "
             f"not {image_type} ones, so its accuracy on this image is unmeasured.", model_lms)
     low_conf = [t["tooth_id"] for t in teeth if t.get("flags", {}).get("low_confidence")]

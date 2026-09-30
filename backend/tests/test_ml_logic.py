@@ -89,6 +89,8 @@ def test_review_router_flags_landmarks_used_outside_their_validated_image_type()
     assert same["status"] == "auto_cleared"
     other = route([tooth], ok, {"is_ood": False}, False, image_type="panoramic", validated_image_type="periapical")
     assert [r["code"] for r in other["reasons"]] == ["landmarks_not_validated"]
+    unvalidated = route([tooth], ok, {"is_ood": False}, False, image_type="panoramic", validated_image_type=None)
+    assert [r["code"] for r in unvalidated["reasons"]] == ["landmarks_not_validated"]
 
 
 # ---------- progression ----------
