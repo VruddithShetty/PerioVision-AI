@@ -73,5 +73,6 @@ export const REASON_LABEL: Record<string, string> = {
   out_of_distribution: "Unusual image",
   low_attention_validity: "Attention outside ROI",
   heuristic_landmarks: "Estimated landmarks",
+  landmarks_not_validated: "Landmarks not validated for this X-ray type",
   low_confidence: "Low confidence",
 };

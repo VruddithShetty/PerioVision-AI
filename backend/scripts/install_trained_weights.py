@@ -5,7 +5,7 @@ Usage (from backend/):
 Backs up the current weights to backend/weights_backup/<timestamp>/, copies in
 dental_yolov8n.pt (and dental_landmark_yolov8n-pose.pt if present), checks each
 file loads with the expected task and FDI class names, copies the test-set metric
-files next to them, and re-signs weights/manifest.json.
+files and conformal_calibration.json (uncertainty calibration) next to them, and re-signs weights/manifest.json.
 """
 import argparse
 import json
@@ -56,11 +56,11 @@ def main() -> int:
             shutil.move(os.path.join(weights, f), os.path.join(backup, f))
         shutil.copy2(os.path.join(args.src, f), os.path.join(weights, f))
         print(f"installed {f} (old copy in weights_backup/{os.path.basename(backup)}/)")
-    for m in ("detector_test_metrics.json", "landmark_test_metrics.json"):
+    for m in ("detector_test_metrics.json", "landmark_test_metrics.json", "conformal_calibration.json"):
         if os.path.exists(os.path.join(args.src, m)):
             shutil.copy2(os.path.join(args.src, m), os.path.join(weights, m))
             data = json.load(open(os.path.join(weights, m), encoding="utf-8"))
-            print(m, {k: v for k, v in data.items() if not isinstance(v, dict)})
+            print(m, {k: v for k, v in data.items() if not isinstance(v, (dict, list))})
     try:
         Signer().sign_manifest(weights)
     except SigningError as e:

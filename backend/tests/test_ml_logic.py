@@ -81,6 +81,16 @@ def test_review_router_flags():
     assert {"demo_mode", "low_quality", "out_of_distribution", "low_attention_validity"} <= set(codes)
 
 
+def test_review_router_flags_landmarks_used_outside_their_validated_image_type():
+    tooth = {"tooth_id": "36", "uncertainty": {"calibrated": True, "set_size": 1}, "flags": {},
+             "landmark_source": "keypoint_model_crop"}
+    ok = {"verdict": "pass"}
+    same = route([tooth], ok, {"is_ood": False}, False, image_type="periapical", validated_image_type="periapical")
+    assert same["status"] == "auto_cleared"
+    other = route([tooth], ok, {"is_ood": False}, False, image_type="panoramic", validated_image_type="periapical")
+    assert [r["code"] for r in other["reasons"]] == ["landmarks_not_validated"]
+
+
 # ---------- progression ----------
 def _analysis(date, teeth, source="model_fdi_class", align=0.9):
     return {"analysis_id": date, "visit_date": date, "image_size": [1000, 500], "alignment": {"confidence": align},

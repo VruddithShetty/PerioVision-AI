@@ -40,6 +40,7 @@ from app.services.progression_service import compare_visits
 
 logger = logging.getLogger(__name__)
 STAGE_ORDER = {"I": 1, "II": 2, "III": 3, "IV": 4}
+MIN_PANORAMIC_TEETH = 4   # fewer teeth from the panoramic detector -> try the periapical path
 
 
 class QualityRejected(Exception):
@@ -154,8 +155,19 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
         detector, lm_model = container.tooth_detector(), container.landmark_detector()
     live = detector is not None and detector.available
     detections = detector.detect_teeth(bgr) if live else demo_detections(enhanced)
-    landmarks = lm_model.detect_landmarks(detections, bgr) if (live and lm_model.available) \
-        else {d["tooth_id"]: demo_landmarks(gray, d) for d in detections}
+    image_type = "panoramic"
+    landmarks = None
+    if live and lm_model.available and len(detections) < MIN_PANORAMIC_TEETH:
+        # A periapical film: the panoramic detector sees too little, so the keypoint model
+        # (trained on periapical films) finds the teeth and their landmarks itself.
+        periapical = lm_model.detect_teeth(bgr)
+        if len(periapical) > len(detections):
+            image_type = "periapical"
+            detections = [d for d, _ in periapical]
+            landmarks = {d["tooth_id"]: lm for d, lm in periapical}
+    if landmarks is None:
+        landmarks = lm_model.detect_landmarks(detections, bgr) if (live and lm_model.available) \
+            else {d["tooth_id"]: demo_landmarks(gray, d) for d in detections}
     heatmap = detector.gradcam_heatmap(bgr, detections) if live else None
 
     q = calibration.current_q()
@@ -220,7 +232,9 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
     }
     from app.ml.fusion.multimodal_risk import predict_patient_risk
     risk = predict_patient_risk(clinical, patient_summary)
-    review = route(teeth, quality, ood, demo_mode=not live)
+    cal_info = calibration.load() or {}
+    review = route(teeth, quality, ood, demo_mode=not live, image_type=image_type,
+                   validated_image_type=cal_info.get("image_type"))
 
     blobs = {"radiograph": storage_service.put(png_bytes, "radiograph"),
              "annotated": storage_service.put(overlay.encode_png(overlay.annotated_image(enhanced, teeth)), "annotated")}
@@ -234,6 +248,7 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
         "mode": "live" if live else "demo",
         "created_by": user["id"],
         "image_size": [w, h],
+        "image_type": image_type,
         "image_phash": compute_phash(gray),
         "pixel_spacing_mm": pixel_spacing_mm,
         "upload": upload_meta or {},

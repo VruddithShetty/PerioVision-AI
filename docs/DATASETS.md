@@ -35,6 +35,9 @@ Check each dataset's licence and data-use terms before downloading.
 |---|---|---|---|
 | [DENTEX](https://huggingface.co/datasets/ibrahimhamamci/DENTEX), `quadrant_enumeration` subset (634 panoramic X-rays, per-tooth FDI boxes) | tooth detector (`notebooks/train_periovision_colab.ipynb`, Part A) | open download, fetched inside Colab only | CC BY-NC-SA 4.0 (academic, non-commercial, attribution) |
 | [BoneLoss-PAN769](https://zenodo.org/records/21939261) (769 panoramic X-rays, crowns + alveolar-ridge lines) | candidate for bone-level training | access request on Zenodo | CC BY 4.0 |
+| [DenPAR](https://zenodo.org/records/16645076) (1000 periapical X-rays; CEJ, apex and bone-level lines verified by dental specialists) | landmark model (`notebooks/train_landmarks_colab.ipynb`, converted by `backend/scripts/convert_denpar.py`) | open download, fetched inside Colab only | CC BY 4.0 |
 | [perio-KPT](https://zenodo.org/records/17272200) (CEJ, bone-level, apex keypoints, YOLO-pose) | candidate for Part B keypoints | university access request | CC BY-NC-SA 2.0 |
 
 The notebook splits DENTEX once (seed 42) into 80 % train, 10 % val and 10 % test and saves the split to Drive. Metrics in `docs/MODEL_CARD.md` come only from the test part.
+
+DenPAR keeps its official Training / Validation / Testing split. Its points are not grouped per tooth, so `convert_denpar.py` assigns each point to the nearest tooth mask, and takes each tooth's keypoints from its worst site (largest CEJ-to-bone distance), because staging uses the worst site. The landmark model's uncertainty calibration comes from the validation split, and its coverage is measured on the test split.
