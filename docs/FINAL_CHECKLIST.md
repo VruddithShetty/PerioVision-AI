@@ -18,10 +18,10 @@
 
 | # | Objective / feature | Status | Evidence |
 |---|---|---|---|
-| O1 | Quality gate, CLAHE, YOLOv8 FDI detection, CEJ/crest landmarks, bone loss %, Stage/Grade, per-tooth output | ✅ detector trained / ⚠️ landmarks | `backend/app/ml/*`, `services/analysis_service.py`; viewer page. Detector: 95.8 % mAP@0.5 on held-out test X-rays (model card). Landmarks still heuristic |
+| O1 | Quality gate, CLAHE, YOLOv8 FDI detection, CEJ/crest landmarks, bone loss %, Stage/Grade, per-tooth output | ✅ | `backend/app/ml/*`, `services/analysis_service.py`; viewer page. Detector 95.8 % mAP@0.5 (DENTEX test); landmarks: bone-loss MAE 7.64 points, 73.1 % stage agreement (DenPAR test). See the model card |
 | O2 | Longitudinal progression with registration-aware matching, velocity, labels, unreliable flags | ✅ | `services/progression_service.py`, Progression page, `test_ml_logic.py` |
 | O3 | Grad-CAM heatmap, opacity slider, ROI attention flag → review | ✅ (live model only) | `ml/explainability/gradcam.py`, viewer heatmap layer. In demo mode no heatmap exists because no model ran |
-| O4 | Split-conformal intervals, stage sets, review router, coverage report | ✅ code / ❌ calibration | `ml/uncertainty/*`, Model trust page. **Not calibrated**: no per-tooth annotated calibration set exists, so every case is routed to review |
+| O4 | Split-conformal intervals, stage sets, review router, coverage report | ✅ | `ml/uncertainty/*`, Model trust page. Calibrated on DenPAR validation teeth; 91.5 % coverage at the 90 % target on the test split |
 | O5 | Multimodal risk with plain-language reasons | ✅ (rule-assisted demo) | `ml/fusion/multimodal_risk.py`; honest label everywhere. Needs an outcome dataset to become a trained model |
 | O6 | AES-256-GCM + rotation, TLS (optional dev cert), bcrypt, JWT + refresh, TOTP MFA, lockout, rate limit, RBAC, Zero Trust, signed models, signed reports + verify, audit chain + Merkle anchors + CLI, upload guard, headers, CORS, validation, adversarial screen, pseudonyms, HIPAA-aligned mapping | ✅ | `backend/app/security/*`, `docs/SECURITY.md`, `docs/TRACEABILITY.md`, security tests |
 | O7 | End-to-end secure workflow | ✅ | UI walkthrough above + `test_end_to_end_workflow` |
@@ -33,8 +33,7 @@
 
 ### What is ❌ or limited, and what you must supply
 
-1. **Landmark quality:** the detector is now trained (YOLO11m on DENTEX: 94.1 % precision, 94.5 % recall, 95.8 % mAP@0.5 on held-out test X-rays; 26 teeth found on a real image, against 2 before). The keypoint model still returns one large box, so landmarks fall back to labelled estimates. **Needed:** per-tooth CEJ/crest/apex labels, then notebook Part B.
-2. **Uncertainty calibration:** needs a held-out split with per-tooth keypoint labels. Then run `scripts/calibrate_conformal.py`.
+1. **Panoramic landmarks:** both models are trained and measured, but the landmark model has only been validated on periapical X-rays. On panoramic images it runs on zoomed crops, and those teeth are flagged for review. **Next:** a panoramic keypoint dataset (for example BoneLoss-PAN769, access request).
 3. **Risk model:** needs longitudinal outcome data (who progressed) to train and validate. Until then it stays a labelled rule-assisted demo.
 4. **Synopsis wording:** `docs/reference/` is still empty. Add the PDF and PPT so the traceability table can quote them.
 5. **Public GitHub history** still contains the patient-named Roboflow images (audit finding G2). **Needed:** make the repository private or rewrite history (owner action).

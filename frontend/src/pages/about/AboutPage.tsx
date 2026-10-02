@@ -91,7 +91,7 @@ export default function AboutPage({ embedded = false }: { embedded?: boolean }) 
         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-mist-300">
           <li>Decision-support tool; not a certified medical device.</li>
           <li>Controls are aligned with HIPAA safeguards, not certified.</li>
-          <li>Tooth detector on held-out test X-rays: 94% precision, 94.5% recall, 95.8% mAP@0.5. No accuracy is claimed for landmarks or bone loss %, which still need clinician-annotated labels.</li>
+          <li>Tooth detector on held-out test X-rays: 94% precision, 94.5% recall, 95.8% mAP@0.5. Landmarks on held-out periapical X-rays: bone-loss error 7.6 points, 73% stage agreement, 91.5% conformal coverage. Landmarks are not validated on panoramic X-rays, so those teeth are always reviewed.</li>
           <li>The risk score is a documented rule-assisted demo, not a trained clinical model.</li>
         </ul>
       </Card>

@@ -15,7 +15,7 @@
 ## Features
 
 **Clinical AI (synopsis objectives O1–O5)**
-- Image-quality gate, CLAHE, YOLOv8 tooth detection with FDI numbers, CEJ / crest / apex landmarks
+- Image-quality gate, CLAHE, YOLO11m tooth detection with FDI numbers, CEJ / crest / apex landmarks
 - Per-tooth bone loss %, Stage I–IV and Grade A–C suggestions (2017 AAP/EFP)
 - Grad-CAM heatmaps with a periodontal-region attention check
 - Split-conformal uncertainty intervals and stage sets; mandatory clinician review router
@@ -38,7 +38,7 @@
 ```
 React app (frontend/) ──HTTPS──▶ Flask API (backend/app)
                                   ├─ Zero Trust guard → RBAC permission → route
-                                  ├─ ml/: quality → CLAHE → YOLOv8 → landmarks → staging → Grad-CAM → conformal → risk
+                                  ├─ ml/: quality → CLAHE → YOLO11m → landmarks → staging → Grad-CAM → conformal → risk
                                   ├─ security/: AES-GCM · RSA-PSS · JWT/MFA · audit chain · upload guard
                                   └─ MongoDB (or in-memory demo DB) + encrypted blob store + external audit anchors
 ```
@@ -101,8 +101,8 @@ On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 
 ## Known limitations (honest)
 
-- The tooth detector is trained (94 % precision, 94.5 % recall, 95.8 % mAP@0.5 on held-out DENTEX test X-rays). The landmark model still lacks clinician-drawn CEJ / crest / apex labels, so landmarks fall back to a labelled estimate ([docs/MODEL_CARD.md](docs/MODEL_CARD.md)).
-- Uncertainty is not calibrated yet (no per-tooth annotated calibration set), so every case is routed to review.
+- Measured on held-out test sets ([docs/MODEL_CARD.md](docs/MODEL_CARD.md)): tooth detector 95.8 % mAP@0.5 (DENTEX panoramic); landmark model 99 % tooth recall, bone-loss error 7.6 points, 73 % stage agreement, 91.5 % conformal coverage (DenPAR periapical). Landmarks are not validated on panoramic X-rays, so those are always flagged for review.
+- Uncertainty intervals are honest but wide (±18.6 points at 90 %), so most teeth still go to dentist review.
 - The risk score is a documented rule-assisted demo, not a trained model.
 - Demo mode uses an in-memory database; nothing persists after a restart.
 - The development server is HTTP unless you enable the local certificate; production needs a TLS reverse proxy.

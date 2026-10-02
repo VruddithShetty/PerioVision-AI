@@ -37,7 +37,7 @@ PerioVision is a secure, explainable decision-support system that measures perio
 
 **What is Zero Trust here?** No request is trusted because of where it comes from. Every call re-verifies the token, the server-side session, the device fingerprint, the account state and the role permission, and routes without an explicit rule are denied.
 
-**How accurate is the model?** The tooth detector (YOLO11m, trained on the public DENTEX panoramic dataset on a free Colab GPU) scores **94 % precision, 94.5 % recall and 95.8 % mAP@0.5** on 63 held-out test X-rays it never saw during training. About 95 % of teeth are found with the correct FDI number. We do *not* quote a number for landmarks or bone-loss %, because we have no clinician-annotated keypoint test set, and inventing one would be dishonest. Those teeth go to a dentist instead.
+**How accurate is the model?** The tooth detector (YOLO11m, trained on the public DENTEX panoramic dataset on a free Colab GPU) scores **94 % precision, 94.5 % recall and 95.8 % mAP@0.5** on 63 held-out test X-rays it never saw during training. About 95 % of teeth are found with the correct FDI number. The landmark model (YOLO11m-pose, trained on DenPAR's specialist-verified periapical X-rays) finds 99 % of teeth and measures bone loss to within **7.6 percentage points on average (median 5.1)**, with **73 % stage agreement** on 200 unseen test X-rays. It hasn't been validated on panoramic X-rays, so those landmarks are always flagged for review.
 
 **Why is mAP@0.5:0.95 only 56 %?** It demands very tight boxes (up to 95 % overlap). Tooth edges are fuzzy on X-rays, so 50-60 % is typical; mAP@0.5 (95.8 %) is the usual headline figure for detection.
 
@@ -45,7 +45,7 @@ PerioVision is a secure, explainable decision-support system that measures perio
 
 **What is conformal prediction, in one line?** Use a held-out set to learn how wrong the model usually is, then widen each prediction by that amount so the true value falls inside the range at the chosen rate (e.g. 90 %).
 
-**Why is the case marked "uncalibrated"?** Our pose labels were generated geometrically, not drawn per tooth, so they can't calibrate honestly. Until real labels exist, every case goes to review. This is safe by design.
+**Is the uncertainty honest?** Yes, it was measured. The conformal radius was learned on DenPAR validation teeth and then tested on separate test teeth: 91.5 % coverage at the 90 % target (82.3 % at 80 %, 96.4 % at 95 %). The intervals are wide (±18.6 points), so only about 1 tooth in 10 gets a single-stage answer; the rest go to the dentist. That's the system being cautious, not broken.
 
 **What does Grad-CAM prove?** Not correctness, only where the model focused. We use it as a sanity check: attention outside the periodontal band pushes the case to review.
 
@@ -65,4 +65,5 @@ PerioVision is a secure, explainable decision-support system that measures perio
 - 74 automated backend tests; the frontend type-checks, lints and builds cleanly.
 - 7 of 7 Security Lab attacks blocked.
 - Tooth detector on held-out test X-rays: 94.1 % precision, 94.5 % recall, 95.8 % mAP@0.5, tooth-level F1 94.8 %.
+- Landmark model on DenPAR test X-rays: 99.0 % tooth recall, 96.9 % pose mAP@0.5, bone-loss MAE 7.64 points, 73.1 % stage agreement; 91.5 % conformal coverage at 90 %.
 - Adversarial screen: 0 false alarms on 30 real radiographs; catches ±8 grey-level perturbation.
