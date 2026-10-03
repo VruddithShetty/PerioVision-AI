@@ -27,7 +27,8 @@ export default function AnalysisViewerPage() {
 
   useEffect(() => {
     if (a && !selected && a.teeth.length) {
-      const worst = [...a.teeth].sort((x, y) => (y.bone_loss_pct ?? 0) - (x.bone_loss_pct ?? 0))[0]!;
+      const measured = a.teeth.filter((t) => t.bone_loss_pct !== null);
+      const worst = measured.length ? measured.reduce((x, y) => (y.bone_loss_pct! > x.bone_loss_pct! ? y : x)) : a.teeth[0]!;
       setSelected(worst.tooth_id);
     }
   }, [a, selected]);
@@ -56,7 +57,10 @@ export default function AnalysisViewerPage() {
         subtitle={
           <span className="flex flex-wrap items-center gap-2">
             <span className="font-mono text-brand-300">{a.pseudo_id}</span> · visit {fmtDate(a.visit_date)} · {a.summary.teeth_detected} teeth
-            {a.mode === "demo" && <Badge tone="review">DEMO · not model output</Badge>}
+            {a.mode === "demo" && <Badge tone="review">Demo mode — synthetic data, not clinical</Badge>}
+            {a.summary.teeth_measured !== undefined && a.summary.teeth_measured < a.summary.teeth_detected && (
+              <Badge tone="review">{a.summary.teeth_measured} of {a.summary.teeth_detected} measured</Badge>
+            )}
           </span>
         }
         actions={
@@ -199,9 +203,13 @@ export default function AnalysisViewerPage() {
             )}
           </Card>
           <Card>
-            <CardTitle icon={<Box className="h-4 w-4" />}>Periodontal risk</CardTitle>
+            <CardTitle icon={<Box className="h-4 w-4" />}>Clinical risk profile</CardTitle>
             <div className="flex justify-center">
-              <RiskGauge value={a.risk.probability} category={a.risk.category} />
+              {a.risk.probability !== null && a.risk.category ? (
+                <RiskGauge value={a.risk.probability} category={a.risk.category} />
+              ) : (
+                <p className="py-6 text-center text-sm text-review-400">No risk score: required inputs are missing.</p>
+              )}
             </div>
             <ul className="mt-3 space-y-2">
               {a.risk.top_factors.map((f) => (
@@ -213,7 +221,7 @@ export default function AnalysisViewerPage() {
               {!a.risk.top_factors.length && <li className="text-sm text-mist-500">No strong contributing factors.</li>}
             </ul>
             {a.risk.missing_inputs.length > 0 && <p className="mt-3 text-xs text-review-400">Missing: {a.risk.missing_inputs.join(", ")}</p>}
-            <p className="mt-3 text-[11px] text-mist-500">{a.risk.model_type} · {a.risk.disclaimer}</p>
+            <p className="mt-3 text-[11px] text-mist-500">{a.risk.model_type}{a.risk.validation ? ` (validated on ${a.risk.validation.test_n.toLocaleString()} people, AUC ${a.risk.validation.roc_auc.toFixed(2)})` : ""} · {a.risk.disclaimer}</p>
           </Card>
         </div>
       </div>

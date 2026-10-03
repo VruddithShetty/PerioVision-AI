@@ -6,6 +6,10 @@ score |predicted % - reference %| for every tooth. For coverage 1 - alpha the
 threshold q is the ceil((n + 1)(1 - alpha))-th smallest score
 (Vovk et al.; Angelopoulos & Bates 2021).
 
+Normalised (adaptive) variant: the score is |predicted - reference| / sigma(x), where sigma(x) grows
+with the tooth's test-time-augmentation disagreement (calibration.scale_for), so the interval is
+pred +/- q * sigma(x): wider for teeth the model reads inconsistently, narrower for stable ones.
+
 Prediction: interval = [pred - q, pred + q] clipped to 0-100, and the stage
 *prediction set* is every stage whose band overlaps that interval. A set with
 more than one stage means the model cannot tell the stages apart at the chosen
@@ -35,15 +39,19 @@ def conformal_quantile(scores, coverage: float) -> float:
     return float(scores[k - 1])
 
 
-def predict_interval(pred_pct: float | None, q: float | None) -> dict:
+def predict_interval(pred_pct: float | None, q: float | None, scale: float = 1.0) -> dict:
+    """Interval pred +/- q * scale. scale = 1 for standard split conformal; for normalised (adaptive)
+    conformal it is the tooth's difficulty sigma(x), and q was calibrated on |error| / sigma(x)."""
     if pred_pct is None:
-        return {"interval": None, "stage_set": [], "set_size": 0, "calibrated": q is not None}
+        return {"interval": None, "stage_set": [], "set_size": 0, "calibrated": q is not None, "half_width": None}
     if q is None or not math.isfinite(q):
-        return {"interval": [0.0, 100.0], "stage_set": ["I", "II", "III"], "set_size": 3, "calibrated": False}
-    low, high = max(0.0, pred_pct - q), min(100.0, pred_pct + q)
+        return {"interval": [0.0, 100.0], "stage_set": ["I", "II", "III"], "set_size": 3, "calibrated": False,
+                "half_width": None}
+    half = q * scale
+    low, high = max(0.0, pred_pct - half), min(100.0, pred_pct + half)
     stage_set = stages_overlapping(low, high)
     return {"interval": [round(low, 2), round(high, 2)], "stage_set": stage_set, "set_size": len(stage_set),
-            "calibrated": True}
+            "calibrated": True, "half_width": round(half, 3)}
 
 
 def empirical_coverage(preds, refs, q: float) -> float:

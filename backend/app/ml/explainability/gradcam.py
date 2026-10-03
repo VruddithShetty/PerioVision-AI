@@ -50,8 +50,13 @@ class YOLOGradCAM:
         self.activations, self.gradients = {}, {}
         # The layers that feed the Detect head differ between architectures (YOLOv8: 15/18/21,
         # YOLO11: 16/19/22), so take them from the head itself.
-        head_inputs = getattr(self.net.model[-1], "f", None)
+        head = self.net.model[-1]
+        head_inputs = getattr(head, "f", None)
         self.layers = tuple(head_inputs) if isinstance(head_inputs, (list, tuple)) else NECK_LAYERS
+        if hasattr(head, "kpt_shape"):
+            # Pose head: its normal keypoint decoding applies sigmoid_() in place, which breaks backward().
+            # The export path decodes the same values out of place. Only this gradient copy is changed.
+            head.export = True
         for idx in self.layers:
             layer = self.net.model[idx]
             layer.register_forward_hook(self._capture(idx))

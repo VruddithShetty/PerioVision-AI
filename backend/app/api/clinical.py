@@ -53,7 +53,7 @@ def create_chart(patient_id):
     doc = container.chart_store().create({
         "patient_id": patient_id, "pseudo_id": patient["pseudo_id"], "exam_date": body.exam_date,
         "teeth": {k: v.model_dump() for k, v in body.teeth.items()}, "notes": body.notes,
-        "examiner_id": g.user["id"], "examiner_name": g.user.get("name"),
+        "examiner_id": g.user["id"], "examiner_name": g.user.get("name"), "source": "clinician_entry",
     })
     summary = summarize_chart(doc)
     audit().record("PERIO_CHART_SAVED", actor=g.user["id"], resource=patient["pseudo_id"],

@@ -6,7 +6,8 @@ For every protected request the guard re-checks, in order:
                device fingerprint matches the one bound at login
   3. user    - the account exists, is active and not locked; the role is read
                from the database, never trusted from the token
-  4. policy  - the role holds the permission the route requires (RBAC matrix)
+  4. policy  - the role holds the permission the route requires (RBAC matrix); roles listed in
+               REQUIRE_MFA_ROLES must have MFA enabled for anything beyond their own account
 Any failure stops the request and is written to the audit log.
 
 `enforce_deny_by_default` (installed by the app factory) refuses any route that
@@ -19,6 +20,7 @@ from functools import wraps
 
 from flask import g, jsonify, request
 
+from app import config
 from app.security import auth
 from app.security.audit_log import audit, hash_ip
 from app.security.rbac import has_permission, normalize_role
@@ -27,8 +29,6 @@ from app.security.rbac import has_permission, normalize_role
 def _deny(status: int, message: str, action: str, actor: str | None = None, **details):
     audit().record(action, outcome="denied", actor=actor, resource=request.path,
                    details={"reason": message, "method": request.method, "ip": hash_ip(request.remote_addr), **details})
-    from app import config
-
     return jsonify({"data": None, "meta": {}, "error": {"code": status, "message": message, "details": None},
                     "mode": config.APP_MODE}), status
 
@@ -71,6 +71,10 @@ def verify_request(permission: str):
         return _deny(403, "Account is disabled or locked", "AUTH_ACCOUNT_BLOCKED", actor=user_id)
     role = normalize_role(raw_user.get("role"))
 
+    if role in config.REQUIRE_MFA_ROLES and not raw_user.get("mfa_enabled") and permission != "self:manage":
+        return _deny(403, "Multi-factor authentication must be set up before using this account. "
+                          "Open Security center to enrol an authenticator app.", "AUTH_MFA_ENROLMENT_REQUIRED",
+                     actor=user_id, role=role)
     if not has_permission(role, permission):
         return _deny(403, "You do not have permission for this action", "PERMISSION_DENIED",
                      actor=user_id, permission=permission, role=role)

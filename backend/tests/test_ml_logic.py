@@ -12,7 +12,7 @@ from app.ml.preprocessing.quality_check import assess_quality
 from app.ml.uncertainty.conformal import conformal_quantile, empirical_coverage, predict_interval
 from app.ml.uncertainty.review_router import route
 from app.security.adversarial import AdversarialInputDetector
-from app.services.progression_service import compare_visits, label_for_velocity
+from app.services.progression_service import compare_visits, label_for_velocity, usable_velocities
 
 
 # ---------- measurement ----------
@@ -68,9 +68,39 @@ def test_prediction_sets():
     assert uncal["calibrated"] is False and uncal["set_size"] == 3
 
 
+def test_adaptive_interval_scales_with_difficulty(monkeypatch):
+    from app.ml.uncertainty import calibration
+
+    spec = {"intercept": 4.0, "slope": 0.5, "floor": 2.0, "missing_sigma": 12.0}
+    monkeypatch.setattr(calibration, "load", lambda: {"scores": [1.0] * 50, "sigma": spec})
+    assert calibration.scale_for({"tta_disagreement_pct": 0.0}) == 4.0
+    assert calibration.scale_for({"tta_disagreement_pct": 10.0}) == 9.0
+    assert calibration.scale_for({"tta_disagreement_pct": None}) == 12.0      # unseen in the mirror: widest
+    easy, hard = predict_interval(30.0, 2.0, 4.0), predict_interval(30.0, 2.0, 9.0)
+    assert easy["half_width"] == 8.0 and hard["half_width"] == 18.0 and easy["set_size"] < hard["set_size"]
+    monkeypatch.setattr(calibration, "load", lambda: {"scores": [1.0] * 50})       # standard calibration
+    assert calibration.scale_for({"tta_disagreement_pct": 10.0}) == 1.0
+
+
+def test_progression_uses_each_readings_own_error_bound(monkeypatch):
+    from app.ml.uncertainty import calibration
+
+    monkeypatch.setattr(calibration, "current_q", lambda coverage=None: 2.0)
+    def tooth(bl, hw):
+        return {"tooth_id": "11", "tooth_id_source": "model_fdi_class", "bbox": [0, 0, 10, 10], "bone_loss_pct": bl,
+                "uncertainty": {"half_width": hw}}
+    base = {"image_size": [100, 100], "mode": "live", "image_type": "periapical",
+            "alignment": {"status": "success", "confidence": 0.9}}
+    prev = {**base, "analysis_id": "a", "visit_date": "2024-01-01", "teeth": [tooth(10.0, 5.0)]}
+    small = compare_visits(prev, {**base, "analysis_id": "b", "visit_date": "2025-01-01", "teeth": [tooth(20.0, 6.0)]})[0]
+    big = compare_visits(prev, {**base, "analysis_id": "c", "visit_date": "2025-01-01", "teeth": [tooth(22.0, 6.0)]})[0]
+    assert small["measurement_error_pct"] == 11.0 and not small["change_detectable"]     # 10 < 5 + 6
+    assert big["change_detectable"]                                                    # 12 > 11
+
+
 def test_review_router_flags():
     tooth = {"tooth_id": "11", "uncertainty": {"calibrated": True, "set_size": 1}, "flags": {},
-             "landmark_source": "keypoint_model"}
+             "landmark_source": "keypoint_model", "bone_loss_pct": 10.0}
     assert route([tooth], {"verdict": "pass"}, {"is_ood": False}, False)["status"] == "auto_cleared"
     ambiguous = {**tooth, "uncertainty": {"calibrated": True, "set_size": 2}}
     res = route([ambiguous], {"verdict": "pass"}, {"is_ood": False}, False)
@@ -79,11 +109,14 @@ def test_review_router_flags():
     codes = [r["code"] for r in route([attention], {"verdict": "warn", "reasons": []}, {"is_ood": True, "reasons": ["x"]},
                                       True)["reasons"]]
     assert {"demo_mode", "low_quality", "out_of_distribution", "low_attention_validity"} <= set(codes)
+    unmeasured = {**tooth, "bone_loss_pct": None}
+    res = route([unmeasured], {"verdict": "pass"}, {"is_ood": False}, False)
+    assert [r["code"] for r in res["reasons"]] == ["not_measured"]
 
 
 def test_review_router_flags_landmarks_used_outside_their_validated_image_type():
     tooth = {"tooth_id": "36", "uncertainty": {"calibrated": True, "set_size": 1}, "flags": {},
-             "landmark_source": "keypoint_model_crop"}
+             "landmark_source": "keypoint_model_crop", "bone_loss_pct": 10.0}
     ok = {"verdict": "pass"}
     same = route([tooth], ok, {"is_ood": False}, False, image_type="periapical", validated_image_type="periapical")
     assert same["status"] == "auto_cleared"
@@ -95,7 +128,8 @@ def test_review_router_flags_landmarks_used_outside_their_validated_image_type()
 
 # ---------- progression ----------
 def _analysis(date, teeth, source="model_fdi_class", align=0.9):
-    return {"analysis_id": date, "visit_date": date, "image_size": [1000, 500], "alignment": {"confidence": align},
+    return {"analysis_id": date, "visit_date": date, "image_size": [1000, 500], "alignment": {"confidence": align, "status": "success" if align >= 0.5 else "failed"},
+            "mode": "demo",
             "teeth": [{"tooth_id": tid, "tooth_id_source": source, "bbox": box, "bone_loss_pct": bl,
                        "landmark_source": "keypoint_model"} for tid, box, bl in teeth]}
 
@@ -121,6 +155,43 @@ def test_unreliable_comparisons_are_flagged_not_silently_computed():
     c = compare_visits(prev, curr)[0]
     assert c["match_method"] == "spatial" and not c["reliable"]
     assert c["label"] == "unreliable comparison" and len(c["reliability_reasons"]) >= 2
+
+
+def _live(a):
+    return {**a, "mode": "live", "image_type": "periapical"}
+
+
+def test_live_change_within_measurement_error_is_not_called_progression(monkeypatch):
+    from app.ml.uncertainty import calibration
+
+    monkeypatch.setattr(calibration, "current_q", lambda coverage=None: 18.6)
+    prev = _live(_analysis("2025-01-01", [("11", [100, 100, 150, 300], 10.0), ("21", [200, 100, 250, 300], 10.0)]))
+    curr = _live(_analysis("2026-01-01", [("11", [110, 100, 160, 300], 30.0), ("21", [210, 100, 260, 300], 60.0)]))
+    res = {c["tooth_id"]: c for c in compare_visits(prev, curr)}
+    # +20 points is within 2q = 37.2 of measurement error: no claim of progression, not usable for grading
+    assert res["11"]["reliable"] and not res["11"]["change_detectable"]
+    assert res["11"]["label"] == "no change beyond measurement error"
+    assert res["21"]["change_detectable"] and res["21"]["label"] == "rapidly progressing"
+    assert usable_velocities(list(res.values())) == [res["21"]["velocity_pct_per_year"]]
+
+
+def test_live_comparison_without_calibration_or_registration_is_unreliable(monkeypatch):
+    from app.ml.uncertainty import calibration
+
+    monkeypatch.setattr(calibration, "current_q", lambda coverage=None: None)
+    prev = _live(_analysis("2025-01-01", [("11", [100, 100, 150, 300], 10.0)]))
+    curr = _live(_analysis("2026-01-01", [("11", [110, 100, 160, 300], 60.0)]))
+    c = compare_visits(prev, curr)[0]
+    assert not c["reliable"] and any("uncalibrated" in r for r in c["reliability_reasons"])
+
+    monkeypatch.setattr(calibration, "current_q", lambda coverage=None: 5.0)
+    # a score above the threshold is not enough: the registration itself must have succeeded
+    failed = {**curr, "alignment": {"confidence": 0.55, "status": "failed", "reason": "registered images do not look alike"}}
+    c = compare_visits(prev, failed)[0]
+    assert not c["reliable"] and any("could not be registered" in r for r in c["reliability_reasons"])
+    other_type = {**curr, "image_type": "panoramic"}
+    c = compare_visits(prev, other_type)[0]
+    assert not c["reliable"] and any("Different radiograph types" in r for r in c["reliability_reasons"])
 
 
 # ---------- quality + adversarial ----------
@@ -151,15 +222,55 @@ def test_adversarial_noise_is_detected():
 
 # ---------- risk ----------
 def test_risk_is_monotonic_and_explained():
-    base = {"age": 45, "smoking_status": "never", "diabetic": False, "hba1c": 5.4}
-    img = {"mean_bone_loss_pct": 10, "max_bone_loss_pct": 15, "affected_teeth": 1}
-    low = predict_patient_risk(base, img)
-    high = predict_patient_risk({**base, "smoking_status": "current", "cigarettes_per_day": 20, "diabetic": True,
-                                 "hba1c": 9.0}, {**img, "mean_bone_loss_pct": 40, "max_bone_loss_pct": 60})
+    base = {"age": 45, "sex": "female", "smoking_status": "never", "diabetic": False, "hba1c": 5.4}
+    low = predict_patient_risk(base)
+    high = predict_patient_risk({**base, "sex": "male", "smoking_status": "current", "cigarettes_per_day": 20,
+                                 "diabetic": True, "hba1c": 9.0})
     assert high["probability"] > low["probability"]
-    assert high["category"] in ("moderate", "high") and high["top_factors"]
-    assert high["model_type"] == "rule-assisted demo"
-    assert "not a calibrated clinical risk" in high["disclaimer"]
+    assert high["top_factors"] and not low["top_factors"]            # the reference person has no raising factors
+    assert high["model_type"] == "logistic regression trained on NHANES"
+    assert high["validation"]["roc_auc"] > 0.6 and high["validation"]["test_n"] > 1000
+    assert "does not use the radiograph" in high["disclaimer"]
+
+
+def test_risk_comes_from_the_trained_coefficients():
+    import math
+
+    from app.ml.fusion.multimodal_risk import load_model
+
+    m = load_model()["models"]["with_hba1c"]
+    c = {"age": 50, "sex": "male", "smoking_status": "current", "cigarettes_per_day": 9, "diabetic": True, "hba1c": 7.0}
+    x = {"age": 50, "male": 1, "current_smoker": 1, "former_smoker": 0, "log_cigs": math.log1p(9), "diabetic": 1, "hba1c": 7.0}
+    expected = 1 / (1 + math.exp(-(m["intercept"] + sum(m["coefficients"][k] * x[k] for k in m["features"]))))
+    assert predict_patient_risk(c)["probability"] == round(expected, 3)
+    no_lab = predict_patient_risk({**c, "hba1c": None})
+    assert no_lab["variant"] == "without_hba1c" and no_lab["probability"] is not None
+
+
+def test_risk_responds_to_each_clinical_toggle():
+    base = {"age": 45, "sex": "female", "smoking_status": "never", "diabetic": False, "hba1c": 5.4}
+    p0 = predict_patient_risk(base)
+    for change, factor in (({"smoking_status": "current", "cigarettes_per_day": 5}, "Current smoker"),
+                           ({"sex": "male"}, "Male sex"),
+                           ({"hba1c": 9.5}, "HbA1c level")):
+        r = predict_patient_risk({**base, **change})
+        assert r["probability"] > p0["probability"], change
+        assert factor in [f["factor"] for f in r["top_factors"]], change
+    assert predict_patient_risk({**base, "age": 70})["probability"] > p0["probability"]
+
+
+@pytest.mark.parametrize("clinical, missing", [
+    ({"sex": "female", "smoking_status": "never"}, "age"),
+    ({"age": 25, "sex": "female", "smoking_status": "never"}, "age 30 or over (the model was trained on adults aged 30+)"),
+    ({"age": 50, "smoking_status": "never"}, "sex (male / female)"),
+    ({"age": 50, "sex": "other", "smoking_status": "never"}, "sex (male / female)"),
+    ({"age": 50, "sex": "male"}, "smoking status"),
+    ({"age": 50, "sex": "male", "smoking_status": "current"}, "cigarettes per day"),
+])
+def test_risk_is_withheld_not_defaulted_when_inputs_are_missing(clinical, missing):
+    r = predict_patient_risk(clinical)
+    assert r["status"] == "insufficient_data" and r["probability"] is None and r["category"] is None
+    assert missing in r["missing_inputs"]
 
 
 def test_visit_date_parsing_in_progression():

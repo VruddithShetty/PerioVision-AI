@@ -14,6 +14,12 @@ class RadiographAligner:
     Handles robust temporal alignment of dental radiographs using 
     both Feature-based (ORB/ECC) and Landmark-based methods.
     """
+    MIN_INLIERS = 25
+    MIN_INLIER_RATIO = 0.5
+    SCALE_RANGE = (0.8, 1.25)
+    MAX_ROTATION_DEG = 20.0
+    MIN_NCC = 0.5
+
     def __init__(self, method="affine"):
         self.method = method
         self.orb = cv2.ORB_create(nfeatures=1500)
@@ -62,42 +68,65 @@ class RadiographAligner:
         kp1, des1 = self.orb.detectAndCompute(ref_gray, None)
         kp2, des2 = self.orb.detectAndCompute(mov_gray, None)
         
-        confidence = 0.0
-        if des1 is not None and des2 is not None and len(des1) >= 8 and len(des2) >= 8:
+        # Registration is accepted only if it is geometrically consistent AND the registered images
+        # actually look alike. Counting descriptor matches alone is not enough: radiographs of two
+        # different patients routinely give 30+ ratio-test matches (repetitive enamel / bone texture).
+        # On DenPAR periapical films, unrelated pairs gave <= 10 RANSAC inliers (inlier ratio <= 0.43);
+        # the same film re-exposed (rotated, scaled, noisy) gave >= 77 inliers, ratio >= 0.94, NCC >= 0.98.
+        # NOT yet validated on real follow-up pairs of the same patient (none available).
+        info = {"alignment_status": "failed", "alignment_confidence": 0.0, "low_alignment_confidence": True,
+                "metal_artifact_detected": metal_artifact, "ratio_test_matches": 0, "ransac_inliers": 0,
+                "inlier_ratio": 0.0, "scale": None, "rotation_deg": None, "ncc_after_warp": None, "reason": None}
+        matrix = None
+        if des1 is None or des2 is None or len(des1) < 8 or len(des2) < 8:
+            info["reason"] = "too few image features"
+        else:
             matches = self.flann.knnMatch(des2, des1, k=2)
-            good_matches = [m for m_res in matches if len(m_res) == 2 and m_res[0].distance < 0.75 * m_res[1].distance for m in [m_res[0]]]
-            num_matches = len(good_matches)
-            confidence = float(num_matches / 30.0) if num_matches >= 10 else 0.0
-            if confidence > 1.0:
-                confidence = 1.0
-            
-            if metal_artifact:
-                confidence *= 0.75  # Lower confidence due to metallic artifact interference
-
-            if confidence >= 0.6:
-                src_pts = np.float32([kp2[m.queryIdx].pt for m in good_matches]).reshape(-1, 1, 2)
-                dst_pts = np.float32([kp1[m.trainIdx].pt for m in good_matches]).reshape(-1, 1, 2)
-                matrix, _ = cv2.estimateAffinePartial2D(src_pts, dst_pts, method=cv2.RANSAC)
-                if matrix is not None:
+            good = [m[0] for m in matches if len(m) == 2 and m[0].distance < 0.75 * m[1].distance]
+            info["ratio_test_matches"] = len(good)
+            if len(good) < self.MIN_INLIERS:
+                info["reason"] = "too few matching features"
+            else:
+                src = np.float32([kp2[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
+                dst = np.float32([kp1[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
+                matrix, inliers = cv2.estimateAffinePartial2D(src, dst, method=cv2.RANSAC, ransacReprojThreshold=5.0)
+                if matrix is None:
+                    info["reason"] = "no consistent transform"
+                else:
+                    n_in = int(inliers.sum())
+                    scale = float(np.hypot(matrix[0, 0], matrix[1, 0]))
+                    angle = float(np.degrees(np.arctan2(matrix[1, 0], matrix[0, 0])))
                     h, w = ref_gray.shape
-                    aligned = cv2.warpAffine(mov_gray, matrix, (w, h), flags=cv2.INTER_LANCZOS4)
-                    self.alignment_status = "success"
-                    self.last_alignment_confidence = confidence
-                    self.last_alignment_info = {
-                        "alignment_status": "success",
-                        "alignment_confidence": round(confidence, 3),
-                        "low_alignment_confidence": confidence < 0.6,
-                        "metal_artifact_detected": metal_artifact
-                    }
-                    return aligned, matrix
+                    aligned = cv2.warpAffine(mov_gray, matrix, (w, h), flags=cv2.INTER_LINEAR)
+                    valid = cv2.warpAffine(np.ones_like(mov_gray), matrix, (w, h)) > 0
+                    ncc = None
+                    if valid.mean() >= 0.3:
+                        a, b = ref_gray[valid].astype(float), aligned[valid].astype(float)
+                        if a.std() > 0 and b.std() > 0:
+                            ncc = float(np.corrcoef(a, b)[0, 1])
+                    info.update({"ransac_inliers": n_in, "inlier_ratio": round(n_in / len(good), 3),
+                                 "scale": round(scale, 3), "rotation_deg": round(angle, 1),
+                                 "ncc_after_warp": round(ncc, 3) if ncc is not None else None})
+                    problems = [msg for bad, msg in (
+                        (n_in < self.MIN_INLIERS, f"only {n_in} geometrically consistent matches"),
+                        (n_in / len(good) < self.MIN_INLIER_RATIO, "most matches are inconsistent"),
+                        (not self.SCALE_RANGE[0] <= scale <= self.SCALE_RANGE[1], f"implausible scale {scale:.2f}"),
+                        (abs(angle) > self.MAX_ROTATION_DEG, f"implausible rotation {angle:.0f} degrees"),
+                        (ncc is None or ncc < self.MIN_NCC, "registered images do not look alike"),
+                    ) if bad]
+                    if problems:
+                        info["reason"] = "; ".join(problems)
+                    else:
+                        # Confidence = how alike the registered images are (normalised cross-correlation).
+                        info.update({"alignment_status": "success", "alignment_confidence": round(ncc, 3),
+                                     "low_alignment_confidence": False})
+                        self.alignment_status = "success"
+                        self.last_alignment_confidence = ncc
+                        self.last_alignment_info = info
+                        return aligned, matrix
         self.alignment_status = "failed"
-        self.last_alignment_confidence = confidence
-        self.last_alignment_info = {
-            "alignment_status": "failed",
-            "alignment_confidence": round(confidence, 3),
-            "low_alignment_confidence": True,
-            "metal_artifact_detected": metal_artifact
-        }
+        self.last_alignment_confidence = 0.0
+        self.last_alignment_info = info
         return moving_image, np.eye(2, 3, dtype=np.float32)
 
     def align_by_landmarks(self, source_image, target_image, source_landmarks, target_landmarks):

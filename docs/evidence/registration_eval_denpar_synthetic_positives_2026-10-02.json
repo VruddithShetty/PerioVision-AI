@@ -1,0 +1,7647 @@
+{
+  "same_patient_pairs": 100,
+  "acceptance_rate_same_patient": 0.95,
+  "different_patient_pairs": 300,
+  "false_acceptance_rate_different_patients": 0.0,
+  "pairs": [
+    {
+      "image_a": "a_0.png",
+      "image_b": "b_0.png",
+      "same_patient": 1,
+      "confidence": 0.985,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 583,
+        "inlier_ratio": 0.98,
+        "scale": 0.954,
+        "rotation_deg": -2.2,
+        "ncc_after_warp": 0.985,
+        "tooth_overlap": 0.881
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.953013,
+          0.036427,
+          -25.384797
+        ],
+        [
+          -0.036427,
+          0.953013,
+          3.492449
+        ]
+      ]
+    },
+    {
+      "image_a": "a_1.png",
+      "image_b": "b_1.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 96,
+        "inlier_ratio": 0.8,
+        "scale": 1.088,
+        "rotation_deg": 1.5,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.917
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.087128,
+          -0.028947,
+          -39.460998
+        ],
+        [
+          0.028947,
+          1.087128,
+          -54.136947
+        ]
+      ]
+    },
+    {
+      "image_a": "a_2.png",
+      "image_b": "b_2.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 73,
+        "inlier_ratio": 0.689,
+        "scale": 1.083,
+        "rotation_deg": -5.0,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.815
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.079074,
+          0.094056,
+          -110.550255
+        ],
+        [
+          -0.094056,
+          1.079074,
+          -45.227108
+        ]
+      ]
+    },
+    {
+      "image_a": "a_3.png",
+      "image_b": "b_3.png",
+      "same_patient": 1,
+      "confidence": 0.992,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 101,
+        "inlier_ratio": 0.808,
+        "scale": 0.921,
+        "rotation_deg": 3.4,
+        "ncc_after_warp": 0.992,
+        "tooth_overlap": 0.866
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.919744,
+          -0.054858,
+          106.361607
+        ],
+        [
+          0.054858,
+          0.919744,
+          -13.154727
+        ]
+      ]
+    },
+    {
+      "image_a": "a_4.png",
+      "image_b": "b_4.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 234,
+        "inlier_ratio": 0.9,
+        "scale": 1.053,
+        "rotation_deg": -0.9,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.971
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.05256,
+          0.016015,
+          -28.490119
+        ],
+        [
+          -0.016015,
+          1.05256,
+          -21.310089
+        ]
+      ]
+    },
+    {
+      "image_a": "a_5.png",
+      "image_b": "b_5.png",
+      "same_patient": 1,
+      "confidence": 0.995,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 83,
+        "inlier_ratio": 0.856,
+        "scale": 0.987,
+        "rotation_deg": -4.9,
+        "ncc_after_warp": 0.995,
+        "tooth_overlap": 0.815
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.982895,
+          0.084407,
+          -38.857545
+        ],
+        [
+          -0.084407,
+          0.982895,
+          88.540588
+        ]
+      ]
+    },
+    {
+      "image_a": "a_6.png",
+      "image_b": "b_6.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 121,
+        "inlier_ratio": 0.688,
+        "scale": 1.054,
+        "rotation_deg": -0.1,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.956
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.053637,
+          0.002033,
+          -11.666127
+        ],
+        [
+          -0.002033,
+          1.053637,
+          -13.783001
+        ]
+      ]
+    },
+    {
+      "image_a": "a_7.png",
+      "image_b": "b_7.png",
+      "same_patient": 1,
+      "confidence": 0.99,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 250,
+        "inlier_ratio": 0.977,
+        "scale": 0.921,
+        "rotation_deg": 1.7,
+        "ncc_after_warp": 0.99,
+        "tooth_overlap": 0.938
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.920788,
+          -0.027332,
+          97.532945
+        ],
+        [
+          0.027332,
+          0.920788,
+          3.762983
+        ]
+      ]
+    },
+    {
+      "image_a": "a_8.png",
+      "image_b": "b_8.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 251,
+        "inlier_ratio": 0.988,
+        "scale": 0.989,
+        "rotation_deg": 2.0,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.891
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.988182,
+          -0.035255,
+          53.754243
+        ],
+        [
+          0.035255,
+          0.988182,
+          -48.621661
+        ]
+      ]
+    },
+    {
+      "image_a": "a_9.png",
+      "image_b": "b_9.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 274,
+        "inlier_ratio": 0.887,
+        "scale": 0.99,
+        "rotation_deg": 3.8,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.854
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.987917,
+          -0.065045,
+          50.916181
+        ],
+        [
+          0.065045,
+          0.987917,
+          -15.121929
+        ]
+      ]
+    },
+    {
+      "image_a": "a_10.png",
+      "image_b": "b_10.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 151,
+        "inlier_ratio": 0.858,
+        "scale": 0.986,
+        "rotation_deg": -5.6,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.717
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.980861,
+          0.097003,
+          -49.822171
+        ],
+        [
+          -0.097003,
+          0.980861,
+          48.359383
+        ]
+      ]
+    },
+    {
+      "image_a": "a_11.png",
+      "image_b": "b_11.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 54,
+        "inlier_ratio": 0.806,
+        "scale": 0.957,
+        "rotation_deg": -6.9,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.823
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.949932,
+          0.114745,
+          -69.140136
+        ],
+        [
+          -0.114745,
+          0.949932,
+          74.099128
+        ]
+      ]
+    },
+    {
+      "image_a": "a_12.png",
+      "image_b": "b_12.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 49,
+        "inlier_ratio": 0.557,
+        "scale": 1.076,
+        "rotation_deg": -3.0,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.93
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.074375,
+          0.055967,
+          -32.654678
+        ],
+        [
+          -0.055967,
+          1.074375,
+          -0.547309
+        ]
+      ]
+    },
+    {
+      "image_a": "a_13.png",
+      "image_b": "b_13.png",
+      "same_patient": 1,
+      "confidence": 0.988,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 298,
+        "inlier_ratio": 0.977,
+        "scale": 0.903,
+        "rotation_deg": -6.7,
+        "ncc_after_warp": 0.988,
+        "tooth_overlap": 0.884
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.897055,
+          0.106085,
+          17.626354
+        ],
+        [
+          -0.106085,
+          0.897055,
+          120.041506
+        ]
+      ]
+    },
+    {
+      "image_a": "a_14.png",
+      "image_b": "b_14.png",
+      "same_patient": 1,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "teeth do not line up after registration",
+      "evidence": {
+        "ransac_inliers": 58,
+        "inlier_ratio": 0.753,
+        "scale": 1.076,
+        "rotation_deg": -1.7,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.0
+      }
+    },
+    {
+      "image_a": "a_15.png",
+      "image_b": "b_15.png",
+      "same_patient": 1,
+      "confidence": 0.996,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 379,
+        "inlier_ratio": 0.992,
+        "scale": 0.989,
+        "rotation_deg": 1.8,
+        "ncc_after_warp": 0.996,
+        "tooth_overlap": 0.968
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.988277,
+          -0.031594,
+          -11.522436
+        ],
+        [
+          0.031594,
+          0.988277,
+          -21.507656
+        ]
+      ]
+    },
+    {
+      "image_a": "a_16.png",
+      "image_b": "b_16.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 93,
+        "inlier_ratio": 0.861,
+        "scale": 0.959,
+        "rotation_deg": -7.5,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.743
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.951184,
+          0.124402,
+          -13.531996
+        ],
+        [
+          -0.124402,
+          0.951184,
+          98.315416
+        ]
+      ]
+    },
+    {
+      "image_a": "a_17.png",
+      "image_b": "b_17.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 296,
+        "inlier_ratio": 0.983,
+        "scale": 0.926,
+        "rotation_deg": -1.8,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.913
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.925583,
+          0.029469,
+          1.773125
+        ],
+        [
+          -0.029469,
+          0.925583,
+          43.561824
+        ]
+      ]
+    },
+    {
+      "image_a": "a_18.png",
+      "image_b": "b_18.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 62,
+        "inlier_ratio": 0.816,
+        "scale": 1.092,
+        "rotation_deg": 7.5,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.705
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.083177,
+          -0.142144,
+          1.046266
+        ],
+        [
+          0.142144,
+          1.083177,
+          -93.250506
+        ]
+      ]
+    },
+    {
+      "image_a": "a_19.png",
+      "image_b": "b_19.png",
+      "same_patient": 1,
+      "confidence": 0.993,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 67,
+        "inlier_ratio": 0.807,
+        "scale": 1.08,
+        "rotation_deg": -5.8,
+        "ncc_after_warp": 0.993,
+        "tooth_overlap": 0.86
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.074933,
+          0.108445,
+          -54.927296
+        ],
+        [
+          -0.108445,
+          1.074933,
+          46.051064
+        ]
+      ]
+    },
+    {
+      "image_a": "a_20.png",
+      "image_b": "b_20.png",
+      "same_patient": 1,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "teeth do not line up after registration",
+      "evidence": {
+        "ransac_inliers": 175,
+        "inlier_ratio": 0.893,
+        "scale": 1.093,
+        "rotation_deg": -7.8,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.202
+      }
+    },
+    {
+      "image_a": "a_21.png",
+      "image_b": "b_21.png",
+      "same_patient": 1,
+      "confidence": 0.992,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 191,
+        "inlier_ratio": 0.955,
+        "scale": 1.054,
+        "rotation_deg": -7.1,
+        "ncc_after_warp": 0.992,
+        "tooth_overlap": 0.834
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.045669,
+          0.130076,
+          -107.655793
+        ],
+        [
+          -0.130076,
+          1.045669,
+          68.258833
+        ]
+      ]
+    },
+    {
+      "image_a": "a_22.png",
+      "image_b": "b_22.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 273,
+        "inlier_ratio": 0.948,
+        "scale": 0.936,
+        "rotation_deg": 1.1,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.979
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.9357,
+          -0.017367,
+          69.687061
+        ],
+        [
+          0.017367,
+          0.9357,
+          39.508909
+        ]
+      ]
+    },
+    {
+      "image_a": "a_23.png",
+      "image_b": "b_23.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 186,
+        "inlier_ratio": 0.939,
+        "scale": 0.956,
+        "rotation_deg": 1.8,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.9
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.955178,
+          -0.030366,
+          25.09589
+        ],
+        [
+          0.030366,
+          0.955178,
+          2.813906
+        ]
+      ]
+    },
+    {
+      "image_a": "a_24.png",
+      "image_b": "b_24.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 113,
+        "inlier_ratio": 0.831,
+        "scale": 1.05,
+        "rotation_deg": -6.8,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.765
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.042631,
+          0.124936,
+          -94.502704
+        ],
+        [
+          -0.124936,
+          1.042631,
+          51.390203
+        ]
+      ]
+    },
+    {
+      "image_a": "a_25.png",
+      "image_b": "b_25.png",
+      "same_patient": 1,
+      "confidence": 0.995,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 72,
+        "inlier_ratio": 0.889,
+        "scale": 0.91,
+        "rotation_deg": -3.7,
+        "ncc_after_warp": 0.995,
+        "tooth_overlap": 0.869
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.908411,
+          0.059398,
+          61.113561
+        ],
+        [
+          -0.059398,
+          0.908411,
+          86.92375
+        ]
+      ]
+    },
+    {
+      "image_a": "a_26.png",
+      "image_b": "b_26.png",
+      "same_patient": 1,
+      "confidence": 0.994,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 124,
+        "inlier_ratio": 0.855,
+        "scale": 0.928,
+        "rotation_deg": -4.6,
+        "ncc_after_warp": 0.994,
+        "tooth_overlap": 0.851
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.925137,
+          0.074885,
+          38.621368
+        ],
+        [
+          -0.074885,
+          0.925137,
+          73.764469
+        ]
+      ]
+    },
+    {
+      "image_a": "a_27.png",
+      "image_b": "b_27.png",
+      "same_patient": 1,
+      "confidence": 0.994,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 167,
+        "inlier_ratio": 0.949,
+        "scale": 1.095,
+        "rotation_deg": 6.0,
+        "ncc_after_warp": 0.994,
+        "tooth_overlap": 0.755
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.089412,
+          -0.114424,
+          -14.736649
+        ],
+        [
+          0.114424,
+          1.089412,
+          -138.683205
+        ]
+      ]
+    },
+    {
+      "image_a": "a_28.png",
+      "image_b": "b_28.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 194,
+        "inlier_ratio": 0.928,
+        "scale": 1.064,
+        "rotation_deg": 1.2,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.925
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.063835,
+          -0.022256,
+          -35.706769
+        ],
+        [
+          0.022256,
+          1.063835,
+          -14.592678
+        ]
+      ]
+    },
+    {
+      "image_a": "a_29.png",
+      "image_b": "b_29.png",
+      "same_patient": 1,
+      "confidence": 0.992,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 502,
+        "inlier_ratio": 0.971,
+        "scale": 1.037,
+        "rotation_deg": 3.3,
+        "ncc_after_warp": 0.992,
+        "tooth_overlap": 0.922
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.035367,
+          -0.059935,
+          42.02175
+        ],
+        [
+          0.059935,
+          1.035367,
+          -83.197892
+        ]
+      ]
+    },
+    {
+      "image_a": "a_30.png",
+      "image_b": "b_30.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 110,
+        "inlier_ratio": 0.957,
+        "scale": 0.907,
+        "rotation_deg": 7.6,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.862
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.899305,
+          -0.119339,
+          127.935648
+        ],
+        [
+          0.119339,
+          0.899305,
+          -28.078473
+        ]
+      ]
+    },
+    {
+      "image_a": "a_31.png",
+      "image_b": "b_31.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 325,
+        "inlier_ratio": 0.97,
+        "scale": 0.992,
+        "rotation_deg": 7.6,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.867
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.983056,
+          -0.130735,
+          85.481776
+        ],
+        [
+          0.130735,
+          0.983056,
+          -100.271906
+        ]
+      ]
+    },
+    {
+      "image_a": "a_32.png",
+      "image_b": "b_32.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 217,
+        "inlier_ratio": 0.828,
+        "scale": 1.052,
+        "rotation_deg": -0.1,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.984
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.052142,
+          0.002001,
+          -23.46995
+        ],
+        [
+          -0.002001,
+          1.052142,
+          10.394761
+        ]
+      ]
+    },
+    {
+      "image_a": "a_33.png",
+      "image_b": "b_33.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 51,
+        "inlier_ratio": 0.75,
+        "scale": 1.004,
+        "rotation_deg": -0.5,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.935
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.003624,
+          0.008188,
+          -21.439161
+        ],
+        [
+          -0.008188,
+          1.003624,
+          -5.128657
+        ]
+      ]
+    },
+    {
+      "image_a": "a_34.png",
+      "image_b": "b_34.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 183,
+        "inlier_ratio": 0.968,
+        "scale": 0.939,
+        "rotation_deg": -4.5,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.769
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.936249,
+          0.07442,
+          41.257881
+        ],
+        [
+          -0.07442,
+          0.936249,
+          65.386332
+        ]
+      ]
+    },
+    {
+      "image_a": "a_35.png",
+      "image_b": "b_35.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 202,
+        "inlier_ratio": 0.922,
+        "scale": 1.083,
+        "rotation_deg": 4.2,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.791
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.080448,
+          -0.079228,
+          -8.247744
+        ],
+        [
+          0.079228,
+          1.080448,
+          -114.923057
+        ]
+      ]
+    },
+    {
+      "image_a": "a_36.png",
+      "image_b": "b_36.png",
+      "same_patient": 1,
+      "confidence": 0.996,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 166,
+        "inlier_ratio": 0.888,
+        "scale": 0.907,
+        "rotation_deg": -5.7,
+        "ncc_after_warp": 0.996,
+        "tooth_overlap": 0.79
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.902226,
+          0.089395,
+          -33.669695
+        ],
+        [
+          -0.089395,
+          0.902226,
+          69.231428
+        ]
+      ]
+    },
+    {
+      "image_a": "a_37.png",
+      "image_b": "b_37.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 568,
+        "inlier_ratio": 0.974,
+        "scale": 1.004,
+        "rotation_deg": -5.8,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.74
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.998948,
+          0.101579,
+          -43.697904
+        ],
+        [
+          -0.101579,
+          0.998948,
+          39.6157
+        ]
+      ]
+    },
+    {
+      "image_a": "a_38.png",
+      "image_b": "b_38.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 160,
+        "inlier_ratio": 0.894,
+        "scale": 0.954,
+        "rotation_deg": 3.9,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.923
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.95166,
+          -0.064084,
+          61.07005
+        ],
+        [
+          0.064084,
+          0.95166,
+          4.050435
+        ]
+      ]
+    },
+    {
+      "image_a": "a_39.png",
+      "image_b": "b_39.png",
+      "same_patient": 1,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 13 geometrically consistent matches; most matches are inconsistent",
+      "evidence": {
+        "ransac_inliers": 13,
+        "inlier_ratio": 0.419,
+        "scale": 1.093,
+        "rotation_deg": 4.3,
+        "ncc_after_warp": 0.999
+      }
+    },
+    {
+      "image_a": "a_40.png",
+      "image_b": "b_40.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 70,
+        "inlier_ratio": 0.588,
+        "scale": 1.033,
+        "rotation_deg": -1.8,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.899
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.032394,
+          0.032785,
+          -13.816724
+        ],
+        [
+          -0.032785,
+          1.032394,
+          16.066772
+        ]
+      ]
+    },
+    {
+      "image_a": "a_41.png",
+      "image_b": "b_41.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 170,
+        "inlier_ratio": 0.909,
+        "scale": 1.012,
+        "rotation_deg": 2.0,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.943
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.011672,
+          -0.035914,
+          2.945084
+        ],
+        [
+          0.035914,
+          1.011672,
+          -62.982512
+        ]
+      ]
+    },
+    {
+      "image_a": "a_42.png",
+      "image_b": "b_42.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 235,
+        "inlier_ratio": 0.911,
+        "scale": 0.974,
+        "rotation_deg": -5.6,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.791
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.96963,
+          0.094773,
+          -9.356356
+        ],
+        [
+          -0.094773,
+          0.96963,
+          97.590663
+        ]
+      ]
+    },
+    {
+      "image_a": "a_43.png",
+      "image_b": "b_43.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 129,
+        "inlier_ratio": 0.843,
+        "scale": 0.988,
+        "rotation_deg": 1.6,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.921
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.987812,
+          -0.028318,
+          42.797601
+        ],
+        [
+          0.028318,
+          0.987812,
+          -5.556249
+        ]
+      ]
+    },
+    {
+      "image_a": "a_44.png",
+      "image_b": "b_44.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 88,
+        "inlier_ratio": 0.652,
+        "scale": 1.046,
+        "rotation_deg": 6.7,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.637
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.038928,
+          -0.121234,
+          70.737325
+        ],
+        [
+          0.121234,
+          1.038928,
+          -56.670153
+        ]
+      ]
+    },
+    {
+      "image_a": "a_45.png",
+      "image_b": "b_45.png",
+      "same_patient": 1,
+      "confidence": 0.993,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 84,
+        "inlier_ratio": 0.757,
+        "scale": 1.028,
+        "rotation_deg": -2.0,
+        "ncc_after_warp": 0.993,
+        "tooth_overlap": 0.917
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.027147,
+          0.035008,
+          -68.931448
+        ],
+        [
+          -0.035008,
+          1.027147,
+          -26.128412
+        ]
+      ]
+    },
+    {
+      "image_a": "a_46.png",
+      "image_b": "b_46.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 119,
+        "inlier_ratio": 0.881,
+        "scale": 1.002,
+        "rotation_deg": 7.3,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.823
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.993501,
+          -0.126856,
+          73.512335
+        ],
+        [
+          0.126856,
+          0.993501,
+          -82.654239
+        ]
+      ]
+    },
+    {
+      "image_a": "a_47.png",
+      "image_b": "b_47.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 133,
+        "inlier_ratio": 0.911,
+        "scale": 1.049,
+        "rotation_deg": -5.8,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.852
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.043274,
+          0.106768,
+          -57.737521
+        ],
+        [
+          -0.106768,
+          1.043274,
+          43.206756
+        ]
+      ]
+    },
+    {
+      "image_a": "a_48.png",
+      "image_b": "b_48.png",
+      "same_patient": 1,
+      "confidence": 0.996,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 331,
+        "inlier_ratio": 0.957,
+        "scale": 0.962,
+        "rotation_deg": -1.3,
+        "ncc_after_warp": 0.996,
+        "tooth_overlap": 0.948
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.961959,
+          0.021498,
+          38.017223
+        ],
+        [
+          -0.021498,
+          0.961959,
+          15.38871
+        ]
+      ]
+    },
+    {
+      "image_a": "a_49.png",
+      "image_b": "b_49.png",
+      "same_patient": 1,
+      "confidence": 0.995,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 120,
+        "inlier_ratio": 0.789,
+        "scale": 1.052,
+        "rotation_deg": -6.1,
+        "ncc_after_warp": 0.995,
+        "tooth_overlap": 0.817
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.046366,
+          0.112351,
+          -105.011562
+        ],
+        [
+          -0.112351,
+          1.046366,
+          22.802603
+        ]
+      ]
+    },
+    {
+      "image_a": "a_50.png",
+      "image_b": "b_50.png",
+      "same_patient": 1,
+      "confidence": 0.996,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 192,
+        "inlier_ratio": 0.928,
+        "scale": 0.934,
+        "rotation_deg": -0.8,
+        "ncc_after_warp": 0.996,
+        "tooth_overlap": 0.967
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.934262,
+          0.012866,
+          33.924243
+        ],
+        [
+          -0.012866,
+          0.934262,
+          57.787082
+        ]
+      ]
+    },
+    {
+      "image_a": "a_51.png",
+      "image_b": "b_51.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 114,
+        "inlier_ratio": 0.731,
+        "scale": 1.077,
+        "rotation_deg": 1.1,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.944
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.076927,
+          -0.020071,
+          -72.825369
+        ],
+        [
+          0.020071,
+          1.076927,
+          -22.277363
+        ]
+      ]
+    },
+    {
+      "image_a": "a_52.png",
+      "image_b": "b_52.png",
+      "same_patient": 1,
+      "confidence": 0.996,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 422,
+        "inlier_ratio": 0.919,
+        "scale": 1.039,
+        "rotation_deg": -4.9,
+        "ncc_after_warp": 0.996,
+        "tooth_overlap": 0.757
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.035618,
+          0.088882,
+          -93.223288
+        ],
+        [
+          -0.088882,
+          1.035618,
+          26.595362
+        ]
+      ]
+    },
+    {
+      "image_a": "a_53.png",
+      "image_b": "b_53.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 229,
+        "inlier_ratio": 0.905,
+        "scale": 1.042,
+        "rotation_deg": 1.0,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.815
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.042121,
+          -0.018249,
+          -55.719477
+        ],
+        [
+          0.018249,
+          1.042121,
+          -45.060359
+        ]
+      ]
+    },
+    {
+      "image_a": "a_54.png",
+      "image_b": "b_54.png",
+      "same_patient": 1,
+      "confidence": 0.995,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 122,
+        "inlier_ratio": 0.803,
+        "scale": 0.913,
+        "rotation_deg": -6.4,
+        "ncc_after_warp": 0.995,
+        "tooth_overlap": 0.747
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.90763,
+          0.101504,
+          -27.713811
+        ],
+        [
+          -0.101504,
+          0.90763,
+          100.786441
+        ]
+      ]
+    },
+    {
+      "image_a": "a_55.png",
+      "image_b": "b_55.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 261,
+        "inlier_ratio": 0.989,
+        "scale": 0.975,
+        "rotation_deg": 3.2,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.889
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.973256,
+          -0.055011,
+          8.082024
+        ],
+        [
+          0.055011,
+          0.973256,
+          -36.00431
+        ]
+      ]
+    },
+    {
+      "image_a": "a_56.png",
+      "image_b": "b_56.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 299,
+        "inlier_ratio": 0.946,
+        "scale": 0.978,
+        "rotation_deg": 3.1,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.824
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.976891,
+          -0.053233,
+          32.298408
+        ],
+        [
+          0.053233,
+          0.976891,
+          11.434837
+        ]
+      ]
+    },
+    {
+      "image_a": "a_57.png",
+      "image_b": "b_57.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 202,
+        "inlier_ratio": 0.957,
+        "scale": 1.015,
+        "rotation_deg": 0.6,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.981
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.015259,
+          -0.010783,
+          -40.865285
+        ],
+        [
+          0.010783,
+          1.015259,
+          16.363178
+        ]
+      ]
+    },
+    {
+      "image_a": "a_58.png",
+      "image_b": "b_58.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 169,
+        "inlier_ratio": 0.816,
+        "scale": 1.072,
+        "rotation_deg": 2.1,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.879
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.0713,
+          -0.040214,
+          3.622301
+        ],
+        [
+          0.040214,
+          1.0713,
+          -55.796149
+        ]
+      ]
+    },
+    {
+      "image_a": "a_59.png",
+      "image_b": "b_59.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 124,
+        "inlier_ratio": 0.81,
+        "scale": 0.935,
+        "rotation_deg": 1.1,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.965
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.934693,
+          -0.017408,
+          33.139078
+        ],
+        [
+          0.017408,
+          0.934693,
+          5.708179
+        ]
+      ]
+    },
+    {
+      "image_a": "a_60.png",
+      "image_b": "b_60.png",
+      "same_patient": 1,
+      "confidence": 0.996,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 120,
+        "inlier_ratio": 0.682,
+        "scale": 1.07,
+        "rotation_deg": -2.7,
+        "ncc_after_warp": 0.996,
+        "tooth_overlap": 0.908
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.06874,
+          0.050376,
+          -101.716967
+        ],
+        [
+          -0.050376,
+          1.06874,
+          22.990859
+        ]
+      ]
+    },
+    {
+      "image_a": "a_61.png",
+      "image_b": "b_61.png",
+      "same_patient": 1,
+      "confidence": 0.996,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 45,
+        "inlier_ratio": 0.529,
+        "scale": 1.083,
+        "rotation_deg": 5.9,
+        "ncc_after_warp": 0.996,
+        "tooth_overlap": 0.8
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.077099,
+          -0.111924,
+          -3.949925
+        ],
+        [
+          0.111924,
+          1.077099,
+          -119.102768
+        ]
+      ]
+    },
+    {
+      "image_a": "a_62.png",
+      "image_b": "b_62.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 86,
+        "inlier_ratio": 0.915,
+        "scale": 1.08,
+        "rotation_deg": 3.3,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.924
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.0778,
+          -0.061913,
+          0.763399
+        ],
+        [
+          0.061913,
+          1.0778,
+          -53.103198
+        ]
+      ]
+    },
+    {
+      "image_a": "a_63.png",
+      "image_b": "b_63.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 116,
+        "inlier_ratio": 0.885,
+        "scale": 1.098,
+        "rotation_deg": 4.4,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.832
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.094748,
+          -0.084227,
+          -8.053376
+        ],
+        [
+          0.084227,
+          1.094748,
+          -128.810525
+        ]
+      ]
+    },
+    {
+      "image_a": "a_64.png",
+      "image_b": "b_64.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 140,
+        "inlier_ratio": 0.881,
+        "scale": 1.028,
+        "rotation_deg": -6.7,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.757
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.021215,
+          0.119767,
+          -100.014523
+        ],
+        [
+          -0.119767,
+          1.021215,
+          45.803229
+        ]
+      ]
+    },
+    {
+      "image_a": "a_65.png",
+      "image_b": "b_65.png",
+      "same_patient": 1,
+      "confidence": 0.988,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 124,
+        "inlier_ratio": 0.954,
+        "scale": 0.954,
+        "rotation_deg": 7.8,
+        "ncc_after_warp": 0.988,
+        "tooth_overlap": 0.843
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.944846,
+          -0.129588,
+          98.64497
+        ],
+        [
+          0.129588,
+          0.944846,
+          -18.931816
+        ]
+      ]
+    },
+    {
+      "image_a": "a_66.png",
+      "image_b": "b_66.png",
+      "same_patient": 1,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "most matches are inconsistent",
+      "evidence": {
+        "ransac_inliers": 32,
+        "inlier_ratio": 0.41,
+        "scale": 1.079,
+        "rotation_deg": 7.7,
+        "ncc_after_warp": 0.997
+      }
+    },
+    {
+      "image_a": "a_67.png",
+      "image_b": "b_67.png",
+      "same_patient": 1,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "teeth do not line up after registration",
+      "evidence": {
+        "ransac_inliers": 75,
+        "inlier_ratio": 0.798,
+        "scale": 1.03,
+        "rotation_deg": -4.2,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.484
+      }
+    },
+    {
+      "image_a": "a_68.png",
+      "image_b": "b_68.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 63,
+        "inlier_ratio": 0.818,
+        "scale": 1.072,
+        "rotation_deg": 3.7,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.911
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.069338,
+          -0.06995,
+          15.621843
+        ],
+        [
+          0.06995,
+          1.069338,
+          -108.588647
+        ]
+      ]
+    },
+    {
+      "image_a": "a_69.png",
+      "image_b": "b_69.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 97,
+        "inlier_ratio": 0.802,
+        "scale": 1.097,
+        "rotation_deg": 2.1,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.95
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.096607,
+          -0.039461,
+          -12.187969
+        ],
+        [
+          0.039461,
+          1.096607,
+          -66.708901
+        ]
+      ]
+    },
+    {
+      "image_a": "a_70.png",
+      "image_b": "b_70.png",
+      "same_patient": 1,
+      "confidence": 0.996,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 265,
+        "inlier_ratio": 0.957,
+        "scale": 0.913,
+        "rotation_deg": 5.3,
+        "ncc_after_warp": 0.996,
+        "tooth_overlap": 0.885
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.909168,
+          -0.083566,
+          107.138739
+        ],
+        [
+          0.083566,
+          0.909168,
+          -24.007049
+        ]
+      ]
+    },
+    {
+      "image_a": "a_71.png",
+      "image_b": "b_71.png",
+      "same_patient": 1,
+      "confidence": 0.992,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 119,
+        "inlier_ratio": 0.804,
+        "scale": 1.058,
+        "rotation_deg": 0.7,
+        "ncc_after_warp": 0.992,
+        "tooth_overlap": 0.944
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.057746,
+          -0.013592,
+          -1.424004
+        ],
+        [
+          0.013592,
+          1.057746,
+          -68.148972
+        ]
+      ]
+    },
+    {
+      "image_a": "a_72.png",
+      "image_b": "b_72.png",
+      "same_patient": 1,
+      "confidence": 0.996,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 315,
+        "inlier_ratio": 0.981,
+        "scale": 1.082,
+        "rotation_deg": -3.2,
+        "ncc_after_warp": 0.996,
+        "tooth_overlap": 0.895
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.080561,
+          0.059767,
+          -62.684198
+        ],
+        [
+          -0.059767,
+          1.080561,
+          38.159621
+        ]
+      ]
+    },
+    {
+      "image_a": "a_73.png",
+      "image_b": "b_73.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 162,
+        "inlier_ratio": 0.757,
+        "scale": 1.087,
+        "rotation_deg": -1.6,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.853
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.087089,
+          0.029698,
+          -65.529352
+        ],
+        [
+          -0.029698,
+          1.087089,
+          -13.372898
+        ]
+      ]
+    },
+    {
+      "image_a": "a_74.png",
+      "image_b": "b_74.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 77,
+        "inlier_ratio": 0.726,
+        "scale": 1.046,
+        "rotation_deg": 5.1,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.817
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.041496,
+          -0.092627,
+          40.771408
+        ],
+        [
+          0.092627,
+          1.041496,
+          -84.17991
+        ]
+      ]
+    },
+    {
+      "image_a": "a_75.png",
+      "image_b": "b_75.png",
+      "same_patient": 1,
+      "confidence": 0.995,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 113,
+        "inlier_ratio": 0.897,
+        "scale": 0.946,
+        "rotation_deg": 4.0,
+        "ncc_after_warp": 0.995,
+        "tooth_overlap": 0.805
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.943497,
+          -0.06643,
+          46.204444
+        ],
+        [
+          0.06643,
+          0.943497,
+          -36.965766
+        ]
+      ]
+    },
+    {
+      "image_a": "a_76.png",
+      "image_b": "b_76.png",
+      "same_patient": 1,
+      "confidence": 0.995,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 180,
+        "inlier_ratio": 0.963,
+        "scale": 0.93,
+        "rotation_deg": 6.7,
+        "ncc_after_warp": 0.995,
+        "tooth_overlap": 0.787
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.923881,
+          -0.109033,
+          85.903435
+        ],
+        [
+          0.109033,
+          0.923881,
+          -45.218581
+        ]
+      ]
+    },
+    {
+      "image_a": "a_77.png",
+      "image_b": "b_77.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 129,
+        "inlier_ratio": 0.838,
+        "scale": 1.019,
+        "rotation_deg": -7.9,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.77
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.008923,
+          0.139437,
+          -66.782591
+        ],
+        [
+          -0.139437,
+          1.008923,
+          63.608015
+        ]
+      ]
+    },
+    {
+      "image_a": "a_78.png",
+      "image_b": "b_78.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 182,
+        "inlier_ratio": 0.984,
+        "scale": 0.982,
+        "rotation_deg": 3.8,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.879
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.980076,
+          -0.064718,
+          12.201353
+        ],
+        [
+          0.064718,
+          0.980076,
+          -17.576573
+        ]
+      ]
+    },
+    {
+      "image_a": "a_79.png",
+      "image_b": "b_79.png",
+      "same_patient": 1,
+      "confidence": 0.993,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 230,
+        "inlier_ratio": 0.966,
+        "scale": 0.971,
+        "rotation_deg": -0.2,
+        "ncc_after_warp": 0.993,
+        "tooth_overlap": 0.983
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.9712,
+          0.00405,
+          -7.237176
+        ],
+        [
+          -0.00405,
+          0.9712,
+          8.366543
+        ]
+      ]
+    },
+    {
+      "image_a": "a_80.png",
+      "image_b": "b_80.png",
+      "same_patient": 1,
+      "confidence": 0.996,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 191,
+        "inlier_ratio": 0.946,
+        "scale": 1.015,
+        "rotation_deg": 1.7,
+        "ncc_after_warp": 0.996,
+        "tooth_overlap": 0.95
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.014903,
+          -0.030676,
+          23.558135
+        ],
+        [
+          0.030676,
+          1.014903,
+          -34.579046
+        ]
+      ]
+    },
+    {
+      "image_a": "a_81.png",
+      "image_b": "b_81.png",
+      "same_patient": 1,
+      "confidence": 0.993,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 170,
+        "inlier_ratio": 0.977,
+        "scale": 0.904,
+        "rotation_deg": -2.1,
+        "ncc_after_warp": 0.993,
+        "tooth_overlap": 0.958
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.90299,
+          0.033235,
+          76.267466
+        ],
+        [
+          -0.033235,
+          0.90299,
+          93.418543
+        ]
+      ]
+    },
+    {
+      "image_a": "a_82.png",
+      "image_b": "b_82.png",
+      "same_patient": 1,
+      "confidence": 0.99,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 200,
+        "inlier_ratio": 0.985,
+        "scale": 0.904,
+        "rotation_deg": 2.0,
+        "ncc_after_warp": 0.99,
+        "tooth_overlap": 0.886
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.903595,
+          -0.031171,
+          88.233301
+        ],
+        [
+          0.031171,
+          0.903595,
+          3.244785
+        ]
+      ]
+    },
+    {
+      "image_a": "a_83.png",
+      "image_b": "b_83.png",
+      "same_patient": 1,
+      "confidence": 0.99,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 84,
+        "inlier_ratio": 0.816,
+        "scale": 0.95,
+        "rotation_deg": 4.6,
+        "ncc_after_warp": 0.99,
+        "tooth_overlap": 0.855
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.946572,
+          -0.076156,
+          82.661259
+        ],
+        [
+          0.076156,
+          0.946572,
+          -2.408756
+        ]
+      ]
+    },
+    {
+      "image_a": "a_84.png",
+      "image_b": "b_84.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 288,
+        "inlier_ratio": 0.935,
+        "scale": 0.972,
+        "rotation_deg": -1.1,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.969
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.971964,
+          0.018214,
+          -28.678929
+        ],
+        [
+          -0.018214,
+          0.971964,
+          32.096739
+        ]
+      ]
+    },
+    {
+      "image_a": "a_85.png",
+      "image_b": "b_85.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 290,
+        "inlier_ratio": 0.993,
+        "scale": 0.952,
+        "rotation_deg": -2.1,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.944
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.951521,
+          0.034931,
+          -20.630492
+        ],
+        [
+          -0.034931,
+          0.951521,
+          38.188911
+        ]
+      ]
+    },
+    {
+      "image_a": "a_86.png",
+      "image_b": "b_86.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 161,
+        "inlier_ratio": 0.988,
+        "scale": 0.914,
+        "rotation_deg": 7.3,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.7
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.906544,
+          -0.116746,
+          76.880516
+        ],
+        [
+          0.116746,
+          0.906544,
+          -34.533803
+        ]
+      ]
+    },
+    {
+      "image_a": "a_87.png",
+      "image_b": "b_87.png",
+      "same_patient": 1,
+      "confidence": 0.996,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 89,
+        "inlier_ratio": 0.802,
+        "scale": 0.913,
+        "rotation_deg": -7.0,
+        "ncc_after_warp": 0.996,
+        "tooth_overlap": 0.857
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.906305,
+          0.11087,
+          25.371237
+        ],
+        [
+          -0.11087,
+          0.906305,
+          81.291996
+        ]
+      ]
+    },
+    {
+      "image_a": "a_88.png",
+      "image_b": "b_88.png",
+      "same_patient": 1,
+      "confidence": 0.989,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 91,
+        "inlier_ratio": 0.791,
+        "scale": 0.949,
+        "rotation_deg": 5.1,
+        "ncc_after_warp": 0.989,
+        "tooth_overlap": 0.819
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.944795,
+          -0.08466,
+          57.314855
+        ],
+        [
+          0.08466,
+          0.944795,
+          20.085656
+        ]
+      ]
+    },
+    {
+      "image_a": "a_89.png",
+      "image_b": "b_89.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 68,
+        "inlier_ratio": 0.708,
+        "scale": 1.084,
+        "rotation_deg": -4.0,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.758
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.081194,
+          0.075278,
+          -74.197192
+        ],
+        [
+          -0.075278,
+          1.081194,
+          -25.806298
+        ]
+      ]
+    },
+    {
+      "image_a": "a_90.png",
+      "image_b": "b_90.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 95,
+        "inlier_ratio": 0.714,
+        "scale": 1.037,
+        "rotation_deg": 1.0,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.93
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.036882,
+          -0.01832,
+          -14.101523
+        ],
+        [
+          0.01832,
+          1.036882,
+          -43.245234
+        ]
+      ]
+    },
+    {
+      "image_a": "a_91.png",
+      "image_b": "b_91.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 134,
+        "inlier_ratio": 0.793,
+        "scale": 1.049,
+        "rotation_deg": -0.0,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.955
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.049314,
+          0.000851,
+          -22.638769
+        ],
+        [
+          -0.000851,
+          1.049314,
+          -1.720821
+        ]
+      ]
+    },
+    {
+      "image_a": "a_92.png",
+      "image_b": "b_92.png",
+      "same_patient": 1,
+      "confidence": 0.995,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 117,
+        "inlier_ratio": 0.914,
+        "scale": 0.947,
+        "rotation_deg": 6.7,
+        "ncc_after_warp": 0.995,
+        "tooth_overlap": 0.851
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.940146,
+          -0.111102,
+          103.611283
+        ],
+        [
+          0.111102,
+          0.940146,
+          -6.959809
+        ]
+      ]
+    },
+    {
+      "image_a": "a_93.png",
+      "image_b": "b_93.png",
+      "same_patient": 1,
+      "confidence": 0.987,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 114,
+        "inlier_ratio": 0.912,
+        "scale": 0.957,
+        "rotation_deg": 0.3,
+        "ncc_after_warp": 0.987,
+        "tooth_overlap": 0.977
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.957216,
+          -0.004887,
+          21.423386
+        ],
+        [
+          0.004887,
+          0.957216,
+          -2.263193
+        ]
+      ]
+    },
+    {
+      "image_a": "a_94.png",
+      "image_b": "b_94.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 34,
+        "inlier_ratio": 0.654,
+        "scale": 1.091,
+        "rotation_deg": 0.4,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.972
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.091053,
+          -0.006705,
+          -51.050473
+        ],
+        [
+          0.006705,
+          1.091053,
+          -74.064923
+        ]
+      ]
+    },
+    {
+      "image_a": "a_95.png",
+      "image_b": "b_95.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 265,
+        "inlier_ratio": 0.964,
+        "scale": 1.08,
+        "rotation_deg": -0.7,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.91
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.080132,
+          0.013057,
+          -43.870793
+        ],
+        [
+          -0.013057,
+          1.080132,
+          -34.055792
+        ]
+      ]
+    },
+    {
+      "image_a": "a_96.png",
+      "image_b": "b_96.png",
+      "same_patient": 1,
+      "confidence": 0.999,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 108,
+        "inlier_ratio": 0.844,
+        "scale": 1.088,
+        "rotation_deg": 6.9,
+        "ncc_after_warp": 0.999,
+        "tooth_overlap": 0.893
+      },
+      "matrix_prev_to_curr": [
+        [
+          1.079653,
+          -0.130414,
+          38.267901
+        ],
+        [
+          0.130414,
+          1.079653,
+          -95.120596
+        ]
+      ]
+    },
+    {
+      "image_a": "a_97.png",
+      "image_b": "b_97.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 113,
+        "inlier_ratio": 0.89,
+        "scale": 0.942,
+        "rotation_deg": -7.7,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.815
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.933699,
+          0.126126,
+          -33.873857
+        ],
+        [
+          -0.126126,
+          0.933699,
+          115.653694
+        ]
+      ]
+    },
+    {
+      "image_a": "a_98.png",
+      "image_b": "b_98.png",
+      "same_patient": 1,
+      "confidence": 0.998,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 248,
+        "inlier_ratio": 0.939,
+        "scale": 0.97,
+        "rotation_deg": 7.8,
+        "ncc_after_warp": 0.998,
+        "tooth_overlap": 0.791
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.961282,
+          -0.131299,
+          63.482353
+        ],
+        [
+          0.131299,
+          0.961282,
+          -55.243309
+        ]
+      ]
+    },
+    {
+      "image_a": "a_99.png",
+      "image_b": "b_99.png",
+      "same_patient": 1,
+      "confidence": 0.997,
+      "status": "success",
+      "metal_artifact_detected": false,
+      "reason": null,
+      "evidence": {
+        "ransac_inliers": 197,
+        "inlier_ratio": 0.891,
+        "scale": 0.994,
+        "rotation_deg": -2.2,
+        "ncc_after_warp": 0.997,
+        "tooth_overlap": 0.883
+      },
+      "matrix_prev_to_curr": [
+        [
+          0.992961,
+          0.037479,
+          -42.922366
+        ],
+        [
+          -0.037479,
+          0.992961,
+          54.930974
+        ]
+      ]
+    },
+    {
+      "image_a": "a_49.png",
+      "image_b": "a_97.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_53.png",
+      "image_b": "a_5.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 6 geometrically consistent matches; most matches are inconsistent; implausible scale 0.00; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 6,
+        "inlier_ratio": 0.162,
+        "scale": 0.0,
+        "rotation_deg": 0.0,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_33.png",
+      "image_b": "a_65.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_62.png",
+      "image_b": "a_51.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_38.png",
+      "image_b": "a_61.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_45.png",
+      "image_b": "a_74.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_27.png",
+      "image_b": "a_64.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 7 geometrically consistent matches; most matches are inconsistent; implausible scale 1.35; implausible rotation -67 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 7,
+        "inlier_ratio": 0.269,
+        "scale": 1.351,
+        "rotation_deg": -66.9,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_17.png",
+      "image_b": "a_36.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_17.png",
+      "image_b": "a_96.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_12.png",
+      "image_b": "a_79.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_32.png",
+      "image_b": "a_68.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; implausible scale 0.00; implausible rotation 180 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.096,
+        "scale": 0.0,
+        "rotation_deg": 180.0,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_90.png",
+      "image_b": "a_77.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_18.png",
+      "image_b": "a_39.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_12.png",
+      "image_b": "a_93.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_9.png",
+      "image_b": "a_87.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 14 geometrically consistent matches; most matches are inconsistent; implausible scale 0.76; implausible rotation -89 degrees",
+      "evidence": {
+        "ransac_inliers": 14,
+        "inlier_ratio": 0.264,
+        "scale": 0.757,
+        "rotation_deg": -89.0,
+        "ncc_after_warp": 0.731
+      }
+    },
+    {
+      "image_a": "a_42.png",
+      "image_b": "a_60.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 9 geometrically consistent matches; most matches are inconsistent; implausible scale 0.04; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 9,
+        "inlier_ratio": 0.31,
+        "scale": 0.043,
+        "rotation_deg": -13.9,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_71.png",
+      "image_b": "a_12.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_45.png",
+      "image_b": "a_55.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_40.png",
+      "image_b": "a_78.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_81.png",
+      "image_b": "a_26.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_70.png",
+      "image_b": "a_61.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 6 geometrically consistent matches; most matches are inconsistent; implausible scale 0.04; implausible rotation 61 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 6,
+        "inlier_ratio": 0.176,
+        "scale": 0.041,
+        "rotation_deg": 60.7,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_56.png",
+      "image_b": "a_66.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_33.png",
+      "image_b": "a_7.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_70.png",
+      "image_b": "a_1.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 7 geometrically consistent matches; most matches are inconsistent; implausible rotation 180 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 7,
+        "inlier_ratio": 0.269,
+        "scale": 0.801,
+        "rotation_deg": 179.6,
+        "ncc_after_warp": -0.049
+      }
+    },
+    {
+      "image_a": "a_11.png",
+      "image_b": "a_92.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_51.png",
+      "image_b": "a_90.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_85.png",
+      "image_b": "a_80.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_0.png",
+      "image_b": "a_78.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 4 geometrically consistent matches; most matches are inconsistent; implausible scale 2.06; implausible rotation 169 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 4,
+        "inlier_ratio": 0.133,
+        "scale": 2.065,
+        "rotation_deg": 169.3,
+        "ncc_after_warp": -0.051
+      }
+    },
+    {
+      "image_a": "a_63.png",
+      "image_b": "a_42.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_31.png",
+      "image_b": "a_93.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; implausible scale 0.33; implausible rotation 159 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.179,
+        "scale": 0.327,
+        "rotation_deg": 159.2,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_41.png",
+      "image_b": "a_90.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_8.png",
+      "image_b": "a_24.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_72.png",
+      "image_b": "a_28.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_30.png",
+      "image_b": "a_18.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_69.png",
+      "image_b": "a_57.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_11.png",
+      "image_b": "a_10.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_40.png",
+      "image_b": "a_65.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_62.png",
+      "image_b": "a_13.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_38.png",
+      "image_b": "a_70.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 15 geometrically consistent matches; most matches are inconsistent; implausible scale 0.77; implausible rotation 95 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 15,
+        "inlier_ratio": 0.405,
+        "scale": 0.767,
+        "rotation_deg": 95.1,
+        "ncc_after_warp": 0.159
+      }
+    },
+    {
+      "image_a": "a_37.png",
+      "image_b": "a_90.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 4 geometrically consistent matches; most matches are inconsistent; implausible scale 0.02; implausible rotation -175 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 4,
+        "inlier_ratio": 0.121,
+        "scale": 0.023,
+        "rotation_deg": -174.9,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_15.png",
+      "image_b": "a_70.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_42.png",
+      "image_b": "a_69.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; implausible scale 0.49; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.161,
+        "scale": 0.49,
+        "rotation_deg": 6.2,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_26.png",
+      "image_b": "a_77.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_70.png",
+      "image_b": "a_75.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 18 geometrically consistent matches; most matches are inconsistent; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 18,
+        "inlier_ratio": 0.327,
+        "scale": 0.985,
+        "rotation_deg": 0.0,
+        "ncc_after_warp": 0.383
+      }
+    },
+    {
+      "image_a": "a_36.png",
+      "image_b": "a_56.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_11.png",
+      "image_b": "a_76.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_49.png",
+      "image_b": "a_40.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_73.png",
+      "image_b": "a_30.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_37.png",
+      "image_b": "a_23.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 4 geometrically consistent matches; most matches are inconsistent; implausible scale 0.04; implausible rotation -122 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 4,
+        "inlier_ratio": 0.121,
+        "scale": 0.037,
+        "rotation_deg": -122.2,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_24.png",
+      "image_b": "a_23.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_4.png",
+      "image_b": "a_78.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_84.png",
+      "image_b": "a_33.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; implausible scale 0.00; implausible rotation 158 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.167,
+        "scale": 0.002,
+        "rotation_deg": 157.6,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_60.png",
+      "image_b": "a_8.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_11.png",
+      "image_b": "a_86.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_96.png",
+      "image_b": "a_16.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_19.png",
+      "image_b": "a_4.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_10.png",
+      "image_b": "a_89.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 4 geometrically consistent matches; most matches are inconsistent; implausible scale 0.18; implausible rotation -55 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 4,
+        "inlier_ratio": 0.138,
+        "scale": 0.176,
+        "rotation_deg": -54.9,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_69.png",
+      "image_b": "a_87.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_50.png",
+      "image_b": "a_90.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_67.png",
+      "image_b": "a_35.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_66.png",
+      "image_b": "a_30.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 6 geometrically consistent matches; most matches are inconsistent; implausible scale 0.22; implausible rotation 79 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 6,
+        "inlier_ratio": 0.167,
+        "scale": 0.221,
+        "rotation_deg": 79.4,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_27.png",
+      "image_b": "a_86.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; implausible scale 0.06; implausible rotation -72 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.172,
+        "scale": 0.065,
+        "rotation_deg": -71.7,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_75.png",
+      "image_b": "a_53.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_74.png",
+      "image_b": "a_35.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_57.png",
+      "image_b": "a_63.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_84.png",
+      "image_b": "a_82.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_89.png",
+      "image_b": "a_45.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_10.png",
+      "image_b": "a_41.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_78.png",
+      "image_b": "a_14.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_62.png",
+      "image_b": "a_75.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_80.png",
+      "image_b": "a_42.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_24.png",
+      "image_b": "a_31.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_2.png",
+      "image_b": "a_93.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_34.png",
+      "image_b": "a_14.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_90.png",
+      "image_b": "a_28.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 4 geometrically consistent matches; most matches are inconsistent; implausible scale 0.50; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 4,
+        "inlier_ratio": 0.138,
+        "scale": 0.501,
+        "rotation_deg": -2.7,
+        "ncc_after_warp": 0.098
+      }
+    },
+    {
+      "image_a": "a_47.png",
+      "image_b": "a_21.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_42.png",
+      "image_b": "a_54.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_7.png",
+      "image_b": "a_12.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.179,
+        "scale": 1.132,
+        "rotation_deg": -6.2,
+        "ncc_after_warp": 0.236
+      }
+    },
+    {
+      "image_a": "a_18.png",
+      "image_b": "a_89.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_28.png",
+      "image_b": "a_5.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_73.png",
+      "image_b": "a_81.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_68.png",
+      "image_b": "a_77.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_87.png",
+      "image_b": "a_9.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_3.png",
+      "image_b": "a_15.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_81.png",
+      "image_b": "a_24.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_77.png",
+      "image_b": "a_73.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_15.png",
+      "image_b": "a_50.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_11.png",
+      "image_b": "a_47.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_14.png",
+      "image_b": "a_4.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_77.png",
+      "image_b": "a_2.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_24.png",
+      "image_b": "a_23.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_91.png",
+      "image_b": "a_15.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_61.png",
+      "image_b": "a_26.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_93.png",
+      "image_b": "a_7.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_86.png",
+      "image_b": "a_2.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_69.png",
+      "image_b": "a_54.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_79.png",
+      "image_b": "a_12.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_33.png",
+      "image_b": "a_8.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_28.png",
+      "image_b": "a_9.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_82.png",
+      "image_b": "a_38.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_44.png",
+      "image_b": "a_55.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_23.png",
+      "image_b": "a_7.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_64.png",
+      "image_b": "a_59.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_5.png",
+      "image_b": "a_76.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_12.png",
+      "image_b": "a_89.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_50.png",
+      "image_b": "a_25.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_33.png",
+      "image_b": "a_45.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_93.png",
+      "image_b": "a_60.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_72.png",
+      "image_b": "a_21.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_89.png",
+      "image_b": "a_86.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_26.png",
+      "image_b": "a_98.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_7.png",
+      "image_b": "a_86.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 9 geometrically consistent matches; most matches are inconsistent; implausible rotation -87 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 9,
+        "inlier_ratio": 0.3,
+        "scale": 1.118,
+        "rotation_deg": -86.9,
+        "ncc_after_warp": 0.149
+      }
+    },
+    {
+      "image_a": "a_20.png",
+      "image_b": "a_43.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_67.png",
+      "image_b": "a_32.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_15.png",
+      "image_b": "a_76.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_56.png",
+      "image_b": "a_85.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 8 geometrically consistent matches; most matches are inconsistent; implausible scale 0.00; implausible rotation 60 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 8,
+        "inlier_ratio": 0.286,
+        "scale": 0.003,
+        "rotation_deg": 60.5,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_22.png",
+      "image_b": "a_1.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_60.png",
+      "image_b": "a_87.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_52.png",
+      "image_b": "a_72.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_65.png",
+      "image_b": "a_39.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_83.png",
+      "image_b": "a_45.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_49.png",
+      "image_b": "a_84.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_32.png",
+      "image_b": "a_19.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; implausible scale 0.00; implausible rotation 180 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.135,
+        "scale": 0.0,
+        "rotation_deg": 180.0,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_71.png",
+      "image_b": "a_88.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_1.png",
+      "image_b": "a_58.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_94.png",
+      "image_b": "a_10.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_42.png",
+      "image_b": "a_94.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_5.png",
+      "image_b": "a_69.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_35.png",
+      "image_b": "a_17.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_30.png",
+      "image_b": "a_97.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_61.png",
+      "image_b": "a_45.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_78.png",
+      "image_b": "a_36.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_86.png",
+      "image_b": "a_45.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_75.png",
+      "image_b": "a_81.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_79.png",
+      "image_b": "a_16.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_91.png",
+      "image_b": "a_39.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 7 geometrically consistent matches; most matches are inconsistent; implausible scale 0.02; implausible rotation 52 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 7,
+        "inlier_ratio": 0.25,
+        "scale": 0.024,
+        "rotation_deg": 52.4,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_49.png",
+      "image_b": "a_95.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_53.png",
+      "image_b": "a_83.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_10.png",
+      "image_b": "a_0.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_76.png",
+      "image_b": "a_24.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_89.png",
+      "image_b": "a_42.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_20.png",
+      "image_b": "a_30.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 6 geometrically consistent matches; most matches are inconsistent; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 6,
+        "inlier_ratio": 0.222,
+        "scale": 0.997,
+        "rotation_deg": -7.6,
+        "ncc_after_warp": 0.246
+      }
+    },
+    {
+      "image_a": "a_28.png",
+      "image_b": "a_81.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_57.png",
+      "image_b": "a_48.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_90.png",
+      "image_b": "a_86.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_72.png",
+      "image_b": "a_53.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_4.png",
+      "image_b": "a_51.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_89.png",
+      "image_b": "a_72.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_53.png",
+      "image_b": "a_98.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_84.png",
+      "image_b": "a_90.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; implausible scale 1.30; implausible rotation -34 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.156,
+        "scale": 1.296,
+        "rotation_deg": -33.6,
+        "ncc_after_warp": 0.046
+      }
+    },
+    {
+      "image_a": "a_5.png",
+      "image_b": "a_21.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_57.png",
+      "image_b": "a_8.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_33.png",
+      "image_b": "a_89.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_20.png",
+      "image_b": "a_57.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 16 geometrically consistent matches",
+      "evidence": {
+        "ransac_inliers": 16,
+        "inlier_ratio": 0.593,
+        "scale": 0.992,
+        "rotation_deg": -0.0,
+        "ncc_after_warp": 0.787
+      }
+    },
+    {
+      "image_a": "a_67.png",
+      "image_b": "a_62.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_71.png",
+      "image_b": "a_77.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_96.png",
+      "image_b": "a_0.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_4.png",
+      "image_b": "a_63.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_41.png",
+      "image_b": "a_39.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_59.png",
+      "image_b": "a_6.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_53.png",
+      "image_b": "a_24.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_70.png",
+      "image_b": "a_81.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_10.png",
+      "image_b": "a_92.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 3 geometrically consistent matches; most matches are inconsistent; implausible scale 0.15; implausible rotation 146 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 3,
+        "inlier_ratio": 0.111,
+        "scale": 0.15,
+        "rotation_deg": 146.1,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_16.png",
+      "image_b": "a_1.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_51.png",
+      "image_b": "a_86.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 8 geometrically consistent matches; most matches are inconsistent; implausible scale 0.58; implausible rotation 171 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 8,
+        "inlier_ratio": 0.308,
+        "scale": 0.577,
+        "rotation_deg": 171.5,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_53.png",
+      "image_b": "a_40.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_0.png",
+      "image_b": "a_27.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_1.png",
+      "image_b": "a_91.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_96.png",
+      "image_b": "a_0.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_86.png",
+      "image_b": "a_67.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_78.png",
+      "image_b": "a_12.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_24.png",
+      "image_b": "a_15.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 21 geometrically consistent matches; implausible rotation 175 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 21,
+        "inlier_ratio": 0.7,
+        "scale": 1.176,
+        "rotation_deg": 175.4,
+        "ncc_after_warp": 0.399
+      }
+    },
+    {
+      "image_a": "a_77.png",
+      "image_b": "a_83.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_25.png",
+      "image_b": "a_38.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_35.png",
+      "image_b": "a_88.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_23.png",
+      "image_b": "a_12.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_60.png",
+      "image_b": "a_50.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_80.png",
+      "image_b": "a_10.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_2.png",
+      "image_b": "a_35.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_57.png",
+      "image_b": "a_14.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_32.png",
+      "image_b": "a_17.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; implausible scale 0.01; implausible rotation 123 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.192,
+        "scale": 0.013,
+        "rotation_deg": 123.0,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_83.png",
+      "image_b": "a_66.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_83.png",
+      "image_b": "a_82.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_44.png",
+      "image_b": "a_14.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_19.png",
+      "image_b": "a_35.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_2.png",
+      "image_b": "a_5.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_5.png",
+      "image_b": "a_26.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_87.png",
+      "image_b": "a_33.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 4 geometrically consistent matches; most matches are inconsistent; implausible scale 0.00; implausible rotation -40 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 4,
+        "inlier_ratio": 0.148,
+        "scale": 0.003,
+        "rotation_deg": -40.2,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_71.png",
+      "image_b": "a_40.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_46.png",
+      "image_b": "a_72.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_5.png",
+      "image_b": "a_95.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_89.png",
+      "image_b": "a_77.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_83.png",
+      "image_b": "a_63.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 11 geometrically consistent matches; most matches are inconsistent; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 11,
+        "inlier_ratio": 0.344,
+        "scale": 0.955,
+        "rotation_deg": 2.5,
+        "ncc_after_warp": 0.313
+      }
+    },
+    {
+      "image_a": "a_91.png",
+      "image_b": "a_82.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_58.png",
+      "image_b": "a_81.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "teeth do not line up after registration",
+      "evidence": {
+        "ransac_inliers": 47,
+        "inlier_ratio": 0.712,
+        "scale": 1.005,
+        "rotation_deg": -1.8,
+        "ncc_after_warp": 0.748,
+        "tooth_overlap": 0.496
+      }
+    },
+    {
+      "image_a": "a_55.png",
+      "image_b": "a_47.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_68.png",
+      "image_b": "a_22.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_26.png",
+      "image_b": "a_48.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_75.png",
+      "image_b": "a_37.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_1.png",
+      "image_b": "a_17.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_19.png",
+      "image_b": "a_34.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_42.png",
+      "image_b": "a_43.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 6 geometrically consistent matches; most matches are inconsistent; implausible scale 0.64; implausible rotation 88 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 6,
+        "inlier_ratio": 0.231,
+        "scale": 0.636,
+        "rotation_deg": 88.1,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_47.png",
+      "image_b": "a_91.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_11.png",
+      "image_b": "a_43.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_99.png",
+      "image_b": "a_79.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_4.png",
+      "image_b": "a_5.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.161,
+        "scale": 0.962,
+        "rotation_deg": 7.2,
+        "ncc_after_warp": -0.2
+      }
+    },
+    {
+      "image_a": "a_34.png",
+      "image_b": "a_20.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_19.png",
+      "image_b": "a_74.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_37.png",
+      "image_b": "a_46.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.167,
+        "scale": 0.926,
+        "rotation_deg": 3.5,
+        "ncc_after_warp": 0.29
+      }
+    },
+    {
+      "image_a": "a_50.png",
+      "image_b": "a_70.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_16.png",
+      "image_b": "a_37.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_14.png",
+      "image_b": "a_61.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_93.png",
+      "image_b": "a_30.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_6.png",
+      "image_b": "a_39.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 7 geometrically consistent matches; most matches are inconsistent; implausible scale 0.00; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 7,
+        "inlier_ratio": 0.179,
+        "scale": 0.0,
+        "rotation_deg": 0.0,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_22.png",
+      "image_b": "a_66.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_93.png",
+      "image_b": "a_9.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_38.png",
+      "image_b": "a_51.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 10 geometrically consistent matches; most matches are inconsistent; implausible scale 0.18; implausible rotation -98 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 10,
+        "inlier_ratio": 0.4,
+        "scale": 0.181,
+        "rotation_deg": -98.4,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_42.png",
+      "image_b": "a_38.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_53.png",
+      "image_b": "a_13.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_12.png",
+      "image_b": "a_71.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_61.png",
+      "image_b": "a_60.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_43.png",
+      "image_b": "a_15.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_61.png",
+      "image_b": "a_14.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_89.png",
+      "image_b": "a_63.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_54.png",
+      "image_b": "a_4.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_38.png",
+      "image_b": "a_42.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 15 geometrically consistent matches; most matches are inconsistent; implausible scale 0.72; implausible rotation -29 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 15,
+        "inlier_ratio": 0.326,
+        "scale": 0.718,
+        "rotation_deg": -29.4,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_94.png",
+      "image_b": "a_87.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_19.png",
+      "image_b": "a_21.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_80.png",
+      "image_b": "a_72.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_48.png",
+      "image_b": "a_81.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 6 geometrically consistent matches; most matches are inconsistent; implausible scale 0.06; implausible rotation 162 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 6,
+        "inlier_ratio": 0.162,
+        "scale": 0.062,
+        "rotation_deg": 162.3,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_11.png",
+      "image_b": "a_8.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_10.png",
+      "image_b": "a_25.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 4 geometrically consistent matches; most matches are inconsistent; implausible scale 0.01; implausible rotation -171 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 4,
+        "inlier_ratio": 0.118,
+        "scale": 0.014,
+        "rotation_deg": -171.4,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_95.png",
+      "image_b": "a_28.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 6 geometrically consistent matches; most matches are inconsistent; implausible scale 0.00; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 6,
+        "inlier_ratio": 0.214,
+        "scale": 0.0,
+        "rotation_deg": 0.0,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_7.png",
+      "image_b": "a_49.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 3 geometrically consistent matches; most matches are inconsistent; implausible scale 0.43; implausible rotation -93 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 3,
+        "inlier_ratio": 0.12,
+        "scale": 0.429,
+        "rotation_deg": -93.3,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_1.png",
+      "image_b": "a_12.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_50.png",
+      "image_b": "a_71.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_66.png",
+      "image_b": "a_37.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_57.png",
+      "image_b": "a_62.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_74.png",
+      "image_b": "a_91.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_86.png",
+      "image_b": "a_27.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_54.png",
+      "image_b": "a_10.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_47.png",
+      "image_b": "a_28.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_33.png",
+      "image_b": "a_74.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_99.png",
+      "image_b": "a_21.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_55.png",
+      "image_b": "a_24.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_45.png",
+      "image_b": "a_14.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_8.png",
+      "image_b": "a_89.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 7 geometrically consistent matches; most matches are inconsistent; implausible scale 0.69; implausible rotation 70 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 7,
+        "inlier_ratio": 0.233,
+        "scale": 0.693,
+        "rotation_deg": 70.0,
+        "ncc_after_warp": 0.123
+      }
+    },
+    {
+      "image_a": "a_3.png",
+      "image_b": "a_67.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 11 geometrically consistent matches; most matches are inconsistent; implausible scale 0.03; implausible rotation -173 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 11,
+        "inlier_ratio": 0.25,
+        "scale": 0.031,
+        "rotation_deg": -173.1,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_57.png",
+      "image_b": "a_96.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_86.png",
+      "image_b": "a_25.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_15.png",
+      "image_b": "a_63.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_50.png",
+      "image_b": "a_32.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_26.png",
+      "image_b": "a_82.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_5.png",
+      "image_b": "a_27.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_79.png",
+      "image_b": "a_18.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_13.png",
+      "image_b": "a_25.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 12 geometrically consistent matches; most matches are inconsistent; implausible scale 0.01; implausible rotation -144 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 12,
+        "inlier_ratio": 0.267,
+        "scale": 0.007,
+        "rotation_deg": -144.4,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_58.png",
+      "image_b": "a_48.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_46.png",
+      "image_b": "a_69.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_19.png",
+      "image_b": "a_13.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_76.png",
+      "image_b": "a_62.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_18.png",
+      "image_b": "a_72.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_51.png",
+      "image_b": "a_81.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 4 geometrically consistent matches; most matches are inconsistent; implausible rotation -137 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 4,
+        "inlier_ratio": 0.138,
+        "scale": 0.884,
+        "rotation_deg": -136.8,
+        "ncc_after_warp": 0.203
+      }
+    },
+    {
+      "image_a": "a_87.png",
+      "image_b": "a_54.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_66.png",
+      "image_b": "a_63.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_86.png",
+      "image_b": "a_41.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_63.png",
+      "image_b": "a_81.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_85.png",
+      "image_b": "a_25.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_69.png",
+      "image_b": "a_78.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_28.png",
+      "image_b": "a_1.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_43.png",
+      "image_b": "a_90.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_95.png",
+      "image_b": "a_40.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 5 geometrically consistent matches; most matches are inconsistent; implausible scale 0.11; implausible rotation 106 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 5,
+        "inlier_ratio": 0.2,
+        "scale": 0.107,
+        "rotation_deg": 105.6,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_41.png",
+      "image_b": "a_4.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_67.png",
+      "image_b": "a_18.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_32.png",
+      "image_b": "a_77.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 4 geometrically consistent matches; most matches are inconsistent; implausible scale 0.00; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 4,
+        "inlier_ratio": 0.108,
+        "scale": 0.0,
+        "rotation_deg": 0.0,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_19.png",
+      "image_b": "a_48.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_74.png",
+      "image_b": "a_37.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_91.png",
+      "image_b": "a_90.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 7 geometrically consistent matches; most matches are inconsistent; implausible rotation 124 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 7,
+        "inlier_ratio": 0.269,
+        "scale": 0.919,
+        "rotation_deg": 124.0,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_60.png",
+      "image_b": "a_8.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_10.png",
+      "image_b": "a_66.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 3 geometrically consistent matches; most matches are inconsistent; implausible scale 0.35; implausible rotation 132 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 3,
+        "inlier_ratio": 0.12,
+        "scale": 0.351,
+        "rotation_deg": 131.8,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_5.png",
+      "image_b": "a_8.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_28.png",
+      "image_b": "a_16.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_5.png",
+      "image_b": "a_38.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_1.png",
+      "image_b": "a_97.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_57.png",
+      "image_b": "a_42.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_20.png",
+      "image_b": "a_19.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_83.png",
+      "image_b": "a_58.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_47.png",
+      "image_b": "a_64.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 10 geometrically consistent matches; most matches are inconsistent; implausible rotation -136 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 10,
+        "inlier_ratio": 0.278,
+        "scale": 0.987,
+        "rotation_deg": -136.1,
+        "ncc_after_warp": 0.003
+      }
+    },
+    {
+      "image_a": "a_48.png",
+      "image_b": "a_67.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 8 geometrically consistent matches; most matches are inconsistent; implausible scale 0.00; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 8,
+        "inlier_ratio": 0.211,
+        "scale": 0.0,
+        "rotation_deg": 0.0,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_64.png",
+      "image_b": "a_4.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_73.png",
+      "image_b": "a_11.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "only 4 geometrically consistent matches; most matches are inconsistent; implausible scale 0.01; implausible rotation 122 degrees; registered images do not look alike",
+      "evidence": {
+        "ransac_inliers": 4,
+        "inlier_ratio": 0.16,
+        "scale": 0.012,
+        "rotation_deg": 122.4,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_86.png",
+      "image_b": "a_66.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_97.png",
+      "image_b": "a_76.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_9.png",
+      "image_b": "a_95.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_54.png",
+      "image_b": "a_96.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_26.png",
+      "image_b": "a_37.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_68.png",
+      "image_b": "a_76.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_53.png",
+      "image_b": "a_61.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_49.png",
+      "image_b": "a_77.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_75.png",
+      "image_b": "a_29.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    },
+    {
+      "image_a": "a_2.png",
+      "image_b": "a_84.png",
+      "same_patient": 0,
+      "confidence": 0.0,
+      "status": "failed",
+      "metal_artifact_detected": false,
+      "reason": "too few matching features",
+      "evidence": {
+        "ransac_inliers": 0,
+        "inlier_ratio": 0.0,
+        "scale": null,
+        "rotation_deg": null,
+        "ncc_after_warp": null
+      }
+    }
+  ]
+}

@@ -1,4 +1,6 @@
 """Tamper-evident audit log: edits, deletions and forged anchors are detected and pinpointed."""
+import uuid
+
 import pytest
 
 from app.models.connection import db
@@ -11,7 +13,7 @@ def log(monkeypatch):
     """A fresh, isolated log (separate collections and anchor store)."""
     monkeypatch.setattr(audit_log, "_anchor_store", AnchorStore())
     lg = MerkleAuditLog()
-    name = f"audit_test_{id(lg)}"
+    name = f"audit_test_{uuid.uuid4().hex}"   # id() can be reused across tests, which shared stale entries
     lg.logs, lg.roots = db[name], db[name + "_roots"]
     lg.logs.create_index("seq", unique=True)
     for i in range(12):

@@ -15,6 +15,8 @@ export interface User {
   email: string;
   role: Role;
   mfa_enabled?: boolean;
+  /** true when this role must use MFA and the account has not enrolled yet (server blocks everything else) */
+  mfa_enrolment_required?: boolean;
   clinic_name?: string | null;
   permissions?: string[];
   active?: boolean;
@@ -60,16 +62,18 @@ export interface Tooth {
   tooth_id_source: string;
   bbox: [number, number, number, number];
   confidence: number | null;
-  cej: [number, number];
-  abc: [number, number];
-  root_apex: [number, number];
+  /** null when no model placed the landmarks ("not_measured"): never drawn, never measured */
+  cej: [number, number] | null;
+  abc: [number, number] | null;
+  root_apex: [number, number] | null;
   landmark_source: string;
+  measurement_status?: string;
   landmark_confidence?: number | null;
   bone_loss_pct: number | null;
   cej_to_crest_mm: number | null;
   stage: string | null;
   uncertainty: Uncertainty;
-  roi: [number, number, number, number];
+  roi: [number, number, number, number] | null;
   roi_attention: number | null;
   flags: Record<string, boolean>;
 }
@@ -95,12 +99,20 @@ export interface Comparison {
   label: string;
   raw_label: string | null;
   reliable: boolean;
+  /** true only when |delta| exceeds twice the calibrated measurement error */
+  change_detectable?: boolean;
+  measurement_error_pct?: number | null;
   reliability_reasons: string[];
 }
 
 export interface RiskResult {
-  category: "low" | "moderate" | "high";
-  probability: number;
+  /** "insufficient_data": required inputs missing, so no score at all (never a default) */
+  status?: "ok" | "insufficient_data" | "unavailable";
+  /** which validated NHANES model was used (HbA1c known or not) */
+  variant?: "with_hba1c" | "without_hba1c";
+  validation?: { source: string; outcome: string; test_n: number; roc_auc: number; brier: number };
+  category: "low" | "moderate" | "high" | null;
+  probability: number | null;
   top_factors: { factor: string; contribution: number; text: string }[];
   missing_inputs: string[];
   model_type: string;
@@ -141,6 +153,8 @@ export interface Analysis {
   pseudo_id: string;
   visit_date: string;
   mode: Mode;
+  /** "synthetic_demo" for seeded demo records; live analyses are never tagged this way */
+  source?: string;
   created: string;
   created_by: string;
   image_size: [number, number];
@@ -148,10 +162,11 @@ export interface Analysis {
   quality: QualityResult;
   adversarial: { is_suspicious: boolean; triggers: string[]; metrics: Record<string, number> };
   ood: { is_ood: boolean; reasons: string[] };
-  explainability: { gradcam_available: boolean; method: string | null };
+  explainability: { gradcam_available: boolean; method: string | null; model?: string | null };
   teeth: Tooth[];
   summary: {
     teeth_detected: number;
+    teeth_measured?: number;
     mean_bone_loss_pct: number | null;
     max_bone_loss_pct: number | null;
     affected_teeth: number;
@@ -160,7 +175,7 @@ export interface Analysis {
     max_velocity_pct_per_year: number | null;
   };
   risk: RiskResult;
-  alignment: { confidence: number; status: string } | null;
+  alignment: { confidence: number; status: string; reason?: string | null } | null;
   progression: Comparison[];
   previous_analysis_id: string | null;
   calibration: { calibrated: boolean; q: number | null; coverage: number };
@@ -325,7 +340,8 @@ export interface ModelTrust {
     target_coverage: number;
     message?: string;
     q_current?: number | null;
-    levels?: Record<string, { q_from_half: number | null; empirical_coverage_other_half: number | null }>;
+    adaptive?: boolean;
+    levels?: Record<string, { q_from_half: number | null; empirical_coverage_other_half: number | null; mean_half_width_pct?: number | null }>;
     reliability_bins?: { bin: [number, number]; n: number; mean_predicted: number; mean_reference: number }[];
     source?: string;
     n_scores?: number;
@@ -427,7 +443,7 @@ export interface CarePlan {
   last_visit: string | null;
   next_recall_due: string | null;
   steps: { step: number; title: string; items: string[]; indicated: boolean }[];
-  prognosis: { tooth_id: string; category: "favourable" | "questionable" | "unfavourable" | "hopeless"; reasons: string[] }[];
+  prognosis: { tooth_id: string; category: "favourable" | "questionable" | "unfavourable" | "hopeless" | "not assessable"; reasons: string[] }[];
   referral_suggested: boolean;
   chart_summary: ChartSummary | null;
   disclaimer: string;
@@ -450,4 +466,15 @@ export interface RecallRow {
   days_until_due: number | null;
   status: "overdue" | "due soon" | "scheduled";
   referral_suggested: boolean;
+}
+
+export interface ModelMetrics {
+  tooth_detector: { dataset: string; model: string; test_precision: number; test_recall: number; test_mAP50: number; test_mAP50_95: number } | null;
+  landmarks: {
+    dataset: string;
+    model: string;
+    tooth_recall: number | null;
+    test: { n_teeth: number; bone_loss_MAE_pct_points: number; within_10_points: number; stage_agreement: number } | null;
+  } | null;
+  conformal: { source: string; image_type: string | null; levels: Record<string, { q_from_half: number | null; empirical_coverage_other_half: number | null; mean_half_width_pct?: number | null }> } | null;
 }

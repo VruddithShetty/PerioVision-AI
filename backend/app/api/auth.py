@@ -132,6 +132,9 @@ def me():
 
     user = container.doctor_manager().get_doctor(g.user["id"])
     user["permissions"] = sorted(p for p, roles in PERMISSIONS.items() if g.user["role"] in roles)
+    from app import config
+
+    user["mfa_enrolment_required"] = g.user["role"] in config.REQUIRE_MFA_ROLES and not user.get("mfa_enabled")
     return ok(user)
 
 

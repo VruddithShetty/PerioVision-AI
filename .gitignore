@@ -67,3 +67,8 @@ backend/keys-production/
 backend/weights-production/
 backend/storage-production/
 backend/logs-production/
+
+# ---------- Local-only ----------
+dental_progression_ai/
+*.tsbuildinfo
+backend/tests_live/**/__pycache__/

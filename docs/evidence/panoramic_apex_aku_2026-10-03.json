@@ -1,0 +1,8 @@
+{
+  "dataset": "Aga Khan University OPG (Zenodo 10538750, CC BY 4.0), first 40 annotated films",
+  "reference": "root tip of the specialist whole-tooth outline",
+  "teeth": 748,
+  "apex_error_pct_of_tooth_length_mean": 10.71,
+  "median": 7.35,
+  "within_10pct": 0.614
+}

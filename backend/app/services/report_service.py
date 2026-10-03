@@ -85,7 +85,9 @@ def build_pdf(analysis: dict, patient: dict, progression: dict, reviewer: dict |
             ["Visit date", analysis["visit_date"]],
             ["Analysis", f"{analysis['analysis_id']} ({analysis.get('mode')})"],
             ["Teeth detected", str(s["teeth_detected"])],
-            ["Mean / max bone loss", f"{s['mean_bone_loss_pct']} % / {s['max_bone_loss_pct']} %"],
+            ["Mean / max bone loss", f"{s['mean_bone_loss_pct']} % / {s['max_bone_loss_pct']} %"
+             if s["mean_bone_loss_pct"] is not None else "not measured (no tooth had model landmarks)"],
+            ["Teeth measured", f"{s.get('teeth_measured', 'n/a')} of {s['teeth_detected']}"],
             ["Stage suggestion (worst tooth)", str(s["stage"] or "n/a")],
             ["Grade suggestion", f"{s['grade'].get('grade') or 'n/a'} ({s['grade'].get('basis') or 'insufficient data'})"]]
     t = Table(rows, colWidths=[55 * mm, 125 * mm])
@@ -137,15 +139,29 @@ def build_pdf(analysis: dict, patient: dict, progression: dict, reviewer: dict |
 
     risk = analysis["risk"]
     reasons = "; ".join(f["text"] for f in risk.get("top_factors", [])) or "no strong contributing factors"
+    risk_text = (f"Category: <b>{risk['category']}</b> (probability {risk['probability']:.2f}, {risk['model_type']}). "
+                 f"Main factors: {reasons}. " if risk.get("probability") is not None
+                 else "<b>Not available</b>: " if risk.get("status") in ("insufficient_data", "unavailable") else "")
     story += [Paragraph("<b>Risk</b>", styles["Heading3"]),
-              Paragraph(f"Category: <b>{risk['category']}</b> (score {risk['probability']:.2f}). Main factors: {reasons}. "
-                        f"<i>{risk['disclaimer']}</i>", small)]
+              Paragraph(f"{risk_text}<i>{risk['disclaimer']}</i>", small)]
 
     review = analysis.get("review", {})
     story.append(Paragraph("<b>Clinician review</b>", styles["Heading3"]))
     if reviewer:
         story.append(Paragraph(f"Signed off by {reviewer['name']} ({reviewer['role']}) on {reviewer['at'][:19]} UTC. "
                                f"Decision: {reviewer['decision']}. {reviewer.get('comment') or ''}", small))
+        if reviewer.get("corrections"):
+            # The clinician's values override the model's for these teeth; both are shown, neither is hidden.
+            model = {t["tooth_id"]: t for t in analysis["teeth"]}
+            rows = [["Tooth", "Model bone loss %", "Model stage", "Clinician bone loss %", "Clinician stage", "Note"]]
+            for c in reviewer["corrections"]:
+                m = model.get(c.get("tooth_id"), {})
+                fmt = lambda v: "-" if v is None else f"{v:.1f}"  # noqa: E731
+                rows.append([c.get("tooth_id"), fmt(m.get("bone_loss_pct")), m.get("stage") or "-",
+                             fmt(c.get("bone_loss_pct")), c.get("stage") or "-", c.get("note") or ""])
+            ct = Table(rows, repeatRows=1, colWidths=[14 * mm, 30 * mm, 22 * mm, 34 * mm, 26 * mm, 54 * mm])
+            ct.setStyle(TableStyle([("FONTSIZE", (0, 0), (-1, -1), 7), ("GRID", (0, 0), (-1, -1), 0.25, colors.grey)]))
+            story += [Paragraph("<b>Clinician corrections (these values replace the model's)</b>", small), ct]
     else:
         story.append(Paragraph(f"Review status: {review.get('label')}. No flags required a sign-off.", small))
 
@@ -176,7 +192,8 @@ def create_report(analysis_id: str, user: dict) -> dict:
     reviewer = None
     if decision:
         reviewer = {"name": decision.get("reviewer_name"), "role": decision.get("reviewer_role"),
-                    "at": decision.get("at"), "decision": decision.get("status"), "comment": decision.get("comment")}
+                    "at": decision.get("at"), "decision": decision.get("status"), "comment": decision.get("comment"),
+                    "corrections": decision.get("corrections") or []}
 
     from app.services.progression_service import patient_progression
 

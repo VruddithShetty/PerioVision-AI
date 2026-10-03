@@ -1,0 +1,165 @@
+{
+  "created": "2026-10-02T11:00:36.547508+00:00",
+  "model_type": "logistic regression trained on NHANES",
+  "outcome": "moderate or severe periodontitis, CDC/AAP case definition (Eke et al. 2012)",
+  "source": "NHANES 2009-2012 (training) and 2013-2014 (temporal test), US CDC, public domain",
+  "population": "US adults aged 30+ with a complete full-mouth periodontal exam (unweighted sample)",
+  "models": {
+    "with_hba1c": {
+      "features": [
+        "age",
+        "male",
+        "current_smoker",
+        "former_smoker",
+        "log_cigs",
+        "diabetic",
+        "hba1c"
+      ],
+      "intercept": -3.3615059306418815,
+      "coefficients": {
+        "age": 0.030252704696364187,
+        "male": 0.6380667091343033,
+        "current_smoker": 0.5753662706261624,
+        "former_smoker": -0.012683140550682755,
+        "log_cigs": 0.056657620455865046,
+        "diabetic": -0.08514622403064089,
+        "hba1c": 0.1789425377071078
+      },
+      "train": {
+        "n": 7417,
+        "prevalence": 0.4421
+      },
+      "test": {
+        "n": 3855,
+        "prevalence": 0.3878,
+        "roc_auc": 0.6504,
+        "brier": 0.2261,
+        "brier_of_prevalence_only": 0.2404,
+        "calibration_bins": [
+          {
+            "bin": [
+              0.0,
+              0.2
+            ],
+            "n": 169,
+            "mean_predicted": 0.188,
+            "observed_rate": 0.136
+          },
+          {
+            "bin": [
+              0.2,
+              0.4
+            ],
+            "n": 1495,
+            "mean_predicted": 0.309,
+            "observed_rate": 0.279
+          },
+          {
+            "bin": [
+              0.4,
+              0.6
+            ],
+            "n": 1560,
+            "mean_predicted": 0.494,
+            "observed_rate": 0.452
+          },
+          {
+            "bin": [
+              0.6,
+              0.8
+            ],
+            "n": 617,
+            "mean_predicted": 0.667,
+            "observed_rate": 0.559
+          },
+          {
+            "bin": [
+              0.8,
+              1.0
+            ],
+            "n": 14,
+            "mean_predicted": 0.817,
+            "observed_rate": 0.357
+          }
+        ]
+      }
+    },
+    "without_hba1c": {
+      "features": [
+        "age",
+        "male",
+        "current_smoker",
+        "former_smoker",
+        "log_cigs",
+        "diabetic"
+      ],
+      "intercept": -2.4240360206485376,
+      "coefficients": {
+        "age": 0.03136591599266991,
+        "male": 0.6356298681960585,
+        "current_smoker": 0.6252201078100695,
+        "former_smoker": 0.014292121181768279,
+        "log_cigs": 0.03925477810428266,
+        "diabetic": 0.21440850543668066
+      },
+      "train": {
+        "n": 7745,
+        "prevalence": 0.4411
+      },
+      "test": {
+        "n": 3965,
+        "prevalence": 0.3881,
+        "roc_auc": 0.6455,
+        "brier": 0.2271,
+        "brier_of_prevalence_only": 0.2403,
+        "calibration_bins": [
+          {
+            "bin": [
+              0.0,
+              0.2
+            ],
+            "n": 134,
+            "mean_predicted": 0.192,
+            "observed_rate": 0.142
+          },
+          {
+            "bin": [
+              0.2,
+              0.4
+            ],
+            "n": 1565,
+            "mean_predicted": 0.311,
+            "observed_rate": 0.277
+          },
+          {
+            "bin": [
+              0.4,
+              0.6
+            ],
+            "n": 1634,
+            "mean_predicted": 0.494,
+            "observed_rate": 0.457
+          },
+          {
+            "bin": [
+              0.6,
+              0.8
+            ],
+            "n": 625,
+            "mean_predicted": 0.663,
+            "observed_rate": 0.541
+          },
+          {
+            "bin": [
+              0.8,
+              1.0
+            ],
+            "n": 7,
+            "mean_predicted": 0.812,
+            "observed_rate": 0.286
+          }
+        ]
+      }
+    }
+  }
+}

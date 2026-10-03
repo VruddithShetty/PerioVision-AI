@@ -75,7 +75,7 @@ export function RadiographViewer({ radiographUrl, gradcamUrl, width, height, tee
                 const color = stageColor(t.stage);
                 return (
                   <g key={t.tooth_id} onClick={(e) => { e.stopPropagation(); onSelect(t.tooth_id); }} className="cursor-pointer">
-                    {layers.roi && (
+                    {layers.roi && t.roi && (
                       <rect x={t.roi[0]} y={t.roi[1]} width={t.roi[2] - t.roi[0]} height={t.roi[3] - t.roi[1]} fill="#fbbf24" fillOpacity={0.08} stroke="#fbbf24" strokeDasharray={`${stroke * 3} ${stroke * 2}`} strokeWidth={stroke * 0.6} />
                     )}
                     {layers.detections && (
@@ -87,10 +87,10 @@ export function RadiographViewer({ radiographUrl, gradcamUrl, width, height, tee
                         </text>
                       </>
                     )}
-                    {layers.boneLines && t.bone_loss_pct !== null && (
+                    {layers.boneLines && t.bone_loss_pct !== null && t.cej && t.abc && (
                       <line x1={t.cej[0]} y1={t.cej[1]} x2={t.abc[0]} y2={t.abc[1]} stroke="#fbbf24" strokeWidth={stroke * 1.4} />
                     )}
-                    {layers.landmarks && (
+                    {layers.landmarks && t.cej && t.abc && t.root_apex && (
                       <>
                         <circle cx={t.cej[0]} cy={t.cej[1]} r={stroke * 2.4} fill="#22d3ee" stroke="#03070f" strokeWidth={stroke * 0.5} />
                         <circle cx={t.abc[0]} cy={t.abc[1]} r={stroke * 2.4} fill="#fbbf24" stroke="#03070f" strokeWidth={stroke * 0.5} />

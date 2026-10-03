@@ -1,19 +1,30 @@
-"""Split-conformal calibration of per-tooth bone-loss % on a labelled held-out set.
+"""Conformal calibration of per-tooth bone-loss % on a labelled held-out set.
 
-For every image in the calibration split it runs the SAME detector + landmark
-pipeline as the app, computes each tooth's predicted bone loss, matches it to the
-labelled tooth (box IoU >= 0.3), computes the reference bone loss from the
-labelled CEJ / apex / crest keypoints, and stores |predicted - reference|.
-Half of the scores set the conformal threshold, the other half measure the
-coverage actually achieved; both go into weights/conformal_calibration.json.
+For every image it runs the SAME pipeline as the app (analysis_service.locate_teeth: panoramic
+detector, then the periapical keypoint path, mirrored test-time augmentation; teeth the app would
+report as "not measured" are skipped), matches each labelled tooth (box IoU >= 0.5), and compares
+bone loss from predicted vs labelled CEJ / apex / crest keypoints.
 
-Usage (from backend/), pointing at a YOLO-pose dataset split:
-    python scripts/calibrate_conformal.py --images <dataset>/pose/images/valid --labels <dataset>/pose/labels/valid
+Default (--method adaptive), normalised split conformal:
+  1. the calibration split is halved (fixed seed);
+  2. half A fits sigma(x) = max(floor, a + b * d), where d = the tooth's disagreement between the
+     normal and mirrored readings (percentage points);
+  3. half B gives the scores |error| / sigma(x) that set q;
+  4. --test-images/--test-labels (a split NOT used above) measures the coverage actually reached.
+--method standard keeps fixed-width intervals (q from half B, sigma = 1).
+
+The previous calibration file is kept as a timestamped backup next to it.
+
+Usage (from backend/), e.g. DenPAR:
+    python scripts/calibrate_conformal.py --images <pose>/images/val --labels <pose>/labels/val \\
+        --test-images <pose>/images/test --test-labels <pose>/labels/test --source "DenPAR ..."
 Label format per line: class cx cy w h  cej_x cej_y v  apex_x apex_y v  crest_x crest_y v (normalised).
 IMPORTANT: coverage is only as meaningful as the labels. Write down where they came from with --source.
 """
 import argparse
+import datetime as dt
 import glob
+import json
 import os
 import sys
 
@@ -22,70 +33,134 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 import cv2  # noqa: E402
 import numpy as np  # noqa: E402
 
+from app import config  # noqa: E402
 from app.ml.landmarks.cej_abc_extractor import _iou  # noqa: E402
 from app.ml.measurement.bone_loss import bone_loss_for_tooth  # noqa: E402
 from app.ml.uncertainty import calibration  # noqa: E402
+from app.ml.uncertainty.conformal import conformal_quantile  # noqa: E402
 from app.services import container  # noqa: E402
+from app.services.analysis_service import locate_teeth, measured  # noqa: E402
+from evaluate_landmarks import read_labels  # noqa: E402  (same folder)
+
+LEVELS = (0.8, 0.9, 0.95)
 
 
-def read_labels(path, w, h):
-    teeth = []
-    for line in open(path, encoding="utf-8"):
-        p = line.split()
-        if len(p) < 14:
+def collect(images: str, labels: str, limit: int = 0) -> list[dict]:
+    files = sorted(glob.glob(os.path.join(images, "*.jpg")) + glob.glob(os.path.join(images, "*.png")))
+    files = files[:limit] if limit else files
+    rows = []
+    for n, img_path in enumerate(files, 1):
+        label = os.path.join(labels, os.path.splitext(os.path.basename(img_path))[0] + ".txt")
+        gray = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+        if gray is None or not os.path.exists(label):
             continue
-        cx, cy, bw, bh = float(p[1]) * w, float(p[2]) * h, float(p[3]) * w, float(p[4]) * h
-        kp = [(float(p[5 + 3 * i]) * w, float(p[6 + 3 * i]) * h) for i in range(3)]
-        teeth.append({"bbox": [cx - bw / 2, cy - bh / 2, cx + bw / 2, cy + bh / 2],
-                      "cej": kp[0], "root_apex": kp[1], "bone_crest": kp[2]})
-    return teeth
+        gray = gray.reshape(gray.shape[:2])  # some JPEGs decode as (h, w, 1)
+        h, w = gray.shape
+        found = locate_teeth(gray)
+        dets, lms, used = found["detections"], found["landmarks"], set()
+        for ref in read_labels(label, w, h):
+            best = max(((i, _iou(d["bbox"], ref["bbox"])) for i, d in enumerate(dets) if i not in used),
+                       key=lambda x: x[1], default=(None, 0.0))
+            if best[0] is None or best[1] < 0.5:
+                continue
+            used.add(best[0])
+            lm = lms.get(dets[best[0]]["tooth_id"])
+            if not measured(lm):
+                continue
+            p, r = bone_loss_for_tooth(lm)["bone_loss_pct"], bone_loss_for_tooth(ref)["bone_loss_pct"]
+            if p is not None and r is not None:
+                rows.append({"pred": p, "ref": r, "d": lm.get("tta_disagreement_pct")})
+        if n % 20 == 0 or n == len(files):
+            print(f"[{n}/{len(files)}] {len(rows)} matched teeth", flush=True)
+    return rows
+
+
+def fit_sigma(rows: list[dict]) -> dict:
+    with_d = [r for r in rows if r["d"] is not None]
+    d = np.array([r["d"] for r in with_d])
+    e = np.array([abs(r["pred"] - r["ref"]) for r in with_d])
+    slope, intercept = np.polyfit(d, e, 1)
+    floor = float(np.percentile(e, 25))
+    spec = {"type": "linear in mirrored-pass disagreement (percentage points)", "intercept": float(intercept),
+            "slope": float(max(slope, 0.0)), "floor": floor}
+    spec["missing_sigma"] = max(floor, spec["intercept"] + spec["slope"] * float(np.percentile(d, 95)))
+    return spec
+
+
+def sigma(spec: dict | None, d) -> float:
+    if not spec:
+        return 1.0
+    if d is None:
+        return spec["missing_sigma"]
+    return max(spec["floor"], spec["intercept"] + spec["slope"] * d)
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--images", required=True)
     ap.add_argument("--labels", required=True)
+    ap.add_argument("--test-images")
+    ap.add_argument("--test-labels")
+    ap.add_argument("--method", choices=("adaptive", "standard"), default="adaptive")
     ap.add_argument("--source", default="YOLO-pose validation split (see docs/DATASETS.md)")
+    ap.add_argument("--image-type", default="periapical")
     ap.add_argument("--limit", type=int, default=0)
     args = ap.parse_args()
 
-    detector, landmarks = container.tooth_detector(), container.landmark_detector()
-    if not detector.available:
+    if not container.tooth_detector().available:
         print("ERROR: the tooth detector is not available (missing or unsigned weights). Run scripts/sign_model.py.")
         return 2
-    files = sorted(glob.glob(os.path.join(args.images, "*.jpg")) + glob.glob(os.path.join(args.images, "*.png")))
-    if args.limit:
-        files = files[:args.limit]
-    scores, preds, refs = [], [], []
-    for n, img_path in enumerate(files, 1):
-        label = os.path.join(args.labels, os.path.splitext(os.path.basename(img_path))[0] + ".txt")
-        img = cv2.imread(img_path)
-        if img is None or not os.path.exists(label):
-            continue
-        h, w = img.shape[:2]
-        truth = read_labels(label, w, h)
-        dets = detector.detect_teeth(img)
-        lms = landmarks.detect_landmarks(dets, img) if landmarks.available else {}
-        for d in dets:
-            best = max(truth, key=lambda t: _iou(d["bbox"], t["bbox"]), default=None)
-            if best is None or _iou(d["bbox"], best["bbox"]) < 0.3 or d["tooth_id"] not in lms:
-                continue
-            p = bone_loss_for_tooth(lms[d["tooth_id"]])["bone_loss_pct"]
-            r = bone_loss_for_tooth(best)["bone_loss_pct"]
-            if p is None or r is None:
-                continue
-            preds.append(p)
-            refs.append(r)
-            scores.append(abs(p - r))
-        print(f"[{n}/{len(files)}] {os.path.basename(img_path)}: {len(scores)} matched teeth so far")
-    if len(scores) < 20:
-        print(f"ERROR: only {len(scores)} matched teeth; need at least 20 for a meaningful calibration.")
+    cal = collect(args.images, args.labels, args.limit)
+    if len(cal) < 40:
+        print(f"ERROR: only {len(cal)} matched teeth; need at least 40 for a meaningful calibration.")
         return 1
-    data = calibration.save(scores, preds, refs, source=args.source,
-                            notes=f"{len(files)} images from {args.images}")
-    print(f"Saved {len(scores)} scores. Mean absolute error {data['mean_absolute_error_pct']} percentage points.")
-    for cov, lvl in data["levels"].items():
-        print(f"  target {cov}: q = {lvl['q_from_half']}  coverage on the other half = {lvl['empirical_coverage_other_half']}")
+    test = collect(args.test_images, args.test_labels, args.limit) if args.test_images else None
+
+    order = np.random.default_rng(0).permutation(len(cal))  # audit-ok: seeded calibration split
+    A, B = [cal[i] for i in order[: len(cal) // 2]], [cal[i] for i in order[len(cal) // 2:]]
+    spec = fit_sigma(A) if args.method == "adaptive" else None
+    held_out = test if test else A                 # coverage on the test split, else the other half
+    scores = np.array([abs(r["pred"] - r["ref"]) / sigma(spec, r["d"]) for r in B])
+    err = np.array([abs(r["pred"] - r["ref"]) for r in held_out])
+    levels = {}
+    for cov in LEVELS:
+        q = conformal_quantile(scores, cov)
+        hw = np.array([q * sigma(spec, r["d"]) for r in held_out]) if np.isfinite(q) else None
+        levels[str(cov)] = {
+            "q_from_half": float(q) if np.isfinite(q) else None,
+            "empirical_coverage_other_half": round(float(np.mean(err <= hw)), 4) if hw is not None else None,
+            "mean_half_width_pct": round(float(hw.mean()), 3) if hw is not None else None,
+        }
+    ho_pred = np.array([r["pred"] for r in held_out])
+    ho_ref = np.array([r["ref"] for r in held_out])
+    data = {
+        "created": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "method": "normalised split conformal" if spec else "split conformal",
+        "source": args.source,
+        "notes": (f"q from half of {os.path.basename(os.path.normpath(args.images))} ({len(B)} teeth)"
+                  + (f"; sigma fitted on the other half ({len(A)} teeth)" if spec else "")
+                  + (f"; coverage measured on {os.path.basename(os.path.normpath(args.test_images))} ({len(test)} teeth)"
+                     if test else "; coverage measured on the other calibration half")
+                  + ". Predictions use the app pipeline incl. mirrored test-time augmentation."),
+        "image_type": args.image_type,
+        "n_scores": int(len(scores)),
+        "scores": [round(float(s), 5) for s in scores],
+        "sigma": spec,
+        "levels": levels,
+        "mean_absolute_error_pct": round(float(np.mean(np.abs(ho_pred - ho_ref))), 3),
+        "reliability_bins": calibration._bins(ho_pred, ho_ref),
+    }
+    if config.CALIBRATION_FILE.exists():
+        backup = config.CALIBRATION_FILE.with_name(f"conformal_calibration.backup-{dt.datetime.now():%Y%m%d-%H%M%S}.json")
+        config.CALIBRATION_FILE.replace(backup)
+        print(f"Previous calibration kept as {backup.name}")
+    with open(config.CALIBRATION_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+    calibration.reset_cache()
+    print(f"Saved {data['method']} calibration: {len(scores)} scores, held-out MAE {data['mean_absolute_error_pct']} points.")
+    for cov, lvl in levels.items():
+        print(f"  target {cov}: q = {lvl['q_from_half']}  held-out coverage = {lvl['empirical_coverage_other_half']}"
+              f"  mean half-width = {lvl['mean_half_width_pct']}")
     return 0
 
 

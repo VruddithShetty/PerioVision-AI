@@ -20,7 +20,9 @@
   },
   "landmarks": {
     "min_keypoint_confidence": 0.3,
-    "match_iou": 0.3
+    "match_iou": 0.3,
+    "tta_mirror": true,
+    "measure_unvalidated_image_types": false
   },
   "explainability": {
     "min_roi_attention": 0.25,
@@ -54,7 +56,8 @@
     "rapid_pct_per_year": 5.0,
     "min_interval_days": 30,
     "spatial_match_max_distance": 0.08,
-    "min_alignment_score": 0.5
+    "min_alignment_score": 0.5,
+    "min_tooth_overlap": 0.5
   },
   "risk": {
     "moderate_min_probability": 0.35,

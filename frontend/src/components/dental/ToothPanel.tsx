@@ -55,19 +55,30 @@ export function ToothPanel({ tooth, coverage }: { tooth: Tooth | null; coverage:
           </div>
 
           <div className="grid grid-cols-[110px_1fr] items-center gap-4">
-            <ToothCrossSection boneLossPct={tooth.bone_loss_pct ?? 0} showLabels={false} className="h-32 w-auto" />
+            {tooth.bone_loss_pct === null ? (
+              <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-white/10 text-center text-[11px] text-mist-500">no landmarks</div>
+            ) : (
+              <ToothCrossSection boneLossPct={tooth.bone_loss_pct} showLabels={false} className="h-32 w-auto" />
+            )}
             <div>
               <p className="label">Radiographic bone loss</p>
               <p className="font-display text-4xl font-bold" style={{ color: stageColor(tooth.stage) }}>
                 {fmtPct(tooth.bone_loss_pct)}
               </p>
+              {tooth.bone_loss_pct === null && (
+                <p className="text-xs text-mist-400">
+                  {tooth.measurement_status?.startsWith("not_validated_on_")
+                    ? "Not measured: bone loss is only validated on periapical X-rays. Take a periapical film of this tooth to measure it."
+                    : "Not measured: the landmark model could not place CEJ, crest and apex on this tooth. Assess it clinically."}
+                </p>
+              )}
               {tooth.cej_to_crest_mm != null && (
                 <p className="flex items-center gap-1 text-xs text-mist-400"><Ruler className="h-3 w-3" /> CEJ→crest {tooth.cej_to_crest_mm} mm</p>
               )}
             </div>
           </div>
 
-          <div>
+          {tooth.bone_loss_pct !== null && <div>
             <p className="label mb-2">Conformal interval ({Math.round(coverage * 100)}% target coverage)</p>
             <IntervalBar value={tooth.bone_loss_pct} interval={tooth.uncertainty.interval} />
             <div className="mt-3 flex flex-wrap items-center gap-1.5">
@@ -79,7 +90,7 @@ export function ToothPanel({ tooth, coverage }: { tooth: Tooth | null; coverage:
               ))}
               {!tooth.uncertainty.calibrated && <Badge tone="review">uncalibrated</Badge>}
             </div>
-          </div>
+          </div>}
 
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">

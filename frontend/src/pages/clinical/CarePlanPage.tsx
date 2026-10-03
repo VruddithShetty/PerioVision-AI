@@ -16,12 +16,13 @@ const PROGNOSIS_COLOR: Record<string, string> = {
   questionable: "#fbbf24",
   unfavourable: "#fb923c",
   hopeless: "#ef4444",
+  "not assessable": "#7f93b0",
 };
 
 function referralLetter(plan: CarePlan, clinician: string, clinic: string): string {
   const p = plan.patient;
   const s = plan.chart_summary;
-  const worst = [...plan.teeth].sort((a, b) => (b.bone_loss_pct ?? 0) - (a.bone_loss_pct ?? 0)).slice(0, 5);
+  const worst = plan.teeth.filter((t) => t.bone_loss_pct !== null).sort((a, b) => b.bone_loss_pct! - a.bone_loss_pct!).slice(0, 5);
   const factors = [
     p.smoking_status === "current" ? `current smoker (${p.cigarettes_per_day ?? "?"}/day)` : null,
     p.diabetic ? `diabetes${p.hba1c ? `, HbA1c ${p.hba1c}%` : ""}` : null,
@@ -37,7 +38,8 @@ Findings
 • Radiographic stage ${plan.radiographic_stage ?? "n/a"}; clinical stage ${plan.clinical_stage ?? "n/a"}.
 ${s ? `• Chart: BOP ${s.bop_pct ?? "–"}%, ${s.sites_pd_4_plus} sites ≥ 4 mm, ${s.sites_pd_6_plus} sites ≥ 6 mm, mean CAL ${s.mean_cal ?? "–"} mm.\n` : ""}• Most affected teeth (radiographic bone loss): ${worst.map((t) => `${t.tooth_id} ${t.bone_loss_pct?.toFixed(0) ?? "–"}%`).join(", ") || "n/a"}.
 • Risk factors: ${factors.join("; ") || "none recorded"}.
-• Teeth with questionable or worse prognosis: ${plan.prognosis.filter((x) => x.category !== "favourable").map((x) => `${x.tooth_id} (${x.category})`).join(", ") || "none"}.
+• Teeth with questionable or worse prognosis: ${plan.prognosis.filter((x) => x.category !== "favourable" && x.category !== "not assessable").map((x) => `${x.tooth_id} (${x.category})`).join(", ") || "none"}.
+• Teeth not measured on the radiograph (assess clinically): ${plan.prognosis.filter((x) => x.category === "not assessable").map((x) => x.tooth_id).join(", ") || "none"}.
 
 Treatment so far / proposed
 ${plan.steps.filter((x) => x.indicated).map((x) => `• Step ${x.step}: ${x.title}`).join("\n")}
@@ -63,7 +65,7 @@ export default function CarePlanPage() {
   const prognosisTeeth = plan.teeth.map((t) => {
     const pr = plan.prognosis.find((x) => x.tooth_id === t.tooth_id);
     // Re-use the odontogram: colour teeth by prognosis instead of stage.
-    const stageLike = pr ? { favourable: "I", questionable: "II", unfavourable: "III", hopeless: "IV" }[pr.category] : null;
+    const stageLike = pr ? ({ favourable: "I", questionable: "II", unfavourable: "III", hopeless: "IV" } as Record<string, string>)[pr.category] ?? null : null;
     return { tooth_id: t.tooth_id, bone_loss_pct: t.bone_loss_pct, stage: stageLike } as never;
   });
 

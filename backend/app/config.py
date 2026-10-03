@@ -40,6 +40,11 @@ RISK_MODEL_DIR = STORAGE_DIR / "models" / "risk_model"
 
 MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "16"))
 
+# Roles that must have TOTP MFA switched on before they can use anything beyond their own account
+# settings (where they enrol). Default: admin and dentist in live mode, nobody in demo mode.
+REQUIRE_MFA_ROLES = {r.strip().lower() for r in os.getenv("REQUIRE_MFA_ROLES", "" if IS_DEMO else "admin,dentist")
+                     .split(",") if r.strip()}
+
 
 def ensure_runtime_dirs() -> None:
     """Create runtime folders (all gitignored)."""

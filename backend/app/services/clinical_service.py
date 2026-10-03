@@ -16,6 +16,7 @@ from __future__ import annotations
 import datetime as dt
 
 from app.ml.measurement.staging import grade_suggestion
+from app.services.progression_service import usable_velocities
 
 SITES = ("DB", "B", "MB", "DL", "L", "ML")          # six probing sites per tooth
 INTERDENTAL = (0, 2, 3, 5)                        # DB, MB, DL, ML
@@ -99,7 +100,7 @@ def concordance(summary: dict, analysis: dict | None) -> list[dict]:
     out = []
     for tooth_id, c in summary["teeth"].items():
         r = radiographic.get(tooth_id)
-        if c.get("missing") or r is None:
+        if c.get("missing") or r is None or r.get("stage") is None:  # unmeasured teeth cannot be compared
             continue
         cs, rs = c["clinical_stage"], r.get("stage")
         gap = STAGE_RANK[cs] - STAGE_RANK[rs]
@@ -118,18 +119,24 @@ def concordance(summary: dict, analysis: dict | None) -> list[dict]:
 
 
 def tooth_prognosis(bone_loss_pct: float | None, mobility: int = 0, furcation: int = 0) -> dict:
-    """Simplified per-tooth prognosis (after Kwok & Caton 2007)."""
-    bl = bone_loss_pct or 0.0
+    """Simplified per-tooth prognosis (after Kwok & Caton 2007).
+
+    An unmeasured tooth (bone_loss_pct None) is never assumed healthy: unless mobility or
+    furcation already decide the category, its prognosis is "not assessable".
+    """
+    bl = bone_loss_pct if bone_loss_pct is not None else -1.0
     if bl > 75 or mobility >= 3:
         cat = "hopeless"
     elif bl > 50 or furcation >= 3 or mobility == 2:
         cat = "unfavourable"
     elif bl >= 25 or furcation == 2 or mobility == 1:
         cat = "questionable"
+    elif bone_loss_pct is None:
+        cat = "not assessable"
     else:
         cat = "favourable"
-    reasons = []
-    if bl:
+    reasons = [] if bone_loss_pct is not None else ["bone loss not measured on the radiograph"]
+    if bl > 0:
         reasons.append(f"{bl:.0f}% radiographic bone loss")
     if mobility:
         reasons.append(f"mobility grade {mobility}")
@@ -167,11 +174,11 @@ def care_plan(patient: dict, analysis: dict | None, chart: dict | None, progress
     if stage == "III" and (patient.get("teeth_lost_perio") or 0) >= 5:
         stage = "IV"
 
-    velocities = [c["velocity_pct_per_year"] for c in progression_latest if c.get("reliable") and c.get("velocity_pct_per_year") is not None]
+    velocities = usable_velocities(progression_latest)
     max_bl = (analysis or {}).get("summary", {}).get("max_bone_loss_pct")
     grade = grade_suggestion(max_bl, patient.get("age"), patient, max(velocities) if velocities else None)
     risk = (analysis or {}).get("risk", {})
-    rapid = any(c.get("raw_label") == "rapidly progressing" for c in progression_latest)
+    rapid = any(c.get("label") == "rapidly progressing" for c in progression_latest)  # reliable, detectable only
     recall = recall_interval(grade.get("grade"), risk.get("category"), summary["bop_pct"] if summary else None, rapid)
 
     deep = summary["sites_pd_4_plus"] if summary else 0

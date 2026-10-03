@@ -6,10 +6,16 @@ Matching, per pair of consecutive visits:
      the earlier visit through the registration transform when one exists) are
      paired to the nearest centre within `spatial_match_max_distance`
 Every comparison carries a reliability verdict. It is marked unreliable (and
-never silently trusted) when registration between the two radiographs was poor
-or missing, a positional match was made without good registration, either
-measurement used heuristic landmarks, or the visits are too close together to
-measure a rate. Positional matches after a good registration are accepted.
+never silently trusted) when registration between the two radiographs failed or
+was missing, a positional match was made without good registration, the films are
+of different types, the measurement error is unknown, or the visits are too close
+together to measure a rate. Positional matches after a good registration are accepted.
+Teeth without a measurement never enter a comparison.
+
+A reliable comparison still only counts as change when |delta| exceeds the two readings'
+error bounds added together (each tooth's conformal half-width; 2q for fixed-width calibration);
+smaller deltas are labelled "no change beyond measurement error"
+and never drive the grade, risk or recall interval (see usable_velocities).
 
 Labels, from velocity in % of root length per year (thresholds in config):
   improved             velocity <= -stable band
@@ -93,28 +99,64 @@ def match_teeth(prev: dict, curr: dict) -> list[tuple[dict, dict, str]]:
     return pairs
 
 
+def measurement_error_pct(prev: dict, curr: dict) -> float | None:
+    """Per-measurement error bound (conformal q at the configured coverage), or None if unknown.
+
+    Live measurements use the calibrated q. Two demo (synthetic) records are compared as-is: their
+    bone levels are planted by the generator, and they are labelled demo everywhere they appear.
+    """
+    if prev.get("mode") == "demo" and curr.get("mode") == "demo":
+        return 0.0
+    from app.ml.uncertainty import calibration
+
+    return calibration.current_q()
+
+
+def _half_width(tooth: dict, q: float | None) -> float | None:
+    """A tooth's error bound in percentage points: its stored interval half-width, else the global q."""
+    if q == 0.0:                      # two synthetic demo records: planted values, no measurement error
+        return 0.0
+    hw = (tooth.get("uncertainty") or {}).get("half_width")
+    return float(hw) if hw is not None else q
+
+
 def compare_visits(prev: dict, curr: dict) -> list[dict]:
     t = config.THRESHOLDS["progression"]
     days = (_parse_date(curr["visit_date"]) - _parse_date(prev["visit_date"])).days
     alignment = curr.get("alignment") or {}
     align_score = alignment.get("confidence")
+    registered = alignment.get("status") == "success" and align_score is not None \
+        and align_score >= t["min_alignment_score"]
+    q = measurement_error_pct(prev, curr)
     results = []
     for p, c, method in match_teeth(prev, curr):
         delta = round(c["bone_loss_pct"] - p["bone_loss_pct"], 2)
         reasons = []
         if days < t["min_interval_days"]:
             reasons.append(f"Visits only {days} days apart; too short to measure a rate.")
-        if align_score is not None and align_score < t["min_alignment_score"]:
-            reasons.append(f"Radiographs could not be aligned well (score {align_score:.2f}).")
-        if align_score is None:
+        if not alignment:
             reasons.append("No image registration available between these visits.")
-        registered = align_score is not None and align_score >= t["min_alignment_score"]
+        elif not registered:
+            why = alignment.get("reason") or f"score {align_score or 0:.2f}"
+            reasons.append(f"The two radiographs could not be registered to each other ({why}).")
         if method == "spatial" and not registered:
             reasons.append("Tooth matched by position without a reliable image registration.")
-        if "heuristic_fallback" in (p.get("landmark_source"), c.get("landmark_source")):
-            reasons.append("At least one measurement used estimated (heuristic) landmarks.")
+        if prev.get("image_type") and curr.get("image_type") and prev["image_type"] != curr["image_type"]:
+            reasons.append(f"Different radiograph types ({prev['image_type']} vs {curr['image_type']}).")
+        if q is None:
+            reasons.append("Measurement error is unknown (uncalibrated), so a change cannot be told apart from noise.")
+        # Each measurement's error bound: its own interval half-width (adaptive calibration) or q.
+        bounds = [_half_width(t, q) for t in (p, c)]
+        if q is not None and None in bounds:
+            reasons.append("Measurement error is unknown for at least one of the two readings.")
         reliable = not reasons
+        # Both measurements lie within their bounds with probability >= 1 - 2*alpha (union bound),
+        # so only a change larger than the two bounds together is evidence of real change.
+        error_bound = None if q is None or None in bounds else round(bounds[0] + bounds[1], 3)
+        detectable = error_bound is not None and abs(delta) > error_bound
         velocity_year = round(delta / (days / 365.25), 2) if days >= t["min_interval_days"] else None
+        label = "unreliable comparison" if not reliable else (
+            label_for_velocity(velocity_year) if detectable else "no change beyond measurement error")
         results.append({
             "tooth_id": c["tooth_id"],
             "previous_tooth_id": p["tooth_id"],
@@ -127,12 +169,20 @@ def compare_visits(prev: dict, curr: dict) -> list[dict]:
             "delta_pct": delta,
             "velocity_pct_per_year": velocity_year,
             "velocity_pct_per_month": round(velocity_year / 12.0, 3) if velocity_year is not None else None,
-            "label": label_for_velocity(velocity_year) if reliable else "unreliable comparison",
+            "label": label,
             "raw_label": label_for_velocity(velocity_year),
             "reliable": reliable,
+            "change_detectable": detectable,
+            "measurement_error_pct": error_bound,
             "reliability_reasons": reasons,
         })
     return results
+
+
+def usable_velocities(comparisons: list[dict]) -> list[float]:
+    """Velocities that may drive grading, risk and recall: reliable AND larger than measurement error."""
+    return [c["velocity_pct_per_year"] for c in comparisons
+            if c.get("reliable") and c.get("change_detectable") and c.get("velocity_pct_per_year") is not None]
 
 
 def patient_progression(analyses: list[dict]) -> dict:
@@ -151,7 +201,7 @@ def patient_progression(analyses: list[dict]) -> dict:
     for prev, curr in zip(ordered, ordered[1:]):
         comparisons.extend(compare_visits(prev, curr))
     latest = [c for c in comparisons if ordered and c["to_date"] == str(ordered[-1]["visit_date"])[:10]]
-    reliable_v = [c["velocity_pct_per_year"] for c in latest if c["reliable"] and c["velocity_pct_per_year"] is not None]
+    reliable_v = usable_velocities(latest)
     return {
         "visits": [{"analysis_id": a["analysis_id"], "visit_date": str(a["visit_date"])[:10],
                     "review_status": a.get("review", {}).get("status")} for a in ordered],
@@ -163,6 +213,7 @@ def patient_progression(analyses: list[dict]) -> dict:
             "max_reliable_velocity_pct_per_year": max(reliable_v) if reliable_v else None,
             "unreliable_comparisons": sum(1 for c in comparisons if not c["reliable"]),
             "labels": {lbl: sum(1 for c in latest if c["label"] == lbl) for lbl in
-                       ("stable", "progressing", "rapidly progressing", "improved", "unreliable comparison")},
+                       ("stable", "progressing", "rapidly progressing", "improved",
+                                 "no change beyond measurement error", "unreliable comparison")},
         },
     }

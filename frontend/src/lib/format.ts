@@ -56,13 +56,14 @@ export const PROGRESSION_TONE: Record<string, Tone> = {
   improved: "brand",
   progressing: "review",
   "rapidly progressing": "critical",
+  "no change beyond measurement error": "neutral",
   "unreliable comparison": "neutral",
 };
 
 export const FLAG_LABEL: Record<string, string> = {
   low_confidence: "Low confidence",
   low_attention_validity: "Attention outside periodontal area",
-  heuristic_landmarks: "Estimated landmarks",
+  not_measured: "Not measured (no model landmarks)",
 };
 
 export const REASON_LABEL: Record<string, string> = {
@@ -72,7 +73,8 @@ export const REASON_LABEL: Record<string, string> = {
   low_quality: "Borderline image quality",
   out_of_distribution: "Unusual image",
   low_attention_validity: "Attention outside ROI",
-  heuristic_landmarks: "Estimated landmarks",
+  not_measured: "Teeth not measured",
+  not_validated_image_type: "Bone loss not validated on this X-ray type",
   landmarks_not_validated: "Landmarks not validated for this X-ray type",
   low_confidence: "Low confidence",
 };

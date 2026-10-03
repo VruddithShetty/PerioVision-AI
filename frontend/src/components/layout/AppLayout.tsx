@@ -17,7 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { api } from "@/api/client";
 import { useReviewQueue } from "@/api/hooks";
 import { Badge } from "@/components/ui/primitives";
@@ -77,8 +77,8 @@ export function DemoBanner() {
   if (mode !== "demo") return null;
   return (
     <div role="status" className="border-b border-review-500/30 bg-review-500/10 px-4 py-2 text-center text-xs text-review-400">
-      <strong className="font-semibold">DEMO MODE</strong> · synthetic data in an in-memory database · results are not
-      clinical output · nothing is saved after restart
+      <strong className="font-semibold">Demo mode — synthetic data, not clinical</strong> · in-memory database, nothing is
+      saved after restart · analyses marked "demo" were not produced by a verified model
     </div>
   );
 }
@@ -162,7 +162,18 @@ export function AppLayout() {
               transition={{ duration: 0.18 }}
               className="mx-auto w-full max-w-7xl px-4 py-6 md:px-8 md:py-8"
             >
-              <Outlet />
+              {user?.mfa_enrolment_required && location.pathname !== "/app/security" ? (
+                <Navigate to="/app/security" replace />
+              ) : (
+                <>
+                  {user?.mfa_enrolment_required && (
+                    <div role="alert" className="mb-6 rounded-xl border border-review-500/30 bg-review-500/10 px-4 py-3 text-sm text-review-400">
+                      Your role requires multi-factor authentication. Set up an authenticator app below to continue.
+                    </div>
+                  )}
+                  <Outlet />
+                </>
+              )}
             </motion.div>
           </AnimatePresence>
         </main>

@@ -1,0 +1,54 @@
+{
+  "dataset": "BRAR (figshare 10.6084/m9.figshare.30155974), CC BY 4.0, single centre, DEXIS OC200D",
+  "reference": "expert-consensus worst-tooth bone loss / root length (interproximal), one tooth per patient",
+  "overall": {
+    "films": 240,
+    "films_with_a_measured_tooth": 237,
+    "mean_teeth_detected": 29.2,
+    "mean_teeth_measured": 11.7,
+    "worst_tooth_MAE_pct_points": 18.55,
+    "worst_tooth_median_abs_error": 17.4,
+    "worst_tooth_bias_app_minus_expert": 5.29,
+    "within_10_points": 0.325,
+    "stage_agreement": 0.46,
+    "grade_agreement_vs_BRAR": 0.435
+  },
+  "by_BRAR_level": {
+    "1": {
+      "films": 80,
+      "films_with_a_measured_tooth": 80,
+      "mean_teeth_detected": 30.8,
+      "mean_teeth_measured": 12.9,
+      "worst_tooth_MAE_pct_points": 24.82,
+      "worst_tooth_median_abs_error": 24.09,
+      "worst_tooth_bias_app_minus_expert": 24.82,
+      "within_10_points": 0.05,
+      "stage_agreement": 0.087,
+      "grade_agreement_vs_BRAR": 0.0
+    },
+    "2": {
+      "films": 80,
+      "films_with_a_measured_tooth": 80,
+      "mean_teeth_detected": 28.5,
+      "mean_teeth_measured": 11.7,
+      "worst_tooth_MAE_pct_points": 11.02,
+      "worst_tooth_median_abs_error": 8.27,
+      "worst_tooth_bias_app_minus_expert": 4.63,
+      "within_10_points": 0.562,
+      "stage_agreement": 0.6,
+      "grade_agreement_vs_BRAR": 0.713
+    },
+    "3": {
+      "films": 80,
+      "films_with_a_measured_tooth": 77,
+      "mean_teeth_detected": 28.4,
+      "mean_teeth_measured": 10.4,
+      "worst_tooth_MAE_pct_points": 19.87,
+      "worst_tooth_median_abs_error": 14.81,
+      "worst_tooth_bias_app_minus_expert": -14.31,
+      "within_10_points": 0.364,
+      "stage_agreement": 0.701,
+      "grade_agreement_vs_BRAR": 0.597
+    }
+  }
+}

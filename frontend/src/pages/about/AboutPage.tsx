@@ -3,9 +3,30 @@ import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useModelMetrics } from "@/api/hooks";
 import { Logo } from "@/components/layout/Logo";
 import { PageHeader, Table } from "@/components/ui/blocks";
 import { Card, CardTitle } from "@/components/ui/primitives";
+
+const pct = (v: number | null | undefined) => (v === null || v === undefined ? "not evaluated" : `${(v * 100).toFixed(1)}%`);
+
+/** Accuracy as measured on held-out test data, read from the installed models' metric files (never typed in here). */
+function MeasuredAccuracy() {
+  const { data: m, isLoading, error } = useModelMetrics();
+  if (isLoading) return <>Loading measured accuracy…</>;
+  if (error || !m) return <>Measured accuracy is unavailable (could not reach the server).</>;
+  const det = m.tooth_detector;
+  const lm = m.landmarks?.test;
+  const cov = m.conformal?.levels?.["0.9"];
+  return (
+    <>
+      {det ? `Tooth detector (${det.model}) on held-out test X-rays: ${pct(det.test_precision)} precision, ${pct(det.test_recall)} recall, ${pct(det.test_mAP50)} mAP@0.5. ` : "Tooth detector: no test metrics installed. "}
+      {lm ? `Landmarks on ${lm.n_teeth} held-out ${m.conformal?.image_type ?? ""} teeth: bone-loss error ${lm.bone_loss_MAE_pct_points.toFixed(1)} points, ${pct(lm.stage_agreement)} stage agreement` : "Landmarks: no test metrics installed"}
+      {cov?.empirical_coverage_other_half != null ? `, ${pct(cov.empirical_coverage_other_half)} coverage of the 90 % conformal interval (${cov.mean_half_width_pct != null ? `on average ±${cov.mean_half_width_pct.toFixed(1)} points, wider for harder teeth` : `±${cov.q_from_half?.toFixed(1)} points`}). ` : ". "}
+      {m.conformal?.image_type ? `Bone loss is measured on ${m.conformal.image_type} X-rays only; on other X-ray types teeth are detected and numbered but no bone-loss numbers are given.` : "Landmarks are not calibrated, so every case is reviewed."}
+    </>
+  );
+}
 
 type NodeId = "ui" | "api" | "zt" | "ml" | "sec" | "db" | "store" | "audit";
 
@@ -91,7 +112,7 @@ export default function AboutPage({ embedded = false }: { embedded?: boolean }) 
         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-mist-300">
           <li>Decision-support tool; not a certified medical device.</li>
           <li>Controls are aligned with HIPAA safeguards, not certified.</li>
-          <li>Tooth detector on held-out test X-rays: 94% precision, 94.5% recall, 95.8% mAP@0.5. Landmarks on held-out periapical X-rays: bone-loss error 7.6 points, 73% stage agreement, 91.5% conformal coverage. Landmarks are not validated on panoramic X-rays, so those teeth are always reviewed.</li>
+          <li><MeasuredAccuracy /></li>
           <li>The risk score is a documented rule-assisted demo, not a trained clinical model.</li>
         </ul>
       </Card>

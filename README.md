@@ -4,7 +4,7 @@
 
 > **Decision support, clinician in the loop.** Not a certified medical device. Model accuracy is reported only from held-out test data (see the model card). Security controls are *aligned with* HIPAA safeguards, not certified.
 
-![Analysis viewer: a real panoramic X-ray with 26 FDI-numbered teeth, landmarks, per-tooth bone loss, conformal interval and the review banner](docs/reference/screenshots/analysis-viewer.jpg)
+![Analysis viewer: FDI-numbered teeth, landmarks, conformal interval and the review banner (screenshot taken before panoramic bone-loss numbers were switched off; they are now shown for periapical films only)](docs/reference/screenshots/analysis-viewer.jpg)
 
 | | |
 |---|---|
@@ -18,9 +18,11 @@
 - Image-quality gate, CLAHE, YOLO11m tooth detection with FDI numbers, CEJ / crest / apex landmarks
 - Per-tooth bone loss %, Stage I–IV and Grade A–C suggestions (2017 AAP/EFP)
 - Grad-CAM heatmaps with a periodontal-region attention check
-- Split-conformal uncertainty intervals and stage sets; mandatory clinician review router
-- Longitudinal progression with registration-aware tooth matching and reliability flags
-- Multimodal risk (clinical + image) with plain-language reasons (documented rule-assisted demo)
+- Adaptive split-conformal uncertainty (each tooth's interval widens when its normal and mirrored readings disagree), stage sets, mandatory clinician review router
+- Longitudinal progression with registration that must line up the teeth themselves, plus a measurement-error rule: changes smaller than the error are never called progression
+- Clinical risk model trained on CDC NHANES (validated on a later survey cycle), with plain-language odds ratios
+- Panoramic films: tooth detection and FDI numbering (validated on an external hospital's data); bone loss is measured on periapical films only
+- No invented numbers: anything unmeasured shows as "not measured" or "insufficient data", enforced by a build-time test
 
 **Security (O6)**
 - AES-256-GCM with key IDs and rotation for fields, radiographs and reports
@@ -72,7 +74,7 @@ Full diagram and data flow: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 
 **Ports:** backend `5000`, frontend `5173`. **API docs:** http://127.0.0.1:5000/api/docs (OpenAPI) and [docs/API.md](docs/API.md).
-**Tests:** `.\run.ps1 test` (backend) and `cd frontend; npm run build; npm run lint`.
+**Tests:** `.\run.ps1 test` (backend) and `cd frontend; npm run build; npm run lint`. With trained weights in `backend/weights/`, `cd backend; python -m pytest tests_live -q` also checks the real models on real radiographs (see `docs/VERIFICATION_REPORT.md`).
 
 ### Demo tour
 1. Landing page: drag the scan bar across the panoramic X-ray; move the staging slider.
@@ -82,7 +84,7 @@ On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 5. Sign in as the **auditor**: Security center → Verify chain; Security lab → Run all attacks.
 
 ### Optional: real models and HTTPS
-- Train on a free Colab GPU with `notebooks/train_periovision_colab.ipynb`, then run `.\run.ps1 install-models -From <export folder>` (installs, signs, tests). Or put weights in `backend/weights/` and run `cd backend; python scripts/sign_model.py`. Unsigned files are refused.
+- Train on a free Colab GPU with the notebooks in `notebooks/` (tooth detector, landmarks, panoramic models; see `notebooks/README.md`), then run `.\run.ps1 install-models -From <export folder>` (installs, signs, tests). Or put weights in `backend/weights/` and run `cd backend; python scripts/sign_model.py`. Unsigned files are refused.
 - Calibrate uncertainty on a held-out, per-tooth-annotated set: `python scripts/calibrate_conformal.py --images … --labels …`.
 - Live deployment (fresh secrets, real MongoDB, production server): see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 - Local HTTPS: `python scripts/make_dev_cert.py`, then set `TLS_CERT=keys/dev-tls.crt` and `TLS_KEY=keys/dev-tls.key` in `.env`.
@@ -101,23 +103,29 @@ On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 
 ## Known limitations (honest)
 
-- Measured on held-out test sets ([docs/MODEL_CARD.md](docs/MODEL_CARD.md)): tooth detector 95.8 % mAP@0.5 (DENTEX panoramic); landmark model 99 % tooth recall, bone-loss error 7.6 points, 73 % stage agreement, 91.5 % conformal coverage (DenPAR periapical). Landmarks are not validated on panoramic X-rays, so those are always flagged for review.
-- Uncertainty intervals are honest but wide (±18.6 points at 90 %), so most teeth still go to dentist review.
-- The risk score is a documented rule-assisted demo, not a trained model.
+- Measured on held-out data ([docs/MODEL_CARD.md](docs/MODEL_CARD.md); re-run commands in [docs/VERIFICATION_REPORT.md](docs/VERIFICATION_REPORT.md)): tooth detector 95.8 % mAP@0.5 on DENTEX and 91 % found-and-correctly-numbered on an external hospital's films; periapical bone-loss error 7.4 points, 73 % stage agreement, 92 % interval coverage (DenPAR).
+- Panoramic bone loss is **not** reported: against expert grading of 240 panoramic films (BRAR) it was not accurate enough. `notebooks/train_panoramic_colab.ipynb` trains the next attempt.
+- Uncertainty intervals are honest but wide (on average ±19 points at 90 %), so most teeth still go to dentist review.
+- The risk model estimates current disease from clinical factors (AUC 0.65); it does not use the radiograph or predict progression.
 - Demo mode uses an in-memory database; nothing persists after a restart.
 - The development server is HTTP unless you enable the local certificate; production needs a TLS reverse proxy.
 
 ## Documentation
 
-[Audit report](docs/AUDIT_REPORT.md) · [Restructure changelog](docs/CHANGELOG_RESTRUCTURE.md) · [Architecture](docs/ARCHITECTURE.md) · [Security](docs/SECURITY.md) · [API](docs/API.md) · [Traceability](docs/TRACEABILITY.md) · [Model card](docs/MODEL_CARD.md) · [Datasets](docs/DATASETS.md) · [Key rotation](docs/KEY_ROTATION.md) · [Viva cheat sheet](docs/VIVA_CHEAT_SHEET.md)
+[Architecture](docs/ARCHITECTURE.md) · [Security](docs/SECURITY.md) · [API](docs/API.md) · [Deployment](docs/DEPLOYMENT.md) · [Model card](docs/MODEL_CARD.md) · [Datasets](docs/DATASETS.md) · [Verification report](docs/VERIFICATION_REPORT.md) · [Instructions for use](docs/INSTRUCTIONS_FOR_USE.md) · [Key rotation](docs/KEY_ROTATION.md) · [Traceability](docs/TRACEABILITY.md) · [Project report](docs/PROJECT_REPORT.md) · [All docs](docs/README.md)
 
 ## Repository layout
 
 ```
-backend/    Flask API: app/ (api, services, ml, security, models, schemas), scripts/, tests/, weights/, keys/
-frontend/   React 18 + Vite + TypeScript web app
-docs/       all documentation (reference/ holds the synopsis and slides)
-data/       local data, gitignored (sample/ = synthetic demo images)
-notebooks/  experiments only
-tools/      optional extras (streamlit_prototype/ = the old UI, frozen)
+backend/        Flask API
+  app/          api/ (routes) · services/ (workflow) · ml/ (models, uncertainty, risk) · security/ · models/ (DB) · schemas/
+  config/       thresholds.json: every clinical / ML threshold in one place
+  scripts/      training, evaluation, calibration, signing and setup tools
+  tests/        fast test suite (no weights needed) · tests_live/: checks with the real trained models
+  weights/      model files (not in git; see weights/README.md) · keys/: signing keys (not in git)
+frontend/       React 18 + Vite + TypeScript web app
+notebooks/      one-click Colab training notebooks
+docs/           documentation, evidence/ (raw evaluation outputs), reference/screenshots/
+data/           local data, gitignored (sample/ = synthetic demo images)
+run.ps1 · Makefile · docker-compose.yml   run / build / deploy entry points
 ```

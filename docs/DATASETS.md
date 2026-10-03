@@ -13,6 +13,20 @@ Location on the development machine: `C:\Users\vrudd\Downloads\DP_datasets\datas
 | `segmentation/` | YOLO-seg, 1 class | Generated alongside `pose/` | Used for `dental_bone_yolov8n-seg.pt` (not used by the app) |
 | `real/tooth_detection/` | YOLO detect, 1 class (Premolars) | Roboflow "dental-x-rays-wwauy" v1, **CC BY 4.0** | Some file names contain what look like personal names. Treat it as sensitive, rename files before any sharing, and credit Roboflow per the licence |
 
+## Datasets behind the deployed models and checks (licences verified 2026-10-02)
+
+| Dataset | Used for | Licence (as published) | Commercial use | Notes |
+|---|---|---|---|---|
+| DENTEX (Zenodo 10.5281/zenodo.7812323) | Tooth detector training (FDI numbers) | Zenodo record: CC BY 4.0. The project's metric file and the challenge's other distributions: CC BY-NC-SA 4.0 | **Unclear: resolve before selling** | Get written confirmation from the DENTEX authors that the version used is CC BY 4.0, or retrain on the Zenodo CC BY release only |
+| DenPAR (Zenodo 16645076) | Landmark model training, conformal calibration (validation split), accuracy (test split) | CC BY 4.0 | Yes, with attribution | 1000 periapical films, specialist-verified CEJ / apex / bone level |
+| NHANES 2009-2014 (US CDC) | Training and temporal validation of the clinical risk model | US public domain | Yes | Downloaded to `~/Downloads/NHANES` with `scripts/train_risk_model_nhanes.py` instructions |
+| BRAR (figshare 10.6084/m9.figshare.30155974) | External panoramic evaluation (worst-tooth bone loss, 988 films) | Figshare record: CC BY 4.0 (the article itself is CC BY-NC-ND) | Yes for the data, with attribution | Single centre (Shanghai), one tooth per patient, no landmark coordinates, so it cannot train a landmark model |
+| Aga Khan University OPG segmentation & numbering (Zenodo 10538750) | External test of the tooth detector (154 films, 4,035 teeth) and of panoramic apex points | CC BY 4.0 | Yes | Whole-tooth outlines (crown + root) with FDI numbers by specialists; Pakistan, Orthophos XG |
+| TL-pano (Zenodo 18715533) | **Pending access** - panoramic CEJ / crest / apex training via `scripts/convert_tlpano.py` | CC BY-NC-SA 2.0, restricted (request access) | No | Enamel + tooth + alveolar-bone outlines on 197 films |
+| DP_datasets `real/tooth_detection` (Roboflow) | Panoramic test films for the live tests | CC BY 4.0 | Yes | File names contain personal names; never publish them |
+
+Datasets checked and **not usable** for the product: BoneLoss-PAN769 (no apex points; access only on request via InReDD for non-commercial use), perio-KPT (CC BY-NC-SA, login), Zenodo 15487430 panoramic conditions ("non-commercial research only"), PhysioNet multimodal dental dataset (restricted licence, registration and data-use agreement; it does contain repeat visits and could validate registration for research).
+
 ## Recommended public datasets for proper training and calibration
 
 - **DENTEX** (MICCAI 2023 challenge): panoramic X-rays with quadrant/tooth enumeration and diagnosis labels. Good for FDI detection.

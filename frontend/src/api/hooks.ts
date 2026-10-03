@@ -10,6 +10,7 @@ import type {
   Dashboard,
   LabResult,
   LabScenario,
+  ModelMetrics,
   ModelStatus,
   ModelTrust,
   Patient,
@@ -155,6 +156,8 @@ export const useModelStatus = () =>
     queryFn: () => get<{ models: ModelStatus[]; public_key_fingerprint: string | null }>("/api/models/status"),
   });
 export const useModelTrust = () => useQuery({ queryKey: ["trust"], queryFn: () => get<ModelTrust>("/api/models/trust") });
+export const useModelMetrics = () =>
+  useQuery({ queryKey: ["metrics"], queryFn: () => get<ModelMetrics>("/api/models/metrics"), staleTime: 300_000 });
 
 export const useLabScenarios = () =>
   useQuery({ queryKey: ["lab"], queryFn: () => get<LabScenario[]>("/api/security-lab") });

@@ -1,0 +1,34 @@
+{
+  "images": 200,
+  "image_types_detected": {
+    "periapical": 198,
+    "panoramic": 2
+  },
+  "teeth_labelled_with_all_keypoints": 596,
+  "teeth_matched_iou50": 575,
+  "tooth_recall": 0.9648,
+  "teeth_measured": 575,
+  "teeth_not_measured": 0,
+  "bone_loss_MAE_pct_points": 7.706,
+  "bone_loss_median_abs_error": 5.19,
+  "within_5_points": 0.4835,
+  "within_10_points": 0.7722,
+  "stage_agreement": 0.7235,
+  "landmark_error_pct_of_root_length_mean": {
+    "cej": 18.01,
+    "root_apex": 6.66,
+    "bone_crest": 17.57
+  },
+  "conformal": {
+    "target_coverage": 0.9,
+    "q": 18.561,
+    "empirical_interval_coverage": 0.913,
+    "reference_stage_in_prediction_set": 0.9826,
+    "set_size_counts": {
+      "1": 63,
+      "2": 333,
+      "3": 179
+    }
+  },
+  "calibration_file_source": "DenPAR periapical radiographs, specialist-verified CEJ / apex / bone-level labels (CC BY 4.0)"
+}

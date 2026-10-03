@@ -22,7 +22,7 @@ def tooth_boxes(n: int = 12) -> list[list[float]]:
 
 def make_radiograph(bone_loss_pct: list[float], seed: int = 0) -> np.ndarray:
     """bone_loss_pct[i] = how far the crest sits below the CEJ, as % of the CEJ-apex distance."""
-    rng = np.random.default_rng(seed)
+    rng = np.random.default_rng(seed)  # audit-ok: seeded sensor noise for SYNTHETIC demo/test images only
     img = np.full((HEIGHT, WIDTH), 38, np.float32)
     boxes = tooth_boxes(len(bone_loss_pct))
     root_len = APEX - CEJ

@@ -30,6 +30,20 @@ def reset_cache() -> None:
     _cache = None
 
 
+def scale_for(landmarks: dict | None) -> float:
+    """sigma(x) for a tooth: 1.0 for standard calibration; for a normalised calibration
+    sigma = max(floor, intercept + slope * mirrored-pass disagreement). A tooth without a
+    disagreement value (seen in one pass only) gets the most conservative sigma on file."""
+    cal = load()
+    spec = (cal or {}).get("sigma")
+    if not spec:
+        return 1.0
+    d = (landmarks or {}).get("tta_disagreement_pct")
+    if d is None:
+        return float(spec["missing_sigma"])
+    return max(float(spec["floor"]), float(spec["intercept"]) + float(spec["slope"]) * float(d))
+
+
 def current_q(coverage: float | None = None) -> float | None:
     cal = load()
     if not cal or not cal.get("scores"):
@@ -43,7 +57,7 @@ def save(scores, preds, refs, source: str, notes: str = "", split_seed: int = 0)
     """Scores are split in half: one half sets q, the other half measures coverage honestly."""
     scores = np.asarray(scores, float)
     preds, refs = np.asarray(preds, float), np.asarray(refs, float)
-    order = np.random.default_rng(split_seed).permutation(len(scores))
+    order = np.random.default_rng(split_seed).permutation(len(scores))  # audit-ok: seeded calibration/test split
     half = len(order) // 2
     cal_idx, test_idx = order[:half], order[half:]
     levels = {}
@@ -92,4 +106,4 @@ def report() -> dict:
                 "message": "No calibration file. Run scripts/calibrate_conformal.py on a held-out set. "
                            "Until then every case goes to clinician review."}
     return {"calibrated": True, "target_coverage": coverage, "q_current": current_q(coverage),
-            **{k: v for k, v in cal.items() if k != "scores"}}
+            "adaptive": bool(cal.get("sigma")), **{k: v for k, v in cal.items() if k != "scores"}}

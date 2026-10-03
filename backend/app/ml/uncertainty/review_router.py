@@ -5,7 +5,7 @@ A case becomes "Mandatory clinician review" if ANY of these hold:
   * the image-quality gate returned a warning
   * the image looks out-of-distribution or adversarially perturbed
   * any tooth's Grad-CAM attention falls outside the periodontal region
-  * any tooth used heuristic landmarks or had a low-confidence detection
+  * any tooth could not be measured (no model landmarks) or had a low-confidence detection
   * the landmark model was validated on a different radiograph type (e.g. periapical vs panoramic)
   * the pipeline ran in demo mode (no verified model)
 Such a case cannot become a final signed report until a dentist signs off.
@@ -40,9 +40,15 @@ def route(teeth: list[dict], quality: dict, ood: dict, demo_mode: bool,
     attention = [t["tooth_id"] for t in teeth if t.get("flags", {}).get("low_attention_validity")]
     if attention:
         add("low_attention_validity", "Model attention fell outside the periodontal region.", attention)
-    heuristic = [t["tooth_id"] for t in teeth if t.get("landmark_source") == "heuristic_fallback"]
-    if heuristic:
-        add("heuristic_landmarks", "Landmarks were estimated geometrically, not by the keypoint model.", heuristic)
+    unvalidated = [t["tooth_id"] for t in teeth if str(t.get("measurement_status", "")).startswith("not_validated_on_")]
+    if unvalidated:
+        add("not_validated_image_type", f"Bone loss is not measured on {image_type} radiographs: the landmark model "
+            "is only validated on periapical films. Take a periapical film of the teeth of interest to measure them.",
+            unvalidated)
+    unmeasured = [t["tooth_id"] for t in teeth if t.get("bone_loss_pct") is None and t["tooth_id"] not in unvalidated]
+    if unmeasured:
+        add("not_measured", "The landmark model could not place CEJ / crest / apex on these teeth, "
+            "so no bone loss is reported for them; a clinician must assess them.", unmeasured)
     model_lms = [t["tooth_id"] for t in teeth if str(t.get("landmark_source", "")).startswith("keypoint_model")]
     if model_lms and image_type and validated_image_type is None:
         add("landmarks_not_validated", "The landmark model has no validation record (no calibration file), "

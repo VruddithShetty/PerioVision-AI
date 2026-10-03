@@ -168,9 +168,9 @@ export default function LandingPage() {
               transition={{ delay: 0.8 }}
               className="glass-strong absolute right-2 top-16 hidden px-4 py-3 text-xs md:block"
             >
-              <p className="label">Tooth 36</p>
-              <p className="mt-1 font-display text-lg font-semibold text-review-400">Stage II · 24%</p>
-              <p className="text-mist-500">interval 19–29% · 90% coverage</p>
+              <p className="label">Illustration · per-tooth result</p>
+              <p className="mt-1 font-display text-lg font-semibold text-review-400">Stage · bone loss %</p>
+              <p className="text-mist-500">with its 90 % conformal interval</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: -20 }}

@@ -41,15 +41,15 @@ Section 10 explains each of these.
 
 | Phase | Outcome |
 |---|---|
-| **0 Audit** | `docs/AUDIT_REPORT.md`. Key findings: the repository is **public** and its history contains ~2,000 radiographs whose file names include what look like real patient names. Other findings: an unauthenticated endpoint could read `.env` and the private signing key; a hard-coded superadmin password; a random-data risk model; the key file could be deleted on a wrong password; inactive MFA; security modules that were never called; three broken UIs; no tests. |
-| **1 Restructure** | Moved to `backend/ frontend/ docs/ data/ notebooks/ tools/`. 104 files moved or restored with `git mv`, **nothing deleted**; every move is logged in `docs/CHANGELOG_RESTRUCTURE.md`. The monolithic server was split into an app factory and blueprints. Hard-coded secrets were moved to `.env`. |
+| **0 Audit** | (Original audit document, since superseded by `docs/VERIFICATION_REPORT.md`.) Key findings: the repository is **public** and its history contains ~2,000 radiographs whose file names include what look like real patient names. Other findings: an unauthenticated endpoint could read `.env` and the private signing key; a hard-coded superadmin password; a random-data risk model; the key file could be deleted on a wrong password; inactive MFA; security modules that were never called; three broken UIs; no tests. |
+| **1 Restructure** | Moved to `backend/ frontend/ docs/ data/ notebooks/ tools/`. 104 files moved or restored with `git mv`, **nothing deleted**; every move is recorded in the git history. The monolithic server was split into an app factory and blueprints. Hard-coded secrets were moved to `.env`. |
 | **2 Must-have features** | Rebuilt the security core, the ML pipeline, uncertainty, progression, risk, encrypted storage, signed reports and the API. |
 | **3 Improvements** | Security Lab, demo seeding, CI workflow, and the review queue / model trust / status endpoints. |
 | **4 Frontend** | React 18 + TypeScript app: 15 required pages plus 3D scenes. |
 | **Extra** | Four chairside clinician tools, added on request. |
 | **5 API contract** | OpenAPI spec generated from the code, plus `docs/API.md` built from 48 live calls; contract tests. |
 | **6 Docs & quality** | Traceability matrix, architecture, viva cheat sheet, beginner README, optional HTTPS. |
-| **7 Verification** | Full test and build run, plus a page-by-page browser walkthrough (`docs/FINAL_CHECKLIST.md`). |
+| **7 Verification** | Full test and build run, plus a page-by-page browser walkthrough (superseded by `docs/VERIFICATION_REPORT.md`). |
 
 ---
 
@@ -209,8 +209,6 @@ This was verified end to end both in the browser and in `tests/test_api.py::test
 
 | Document | Contents |
 |---|---|
-| `AUDIT_REPORT.md` | Phase 0 audit and its findings |
-| `CHANGELOG_RESTRUCTURE.md` | Every file move and change, by phase |
 | `ARCHITECTURE.md` | Diagram, request flow and trust boundaries |
 | `SECURITY.md` | Threat model, permission matrix and HIPAA-aligned mapping |
 | `API.md` | 48 live request/response examples, plus `openapi.json` |
@@ -218,8 +216,6 @@ This was verified end to end both in the browser and in `tests/test_api.py::test
 | `MODEL_CARD.md` | Intended use, component status, limitations |
 | `DATASETS.md` | Datasets in use and how to plug in new ones |
 | `KEY_ROTATION.md` | Steps for rotating encryption and signing keys |
-| `VIVA_CHEAT_SHEET.md` | Modules in plain language and likely examiner questions |
-| `FINAL_CHECKLIST.md` | Final verification results and next steps |
 
 ---
 
@@ -256,4 +252,4 @@ Sign in with a `DEMO_*` account from `.env`; these accounts are for demos only. 
 3. **Calibrate uncertainty** on a held-out annotated split with `scripts/calibrate_conformal.py`. Only then report real metrics in the model card.
 4. **Collect longitudinal outcome data** to replace the rule-assisted risk score with a validated model.
 5. **Replace the demo secrets** (new encryption key ring plus `rotate_keys.py`, a new signing key pair and password), remove the demo accounts, and deploy behind a TLS reverse proxy with MongoDB authentication.
-6. Add the synopsis and slides to `docs/reference/`, add screenshots to the README, and rehearse with `docs/VIVA_CHEAT_SHEET.md`.
+6. Add the synopsis and slides to `docs/reference/`, add screenshots to the README.

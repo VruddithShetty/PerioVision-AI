@@ -84,7 +84,7 @@ function ReviewPanel({ id, onDone }: { id: string; onDone: () => void }) {
                   <td className="px-3 py-2 font-mono font-semibold">{t.tooth_id}</td>
                   <td className="px-3 py-2">
                     <span style={{ color: stageColor(t.stage) }}>{t.bone_loss_pct?.toFixed(1) ?? "–"}% · {t.stage ?? "–"}</span>
-                    {t.flags.heuristic_landmarks && <span className="ml-1 text-[10px] text-review-400">est.</span>}
+                    {t.bone_loss_pct === null && <span className="ml-1 text-[10px] text-review-400">not measured</span>}
                   </td>
                   <td className="px-3 py-2"><Input type="number" min={0} max={100} step="0.5" className="w-24 py-1.5" value={c?.bone_loss_pct ?? ""} onChange={(e) => edit(t, { bone_loss_pct: e.target.value })} disabled={!canSign} aria-label={`Corrected bone loss for tooth ${t.tooth_id}`} /></td>
                   <td className="px-3 py-2">

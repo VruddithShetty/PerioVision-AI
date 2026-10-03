@@ -77,6 +77,7 @@ SUMMARIES = {
     "security.all_sessions": "Active sessions of all users",
     "security.models_status": "Model files and signature status",
     "security.model_trust": "Calibration, flagged share and model integrity",
+    "security.model_metrics": "Held-out test metrics of the installed models, read from their metric files",
     "security.list_users": "List user accounts",
     "security.create_user": "Create a user account",
     "security.update_user": "Change a user's role or disable them",

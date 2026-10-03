@@ -23,7 +23,7 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 120
 target-version = "py311"
-extend-exclude = ["legacy"]
+extend-exclude = []
 
 [tool.ruff.lint]
 # Errors that break code or hide bugs: syntax errors, undefined names, invalid comparisons, unused imports.
@@ -37,4 +37,4 @@ select = ["E9", "F63", "F7", "F82", "F401"]
 [tool.black]
 line-length = 120
 target-version = ["py311"]
-extend-exclude = "legacy"
+extend-exclude = ""

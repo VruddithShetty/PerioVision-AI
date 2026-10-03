@@ -18,6 +18,7 @@ from app.services import container
 
 logger = logging.getLogger(__name__)
 MARKER = {"_id": "demo_seed_v1"}
+SYNTHETIC = "synthetic_demo"   # every seeded record carries source = SYNTHETIC; live records never do
 
 PATIENTS = [
     # name, clinical profile, bone loss per visit (12 teeth each visit, % below CEJ)
@@ -71,7 +72,7 @@ def seed(force: bool = False) -> dict:
             visit_date = (today - dt.timedelta(days=365 * years_back + offset)).isoformat()
             png = synthetic.to_png(synthetic.make_radiograph(levels, seed=p_index * 10 + v_index))
             record = run_analysis(png, raw, user, visit_date=visit_date, force_demo=True,
-                                  upload_meta={"kind": "png", "source": "synthetic demo"})
+                                  upload_meta={"kind": "png", "source": "synthetic demo"}, source=SYNTHETIC)
             analysis_ids.append(record["analysis_id"])
 
     # A dentist signs off the latest visit of the first two patients; one gets a correction.
@@ -94,7 +95,9 @@ def seed(force: bool = False) -> dict:
     for pid, a in zip(created, latest):
         teeth = {}
         for t in a["teeth"]:
-            bl = t.get("bone_loss_pct") or 0.0
+            bl = t.get("bone_loss_pct")
+            if bl is None:                                 # not measured: no synthetic chart values derived from it
+                continue
             cal = max(1, round(bl * 0.13 + 1))            # ~13 mm root: % -> mm, plus 1 mm biological width
             if pid == created[1] and t["tooth_id"] in ("44", "34"):
                 cal += 4                                   # angular defect the X-ray under-reads
@@ -105,7 +108,7 @@ def seed(force: bool = False) -> dict:
                                     "mobility": 1 if bl > 35 else 0, "furcation": 1 if bl > 30 and t["tooth_id"][1] in "67" else 0,
                                     "missing": False}
         charts.create({"patient_id": pid, "pseudo_id": a["pseudo_id"], "exam_date": a["visit_date"], "teeth": teeth,
-                       "notes": "Synthetic demo chart", "examiner_id": user["id"], "examiner_name": user["name"]})
+                       "notes": "Synthetic demo chart", "source": SYNTHETIC, "examiner_id": user["id"], "examiner_name": user["name"]})
 
     report_id = None
     try:

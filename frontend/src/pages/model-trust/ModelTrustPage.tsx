@@ -88,12 +88,14 @@ export default function ModelTrustPage() {
                     <p className="mt-1 font-display text-2xl font-bold">
                       {v.empirical_coverage_other_half === null ? "–" : `${Math.round(v.empirical_coverage_other_half * 100)}%`}
                     </p>
-                    <p className="text-[11px] text-mist-500">± {v.q_from_half?.toFixed(1) ?? "∞"} pts</p>
+                    <p className="text-[11px] text-mist-500">
+                      {v.mean_half_width_pct != null ? `avg ± ${v.mean_half_width_pct.toFixed(1)} pts` : `± ${v.q_from_half?.toFixed(1) ?? "∞"} pts`}
+                    </p>
                   </div>
                 ))}
               </div>
               <CalibrationPlot bins={cal.reliability_bins ?? []} />
-              <p className="text-xs text-mist-500">Source: {cal.source} · {cal.n_scores} teeth · MAE {cal.mean_absolute_error_pct} pts</p>
+              <p className="text-xs text-mist-500">Source: {cal.source} · {cal.n_scores} teeth · MAE {cal.mean_absolute_error_pct} pts{cal.adaptive ? " · adaptive: each tooth's interval widens when the normal and mirrored readings disagree" : ""}</p>
             </>
           )}
         </Card>

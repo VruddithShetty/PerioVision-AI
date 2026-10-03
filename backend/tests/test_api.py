@@ -172,6 +172,24 @@ def test_disguised_upload_is_blocked(client, technician):
     assert r.status_code == 415
 
 
+def _pdf_text(pdf: bytes) -> str:
+    """Page content of a ReportLab PDF (inflates the Flate-compressed streams)."""
+    import base64
+    import re
+    import zlib
+
+    out = []
+    for m in re.finditer(rb"stream\r?\n(.*?)\s*endstream", pdf, re.S):
+        raw = m.group(1).strip()
+        try:
+            if raw.endswith(b"~>"):  # ReportLab: ASCII85 on top of Flate
+                raw = base64.a85decode(raw[:-2])
+            out.append(zlib.decompress(raw).decode("latin-1"))
+        except (zlib.error, ValueError):
+            out.append(m.group(1).decode("latin-1", "ignore"))
+    return "\n".join(out)
+
+
 # ---------- end-to-end happy path ----------
 def test_end_to_end_workflow(client, dentist, auditor):
     pid = data(client.post("/api/patients", headers=dentist, json={
@@ -217,6 +235,11 @@ def test_end_to_end_workflow(client, dentist, auditor):
 
     pdf = client.get(f"/api/reports/{report_id}/download", headers=dentist)
     assert pdf.status_code == 200 and pdf.data.startswith(b"%PDF")
+    # the report shows exactly the stored numbers (no re-estimation) and the clinician's correction
+    text = _pdf_text(pdf.data)
+    model_value = second["teeth"][0]["bone_loss_pct"]
+    assert model_value is not None and f"({t0}) Tj" in text and f"({model_value:.1f}) Tj" in text
+    assert "Clinician corrections" in text and "(22.5) Tj" in text
     ok = data(client.get(f"/api/reports/verify/{report_id}"))
     assert ok["valid"] and ok["signature_valid"]
     by_file = data(client.post("/api/reports/verify", content_type="multipart/form-data",

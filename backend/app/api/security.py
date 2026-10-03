@@ -9,7 +9,7 @@ from app.api._common import fail, ok, validation_error
 from app.schemas import UserCreateIn, UserUpdateIn
 from app.security.audit_log import audit
 from app.security.rbac import ROLES, permission_matrix
-from app.security.zero_trust import secured
+from app.security.zero_trust import public, secured
 from app.services import container
 
 bp = Blueprint("security", __name__)
@@ -60,6 +60,45 @@ def model_trust():
         "flag_reasons": reasons,
         "models": container.registry().status(),
         "risk_model": {"type": MODEL_TYPE, "version": MODEL_VERSION},
+    })
+
+
+@bp.get("/api/models/metrics")
+@public
+def model_metrics():
+    """Held-out test metrics exactly as written by the training/evaluation run (no PHI, read-only).
+
+    Served from weights/*_metrics.json so no accuracy figure is ever typed into the frontend.
+    Missing files are reported as null ("not evaluated"), never as a default number.
+    """
+    import json
+
+    from app import config
+    from app.ml.uncertainty import calibration
+
+    def read(name):
+        path = config.WEIGHTS_DIR / name
+        if not path.exists():
+            return None
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+
+    det, lm, cal = read("detector_test_metrics.json"), read("landmark_test_metrics.json"), calibration.load()
+    # Written by scripts/evaluate_landmarks.py --metrics-out: the deployed pipeline (incl. test-time
+    # augmentation) measured end to end; preferred over the training run's own numbers when present.
+    pipe = read("pipeline_test_metrics.json")
+    pick = lambda d, keys: {k: d.get(k) for k in keys} if d else None  # noqa: E731
+    return ok({
+        "tooth_detector": pick(det, ("dataset", "model", "test_precision", "test_recall", "test_mAP50", "test_mAP50_95")),
+        "landmarks": None if not lm else {
+            **pick(lm, ("dataset", "model")),
+            "measured_by": "app pipeline (scripts/evaluate_landmarks.py)" if pipe else "training run",
+            "test": {"n_teeth": pipe["teeth_measured"], "bone_loss_MAE_pct_points": pipe["bone_loss_MAE_pct_points"],
+                     "within_10_points": pipe["within_10_points"], "stage_agreement": pipe["stage_agreement"]}
+            if pipe else lm.get("test", {}).get("all_found_teeth"),
+            "tooth_recall": pipe["tooth_recall"] if pipe else lm.get("test", {}).get("tooth_recall")},
+        "conformal": None if not cal else {"source": cal.get("source"), "image_type": cal.get("image_type"),
+                                           "levels": cal.get("levels")},
     })
 
 
