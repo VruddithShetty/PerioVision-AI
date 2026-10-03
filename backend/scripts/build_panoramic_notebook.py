@@ -40,13 +40,17 @@ At the end, download `MyDrive/PerioVision/export_panoramic/` and give it to Clau
 its held-out test metrics, and the app only switches a model on if those metrics pass.
 """),
          code("""
-# 0. Settings (defaults chosen for a T4 GPU; larger GPUs can raise sizes / epochs)
+# 0. Settings (defaults chosen for a free T4 GPU)
+# Which models to train in this session. Finished models are skipped anyway, so a short session can do one at a time.
+RUN = {"A": True, "B": True, "C": True, "D": False}   # D (tooth-detector fine-tune) can also be trained on a CPU
 ARCH        = "convnext_tiny"   # backbone for A and B: resnet18 | resnet50 | efficientnet_b3 | convnext_tiny
 SIZE        = (1024, 512)       # panoramic film resized to W x H for A and B
 EPOCHS_A, EPOCHS_B = 12, 30
 BATCH_A, BATCH_B   = 16, 16
-YOLO_C, IMGSZ_C, EPOCHS_C = "yolo11m.pt", 1280, 150
-IMGSZ_D, EPOCHS_D = 1280, 60
+# C: per-tooth bone-loss detector. "yolo11s" at 1024 fits one free session (~1-1.5 h on a T4);
+# with more GPU time use "yolo11m.pt", 1280, 150 for the most accuracy.
+YOLO_C, IMGSZ_C, EPOCHS_C, PATIENCE_C = "yolo11s.pt", 1024, 60, 15
+IMGSZ_D, EPOCHS_D = 1280, 40
 """),
          code("""
 # 1. GPU + Google Drive
@@ -78,91 +82,104 @@ def fetch(url, path):
         print("downloading", url); urllib.request.urlretrieve(url, path)
     return path
 
-# MM-OPG (Hugging Face, Apache-2.0)
-os.makedirs(f"{D}/mmopg", exist_ok=True)
-HF = "https://huggingface.co/datasets/jeffrey423/ToothXpert.MM-OPG-Annotations/resolve/main"
-fetch(f"{HF}/MM-OPG-Train-Raw.json", f"{D}/mmopg/mmopg_train.json")
-fetch(f"{HF}/MM-OPG-Test.json", f"{D}/mmopg/mmopg_test.json")
-fetch(f"{HF}/images_resized_public.zip", f"{D}/mmopg/images.zip")
+need_A = RUN["A"] and not os.path.exists(f"{EXPORT}/panoramic_screen_metrics.json")
+need_B = RUN["B"] and not os.path.exists(f"{EXPORT}/panoramic_severity_metrics.json")
+need_C = RUN["C"] and not os.path.exists(f"{EXPORT}/pdcnn_boneloss_metrics.json")
+need_D = RUN["D"] and not os.path.exists(f"{EXPORT}/aku_detector_finetune_metrics.json")
+print("still to train:", [k for k, v in (("A", need_A), ("B", need_B), ("C", need_C), ("D", need_D)) if v])
 
-# BRAR (figshare, CC BY 4.0)
-if not os.path.exists(f"{D}/brar/meta_data.csv"):
+# MM-OPG (Hugging Face, Apache-2.0) - only needed for A
+if need_A:
+    os.makedirs(f"{D}/mmopg", exist_ok=True)
+    HF = "https://huggingface.co/datasets/jeffrey423/ToothXpert.MM-OPG-Annotations/resolve/main"
+    fetch(f"{HF}/MM-OPG-Train-Raw.json", f"{D}/mmopg/mmopg_train.json")
+    fetch(f"{HF}/MM-OPG-Test.json", f"{D}/mmopg/mmopg_test.json")
+    fetch(f"{HF}/images_resized_public.zip", f"{D}/mmopg/images.zip")
+
+# BRAR (figshare, CC BY 4.0) - only needed for B
+if need_B and not os.path.exists(f"{D}/brar/meta_data.csv"):
     zipfile.ZipFile(fetch("https://ndownloader.figshare.com/files/58062268", f"{D}/brar.zip")).extractall(f"{D}/brar")
     inner = glob.glob(f"{D}/brar/**/meta_data.csv", recursive=True)[0]
     if os.path.dirname(inner) != f"{D}/brar":
         for p in os.listdir(os.path.dirname(inner)): shutil.move(os.path.join(os.path.dirname(inner), p), f"{D}/brar")
 
-# Aga Khan OPG (Zenodo, CC BY 4.0)
-if not glob.glob(f"{D}/aku/**/annotations", recursive=True):
+# Aga Khan OPG (Zenodo, CC BY 4.0) - only needed for D
+if need_D and not glob.glob(f"{D}/aku/**/annotations", recursive=True):
     zipfile.ZipFile(fetch("https://zenodo.org/api/records/10538750/files/Niihhaa/Dataset-v1.zip/content", f"{D}/aku.zip")).extractall(f"{D}/aku")
 
-# PDCNN (public Google Drive folder)
-if not glob.glob(f"{D}/pdcnn/**/*.json", recursive=True):
-    !gdown --folder "https://drive.google.com/drive/folders/18qUxeRPHPcCQT9o8AgV5400f05Fu3ISW" -O {D}/pdcnn
-for z in glob.glob(f"{D}/pdcnn/**/*.zip", recursive=True):
-    if not os.path.isdir(z[:-4]): zipfile.ZipFile(z).extractall(z[:-4])
-print(subprocess.run(["du", "-sh", D + "/mmopg", D + "/brar", D + "/aku", D + "/pdcnn"], capture_output=True, text=True).stdout)
-print("PDCNN annotation files:", glob.glob(f"{D}/pdcnn/**/*.json", recursive=True))
+# PDCNN (public Google Drive folder) - only needed for C
+if need_C:
+    if not glob.glob(f"{D}/pdcnn/**/*.json", recursive=True):
+        !gdown --folder "https://drive.google.com/drive/folders/18qUxeRPHPcCQT9o8AgV5400f05Fu3ISW" -O {D}/pdcnn
+    for z in glob.glob(f"{D}/pdcnn/**/*.zip", recursive=True):
+        if not os.path.isdir(z[:-4]): zipfile.ZipFile(z).extractall(z[:-4])
+    print("PDCNN annotation files:", glob.glob(f"{D}/pdcnn/**/*.json", recursive=True))
+print(subprocess.run("du -sh " + D + "/*", shell=True, capture_output=True, text=True).stdout)
 """),
           code("""
 # 4. Model A: panoramic bone-loss screen per jaw (MM-OPG)
-if not os.path.exists(f"{EXPORT}/panoramic_screen_metrics.json"):
+if need_A:
     !python /content/train_panoramic_boneloss.py --task screen --data {D}/mmopg --out {EXPORT}/panoramic_screen --arch {ARCH} --size {SIZE[0]} {SIZE[1]} --epochs {EPOCHS_A} --batch {BATCH_A} --lr 2e-4
-print(open(f"{EXPORT}/panoramic_screen_metrics.json").read())
+if os.path.exists(f"{EXPORT}/panoramic_screen_metrics.json"): print(open(f"{EXPORT}/panoramic_screen_metrics.json").read())
 """),
           code("""
 # 5. Model B: worst-tooth bone loss % and stage (BRAR), fine-tuned from model A
-if not os.path.exists(f"{EXPORT}/panoramic_severity_metrics.json"):
+if need_B:
     !python /content/train_panoramic_boneloss.py --task severity --data {D}/brar --init {EXPORT}/panoramic_screen.pt --out {EXPORT}/panoramic_severity --arch {ARCH} --size {SIZE[0]} {SIZE[1]} --epochs {EPOCHS_B} --batch {BATCH_B} --lr 1e-4
-print(open(f"{EXPORT}/panoramic_severity_metrics.json").read())
+if os.path.exists(f"{EXPORT}/panoramic_severity_metrics.json"): print(open(f"{EXPORT}/panoramic_severity_metrics.json").read())
 """),
           code("""
 # 6. Model C: per-tooth bone-loss detector (PDCNN). Resumes from Drive after a disconnect.
 from ultralytics import YOLO
-bl = [p for p in glob.glob(f"{D}/pdcnn/**/*.json", recursive=True) if "BL" in os.path.basename(p)]
-assert bl, "PDCNN bone-loss JSON not found - check the printout of step 3"
-if not os.path.exists("/content/pdcnn_yolo/pdcnn.yaml"):
-    !python /content/convert_pdcnn_coco.py --json "{bl[0]}" --images {D}/pdcnn --out /content/pdcnn_yolo
-print(open("/content/pdcnn_yolo/pdcnn.yaml").read())
-run_c = f"{ROOT}/runs/pdcnn_bl"
-if os.path.exists(f"{run_c}/weights/last.pt") and not os.path.exists(f"{run_c}/DONE"):
-    YOLO(f"{run_c}/weights/last.pt").train(resume=True)
-elif not os.path.exists(f"{run_c}/DONE"):
-    YOLO(YOLO_C).train(data="/content/pdcnn_yolo/pdcnn.yaml", imgsz=IMGSZ_C, epochs=EPOCHS_C, patience=30, batch=-1,
-                       project=f"{ROOT}/runs", name="pdcnn_bl", exist_ok=True, seed=0, deterministic=False,
-                       fliplr=0.5, mosaic=0.5, close_mosaic=15)
-open(f"{run_c}/DONE", "w").close()
+if not need_C:
+    print("Model C already trained or switched off in RUN - skipping")
+else:
+    bl = [p for p in glob.glob(f"{D}/pdcnn/**/*.json", recursive=True) if "BL" in os.path.basename(p)]
+    assert bl, "PDCNN bone-loss JSON not found - check the printout of step 3"
+    if not os.path.exists("/content/pdcnn_yolo/pdcnn.yaml"):
+        !python /content/convert_pdcnn_coco.py --json "{bl[0]}" --images {D}/pdcnn --out /content/pdcnn_yolo
+    print(open("/content/pdcnn_yolo/pdcnn.yaml").read())
+    run_c = f"{ROOT}/runs/pdcnn_bl"
+    if os.path.exists(f"{run_c}/weights/last.pt") and not os.path.exists(f"{run_c}/DONE"):
+        YOLO(f"{run_c}/weights/last.pt").train(resume=True)
+    elif not os.path.exists(f"{run_c}/DONE"):
+        YOLO(YOLO_C).train(data="/content/pdcnn_yolo/pdcnn.yaml", imgsz=IMGSZ_C, epochs=EPOCHS_C, patience=PATIENCE_C, batch=-1,
+                           project=f"{ROOT}/runs", name="pdcnn_bl", exist_ok=True, seed=0, deterministic=False,
+                           fliplr=0.5, mosaic=0.5, close_mosaic=10, cache="ram", save_period=1)
+    open(f"{run_c}/DONE", "w").close()
 
-# Honest test: detection mAP per class + per-tooth label accuracy on the held-out 10 %
-model_c = YOLO(f"{run_c}/weights/best.pt")
-r = model_c.val(data="/content/pdcnn_yolo/pdcnn.yaml", split="test", imgsz=IMGSZ_C, project=f"{ROOT}/runs", name="pdcnn_test", exist_ok=True)
-def iou(a, b):
-    x1, y1, x2, y2 = max(a[0], b[0]), max(a[1], b[1]), min(a[2], b[2]), min(a[3], b[3])
-    inter = max(0, x2 - x1) * max(0, y2 - y1); return inter / ((a[2]-a[0])*(a[3]-a[1]) + (b[2]-b[0])*(b[3]-b[1]) - inter + 1e-9)
-right = total = 0
-for img in glob.glob("/content/pdcnn_yolo/images/test/*"):
-    lab = img.replace("/images/", "/labels/").rsplit(".", 1)[0] + ".txt"
-    p = model_c(img, imgsz=IMGSZ_C, conf=0.25, verbose=False)[0]
-    H, W = p.orig_shape
-    preds = [(b.xyxy[0].tolist(), int(b.cls)) for b in p.boxes]
-    for line in open(lab):
-        c, cx, cy, w, h = map(float, line.split()); g = [(cx-w/2)*W, (cy-h/2)*H, (cx+w/2)*W, (cy+h/2)*H]
-        best = max(preds, key=lambda q: iou(g, q[0]), default=None)
-        total += 1
-        if best is not None and iou(g, best[0]) >= 0.5 and best[1] == int(c): right += 1
-names = model_c.names
-mc = {"task": "per-tooth periodontal bone-loss boxes (PDCNN)", "classes": names,
-      "test_mAP50": round(float(r.box.map50), 4), "test_mAP50_95": round(float(r.box.map), 4),
-      "test_per_class_mAP50": {names[i]: round(float(v), 4) for i, v in enumerate(r.box.all_ap[:, 0])},
-      "test_tooth_found_with_correct_label": round(right / max(total, 1), 4), "test_teeth": total}
-json.dump(mc, open(f"{EXPORT}/pdcnn_boneloss_metrics.json", "w"), indent=2)
-shutil.copy(f"{run_c}/weights/best.pt", f"{EXPORT}/pdcnn_boneloss.pt")
-print(json.dumps(mc, indent=2))
+    # Honest test: detection mAP per class + per-tooth label accuracy on the held-out 10 %
+    model_c = YOLO(f"{run_c}/weights/best.pt")
+    r = model_c.val(data="/content/pdcnn_yolo/pdcnn.yaml", split="test", imgsz=IMGSZ_C, project=f"{ROOT}/runs", name="pdcnn_test", exist_ok=True)
+    def iou(a, b):
+        x1, y1, x2, y2 = max(a[0], b[0]), max(a[1], b[1]), min(a[2], b[2]), min(a[3], b[3])
+        inter = max(0, x2 - x1) * max(0, y2 - y1); return inter / ((a[2]-a[0])*(a[3]-a[1]) + (b[2]-b[0])*(b[3]-b[1]) - inter + 1e-9)
+    right = total = 0
+    for img in glob.glob("/content/pdcnn_yolo/images/test/*"):
+        lab = img.replace("/images/", "/labels/").rsplit(".", 1)[0] + ".txt"
+        p = model_c(img, imgsz=IMGSZ_C, conf=0.25, verbose=False)[0]
+        H, W = p.orig_shape
+        preds = [(b.xyxy[0].tolist(), int(b.cls)) for b in p.boxes]
+        for line in open(lab):
+            c, cx, cy, w, h = map(float, line.split()); g = [(cx-w/2)*W, (cy-h/2)*H, (cx+w/2)*W, (cy+h/2)*H]
+            best = max(preds, key=lambda q: iou(g, q[0]), default=None)
+            total += 1
+            if best is not None and iou(g, best[0]) >= 0.5 and best[1] == int(c): right += 1
+    names = model_c.names
+    mc = {"task": "per-tooth periodontal bone-loss boxes (PDCNN)", "classes": names,
+          "test_mAP50": round(float(r.box.map50), 4), "test_mAP50_95": round(float(r.box.map), 4),
+          "test_per_class_mAP50": {names[i]: round(float(v), 4) for i, v in enumerate(r.box.all_ap[:, 0])},
+          "test_tooth_found_with_correct_label": round(right / max(total, 1), 4), "test_teeth": total}
+    json.dump(mc, open(f"{EXPORT}/pdcnn_boneloss_metrics.json", "w"), indent=2)
+    shutil.copy(f"{run_c}/weights/best.pt", f"{EXPORT}/pdcnn_boneloss.pt")
+    print(json.dumps(mc, indent=2))
 """),
           code("""
 # 7. Model D: fine-tune the current tooth detector on Aga Khan; keep it only if the held-out test improves
 CUR = f"{ROOT}/current/dental_yolov8n.pt"
-if not os.path.exists(CUR):
+if not need_D:
+    print("Model D already trained or switched off in RUN - skipping")
+elif not os.path.exists(CUR):
     print("SKIPPED: upload backend/weights/dental_yolov8n.pt to MyDrive/PerioVision/current/ to run step D")
 else:
     aku_src = os.path.dirname(glob.glob(f"{D}/aku/**/folder 1", recursive=True)[0])
