@@ -214,9 +214,48 @@ Download `MyDrive/PerioVision/export_panoramic/` (right-click → Download), ext
 test metrics pass; otherwise panoramic bone loss stays off.
 """)]
 
-nb = {"cells": cells, "metadata": {"accelerator": "GPU", "colab": {"provenance": []},
-                                   "kernelspec": {"display_name": "Python 3", "name": "python3"}},
-      "nbformat": 4, "nbformat_minor": 0}
-with open(OUT, "w", encoding="utf-8") as f:
-    json.dump(nb, f, indent=1, ensure_ascii=False)
-print("wrote", os.path.abspath(OUT), len(cells), "cells")
+def write(path, cell_list):
+    nb = {"cells": cell_list, "metadata": {"accelerator": "GPU", "colab": {"provenance": []},
+                                           "kernelspec": {"display_name": "Python 3", "name": "python3"}},
+          "nbformat": 4, "nbformat_minor": 0}
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(nb, f, indent=1, ensure_ascii=False)
+    print("wrote", os.path.abspath(path), len(cell_list), "cells")
+
+
+write(OUT, cells)
+
+# Single-model notebooks, so two Google accounts can train C and D at the same time.
+SINGLE = {
+    "C": ("train_panoramic_C_colab.ipynb", "the per-tooth bone-loss detector (model C, PDCNN)",
+          "About 1-1.5 hours on a free T4."),
+    "D": ("train_panoramic_D_colab.ipynb", "the tooth-detector fine-tune on Aga Khan films (model D)",
+          "About 30-45 minutes on a free T4. **First** upload `backend/weights/dental_yolov8n.pt` to "
+          "`MyDrive/PerioVision/current/` in THIS Google account."),
+}
+for key, (fname, what, note) in SINGLE.items():
+    one = [md(f"""
+# PerioVision AI: train {what} on a free Colab GPU
+
+`Runtime` → `Change runtime type` → **T4 GPU** → Save, then `Runtime` → **Run all** and allow Google Drive.
+{note} If Colab disconnects, Run all again: training resumes from Drive.
+
+Results go to `MyDrive/PerioVision/export_panoramic/` in this account; download that folder and give it to Claude.
+""")]
+    for c in cells[1:]:
+        src = "".join(c["source"])
+        if c["cell_type"] == "markdown":
+            continue
+        if src.startswith("# 0. Settings"):
+            src = src.replace('RUN = {"A": True, "B": True, "C": True, "D": False}',
+                              "RUN = {" + ", ".join(f'"{k}": {k == key}' for k in "ABCD") + "}")
+        if src.startswith(("# 4. Model A", "# 5. Model B")):
+            continue
+        if src.startswith("%%writefile /content/train_panoramic_boneloss.py"):
+            continue
+        if key == "C" and src.startswith(("# 7. Model D", "%%writefile /content/convert_aku_labelme.py")):
+            continue
+        if key == "D" and src.startswith(("# 6. Model C", "%%writefile /content/convert_pdcnn_coco.py")):
+            continue
+        one.append(code(src))
+    write(os.path.join(os.path.dirname(OUT), fname), one)
