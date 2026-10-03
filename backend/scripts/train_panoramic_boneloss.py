@@ -18,6 +18,9 @@ Usage (from backend/):
          --init weights/panoramic_screen.pt --out weights/panoramic_severity
 """
 import argparse
+import os as _os
+
+_os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")   # before torch initialises CUDA
 import json
 import math
 import os
@@ -144,14 +147,22 @@ def load_brar(folder: str):
 
 
 # ---------------------------------------------------------------- training
-def run_epochs(net, train, val_fn, loss_fn, epochs, lr, batch=32, seed=0):
+def run_epochs(net, train, val_fn, loss_fn, epochs, lr, batch=32, seed=0, ckpt=None):
+    """Train; keep the best epoch by validation score. With `ckpt`, state is saved after every epoch and a
+    rerun resumes from it (Colab disconnects lose nothing but the current epoch)."""
     rng = random.Random(seed)  # audit-ok: seeded shuffling / augmentation
     opt = torch.optim.AdamW(net.parameters(), lr=lr, weight_decay=1e-4)
     steps = epochs * math.ceil(len(train) / batch)
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=lr, total_steps=steps, pct_start=0.15)
     scaler = torch.amp.GradScaler(enabled=DEVICE == "cuda")
-    best, best_state = None, None
-    for ep in range(epochs):
+    best, best_state, start = None, None, 0
+    if ckpt and os.path.exists(ckpt):
+        c = torch.load(ckpt, map_location=DEVICE, weights_only=False)
+        net.load_state_dict(c["net"]); opt.load_state_dict(c["opt"]); sched.load_state_dict(c["sched"])
+        scaler.load_state_dict(c["scaler"]); rng.setstate(c["rng"])
+        best, best_state, start = c["best"], c["best_state"], c["epoch"]
+        print(f"resuming after epoch {start} (best val {best:.4f})", flush=True)
+    for ep in range(start, epochs):
         net.train()
         rng.shuffle(train)
         t0, tot = time.time(), 0.0
@@ -167,21 +178,33 @@ def run_epochs(net, train, val_fn, loss_fn, epochs, lr, batch=32, seed=0):
             scaler.step(opt)
             scaler.update()
             sched.step()
-            tot += float(loss) * len(chunk)
+            tot += loss.item() * len(chunk)
+        if DEVICE == "cuda":
+            torch.cuda.empty_cache()
         score = val_fn(net)
         print(f"epoch {ep + 1}/{epochs} loss {tot / len(train):.4f} val {score:.4f} ({time.time() - t0:.0f}s)", flush=True)
         if best is None or score > best:
-            best, best_state = score, {k: v.detach().clone() for k, v in net.state_dict().items()}
+            best, best_state = score, {k: v.detach().cpu().clone() for k, v in net.state_dict().items()}
+        if ckpt:
+            torch.save({"net": net.state_dict(), "opt": opt.state_dict(), "sched": sched.state_dict(),
+                        "scaler": scaler.state_dict(), "rng": rng.getstate(), "best": best,
+                        "best_state": best_state, "epoch": ep + 1}, ckpt + ".tmp")
+            os.replace(ckpt + ".tmp", ckpt)
     net.load_state_dict(best_state)
     return best
 
 
-@torch.no_grad()
-def predict(net, rows, batch=64):
+@torch.inference_mode()
+def predict(net, rows, batch=8):
+    """Small batches in half precision: full-size panoramic films at 1024 x 512 need a lot of GPU memory."""
     net.eval()
     out = []
     for i in range(0, len(rows), batch):
-        out.append(net(to_tensor(np.stack([r[0] for r in rows[i:i + batch]]))).float().cpu().numpy())
+        with torch.autocast(DEVICE, dtype=torch.float16, enabled=DEVICE == "cuda"):
+            y = net(to_tensor(np.stack([r[0] for r in rows[i:i + batch]])))
+        out.append(y.float().cpu().numpy())
+    if DEVICE == "cuda":
+        torch.cuda.empty_cache()
     return np.concatenate(out)
 
 
@@ -217,7 +240,7 @@ def main() -> int:
             y = np.stack([r[1] for r in val])
             return float(np.nanmean([auc(y[:, j], p[:, j]) for j in (0, 1)]))
 
-        run_epochs(net, train, val_auc, crit, args.epochs, args.lr, args.batch)
+        run_epochs(net, train, val_auc, crit, args.epochs, args.lr, args.batch, ckpt=os.path.expanduser(args.out) + ".ckpt")
         pv, yv = 1 / (1 + np.exp(-predict(net, val))), np.stack([r[1] for r in val])
         pt, yt = 1 / (1 + np.exp(-predict(net, test))), np.stack([r[1] for r in test])
         metrics = {"task": "generalised crestal bone loss, per jaw", "dataset": "ToothXpert MM-OPG (Apache-2.0)",
@@ -245,7 +268,7 @@ def main() -> int:
         def val_neg_mae(n):
             return -float(np.mean(np.abs(predict(n, val)[:, 0] - np.array([r[1][0] for r in val]))))
 
-        run_epochs(net, train, val_neg_mae, crit, args.epochs, args.lr, args.batch)
+        run_epochs(net, train, val_neg_mae, crit, args.epochs, args.lr, args.batch, ckpt=os.path.expanduser(args.out) + ".ckpt")
         st = lambda p: "I" if p < 15 else "II" if p <= 33 else "III"  # noqa: E731
         pv = np.clip(predict(net, val)[:, 0], 0, 100); yv = np.array([r[1][0] for r in val])
         pt = np.clip(predict(net, test)[:, 0], 0, 100); yt = np.array([r[1][0] for r in test])
@@ -274,6 +297,8 @@ def main() -> int:
     torch.save(net.state_dict(), out + ".pt")
     with open(out + "_metrics.json", "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2)
+    if os.path.exists(out + ".ckpt"):
+        os.remove(out + ".ckpt")              # training finished: the resume checkpoint is no longer needed
     print(json.dumps(metrics, indent=2))
     return 0
 
