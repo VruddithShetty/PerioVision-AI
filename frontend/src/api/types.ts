@@ -130,6 +130,8 @@ export interface ModelStatus {
   name: string;
   file: string;
   purpose: string;
+  /** optional models (e.g. the panoramic whole-film models) may be absent without the system being unsafe */
+  optional?: boolean;
   present: boolean;
   signature_valid: boolean;
   loaded: boolean;
@@ -176,6 +178,8 @@ export interface Analysis {
   };
   risk: RiskResult;
   alignment: { confidence: number; status: string; reason?: string | null } | null;
+  /** Whole-film panoramic estimate (patient level); only on panoramic films with the optional models installed. */
+  panoramic_assessment?: PanoramicAssessment | null;
   progression: Comparison[];
   previous_analysis_id: string | null;
   calibration: { calibrated: boolean; q: number | null; coverage: number };
@@ -477,4 +481,18 @@ export interface ModelMetrics {
     test: { n_teeth: number; bone_loss_MAE_pct_points: number; within_10_points: number; stage_agreement: number } | null;
   } | null;
   conformal: { source: string; image_type: string | null; levels: Record<string, { q_from_half: number | null; empirical_coverage_other_half: number | null; mean_half_width_pct?: number | null }> } | null;
+}
+
+export interface PanoramicAssessment {
+  level: string;
+  note: string;
+  screen?: Record<"maxilla" | "mandible", {
+    probability: number; bone_loss_suggested: boolean; threshold: number;
+    test: { test_auc: number; test_sensitivity: number; test_specificity: number };
+  }>;
+  screen_validation?: { dataset: string; test_films: number };
+  worst_tooth?: {
+    bone_loss_pct: number; stage: string | null; interval_90: [number, number]; stage_set: string[]; dataset: string;
+    test: { test_MAE: number; test_stage_agreement: number; test_interval_coverage: number; test_films: number };
+  };
 }

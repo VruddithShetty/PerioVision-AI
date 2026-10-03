@@ -21,6 +21,11 @@ MODEL_SPECS = {
                        "purpose": "YOLO11m tooth detection with FDI tooth numbers (trained on DENTEX)"},
     "landmarks": {"file": "dental_landmark_yolov8n-pose.pt", "task": "pose",
                   "purpose": "YOLO-pose CEJ / root apex / bone crest keypoints"},
+    # Optional whole-film panoramic models (torch state dicts; see app/ml/panoramic/whole_film.py)
+    "panoramic_screen": {"file": "panoramic_screen.pt", "task": "torch_state_dict", "optional": True,
+                         "purpose": "Panoramic generalised bone loss per jaw (ConvNeXt-T, ToothXpert MM-OPG)"},
+    "panoramic_severity": {"file": "panoramic_severity.pt", "task": "torch_state_dict", "optional": True,
+                           "purpose": "Panoramic worst-tooth bone loss % (ConvNeXt-T, BRAR)"},
 }
 
 
@@ -29,6 +34,7 @@ class ModelStatus:
     name: str
     file: str
     purpose: str
+    optional: bool = False
     present: bool = False
     signature_valid: bool = False
     loaded: bool = False
@@ -55,7 +61,8 @@ class ModelRegistry:
     def check(self, name: str) -> ModelStatus:
         spec = MODEL_SPECS[name]
         path = self.path_for(name)
-        status = ModelStatus(name=name, file=spec["file"], purpose=spec["purpose"], present=path.exists())
+        status = ModelStatus(name=name, file=spec["file"], purpose=spec["purpose"], present=path.exists(),
+                             optional=bool(spec.get("optional")))
         if not status.present:
             status.reason = "weight file not found"
             return status
@@ -72,7 +79,11 @@ class ModelRegistry:
                 return self._models[name]
             status = self.check(name)
             model = None
-            if status.present and status.signature_valid:
+            if status.present and status.signature_valid and MODEL_SPECS[name]["task"] == "torch_state_dict":
+                # verified file; the caller builds the network and loads the state dict
+                model = self.path_for(name)
+                status.loaded = True
+            elif status.present and status.signature_valid:
                 try:
                     from ultralytics import YOLO
 

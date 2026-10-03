@@ -21,7 +21,7 @@
 - Adaptive split-conformal uncertainty (each tooth's interval widens when its normal and mirrored readings disagree), stage sets, mandatory clinician review router
 - Longitudinal progression with registration that must line up the teeth themselves, plus a measurement-error rule: changes smaller than the error are never called progression
 - Clinical risk model trained on CDC NHANES (validated on a later survey cycle), with plain-language odds ratios
-- Panoramic films: tooth detection and FDI numbering (validated on an external hospital's data); bone loss is measured on periapical films only
+- Panoramic films: tooth detection and FDI numbering (validated on an external hospital's data) plus a validated whole-film estimate (bone loss per jaw, worst-tooth bone loss and stage); per-tooth bone loss is measured on periapical films only
 - No invented numbers: anything unmeasured shows as "not measured" or "insufficient data", enforced by a build-time test
 
 **Security (O6)**
@@ -104,7 +104,7 @@ On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 ## Known limitations (honest)
 
 - Measured on held-out data ([docs/MODEL_CARD.md](docs/MODEL_CARD.md); re-run commands in [docs/VERIFICATION_REPORT.md](docs/VERIFICATION_REPORT.md)): tooth detector 95.8 % mAP@0.5 on DENTEX and 91 % found-and-correctly-numbered on an external hospital's films; periapical bone-loss error 7.4 points, 73 % stage agreement, 92 % interval coverage (DenPAR).
-- Panoramic bone loss is **not** reported: against expert grading of 240 panoramic films (BRAR) it was not accurate enough. `notebooks/train_panoramic_colab.ipynb` trains the next attempt.
+- Panoramic films get no per-tooth bone-loss numbers (not accurate enough against expert grading of 240 films). Instead whole-film models give a patient-level estimate: bone loss per jaw (test AUC 0.85 / 0.87) and the worst tooth's bone loss (error 11 points, 69 % stage agreement).
 - Uncertainty intervals are honest but wide (on average ±19 points at 90 %), so most teeth still go to dentist review.
 - The risk model estimates current disease from clinical factors (AUC 0.65); it does not use the radiograph or predict progression.
 - Demo mode uses an in-memory database; nothing persists after a restart.

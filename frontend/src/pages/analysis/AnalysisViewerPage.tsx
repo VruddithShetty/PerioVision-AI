@@ -1,4 +1,4 @@
-import { AlertTriangle, Box, CheckCircle2, ClipboardList, FileSignature, LineChart, ShieldCheck, Stethoscope } from "lucide-react";
+import { AlertTriangle, Box, CheckCircle2, ClipboardList, FileSignature, LineChart, ScanLine, ShieldCheck, Stethoscope } from "lucide-react";
 import { lazy, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "@/api/client";
@@ -202,6 +202,42 @@ export default function AnalysisViewerPage() {
               </div>
             )}
           </Card>
+          {a.panoramic_assessment && (
+            <Card>
+              <CardTitle icon={<ScanLine className="h-4 w-4" />}>Whole-film panoramic estimate</CardTitle>
+              <p className="text-xs text-mist-500">{a.panoramic_assessment.note}</p>
+              {a.panoramic_assessment.screen && (
+                <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                  {(["maxilla", "mandible"] as const).map((jaw) => {
+                    const s = a.panoramic_assessment!.screen![jaw];
+                    return (
+                      <div key={jaw} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+                        <p className="label">{jaw === "maxilla" ? "Upper jaw" : "Lower jaw"}</p>
+                        <p className={s.bone_loss_suggested ? "mt-1 font-semibold text-review-400" : "mt-1 font-semibold text-teal-400"}>
+                          {s.bone_loss_suggested ? "Generalised bone loss suggested" : "Not suggested"}
+                        </p>
+                        <p className="text-[11px] text-mist-500">probability {s.probability.toFixed(2)} · test AUC {s.test.test_auc.toFixed(2)}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {a.panoramic_assessment.worst_tooth && (() => {
+                const w = a.panoramic_assessment!.worst_tooth!;
+                return (
+                  <div className="mt-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-sm">
+                    <p className="label">Worst tooth (estimate)</p>
+                    <p className="mt-1">
+                      about <b style={{ color: stageColor(w.stage) }}>{w.bone_loss_pct.toFixed(0)}%</b> bone loss · 90% range {w.interval_90[0].toFixed(0)}–{w.interval_90[1].toFixed(0)}% · possible stages {w.stage_set.join(" / ")}
+                    </p>
+                    <p className="mt-1 text-[11px] text-mist-500">
+                      Tested on {w.test.test_films} held-out films: average error {w.test.test_MAE.toFixed(1)} points, stage agreement {Math.round(w.test.test_stage_agreement * 100)}%. Tends to underestimate very severe cases.
+                    </p>
+                  </div>
+                );
+              })()}
+            </Card>
+          )}
           <Card>
             <CardTitle icon={<Box className="h-4 w-4" />}>Clinical risk profile</CardTitle>
             <div className="flex justify-center">

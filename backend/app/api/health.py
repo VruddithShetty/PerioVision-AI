@@ -33,7 +33,8 @@ def system_status() -> dict:
         "database": _db_ok(),
         "models": [{"name": m["name"], "present": m["present"], "signature_valid": m["signature_valid"],
                     "loaded": m["loaded"], "reason": m["reason"]} for m in models],
-        "models_verified": all(m["signature_valid"] for m in models),
+        # a missing OPTIONAL model is fine; a present-but-unsigned one never is
+        "models_verified": all(m["signature_valid"] or (m.get("optional") and not m["present"]) for m in models),
         "audit_chain_intact": chain["chain_intact"],
         "audit_entries": chain["entries_verified"],
         "calibrated": config.CALIBRATION_FILE.exists(),

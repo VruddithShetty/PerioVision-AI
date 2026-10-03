@@ -23,7 +23,8 @@ PANORAMIC_DIR = Path(os.getenv("PERIOVISION_PANORAMIC_DIR",
                                HOME / "Downloads/DP_datasets/datasets/real/tooth_detection/test/images"))
 DENPAR_DIR = Path(os.getenv("PERIOVISION_DENPAR_DIR", HOME / "Downloads/DenPAR/pose_dataset"))
 LIVE_FILES = ("dental_yolov8n.pt", "dental_landmark_yolov8n-pose.pt", "conformal_calibration.json",
-              "detector_test_metrics.json", "landmark_test_metrics.json", "pipeline_test_metrics.json")
+              "detector_test_metrics.json", "landmark_test_metrics.json", "pipeline_test_metrics.json",
+              "panoramic_screen.pt", "panoramic_screen_metrics.json", "panoramic_severity.pt", "panoramic_severity_metrics.json")
 
 _TMP = Path(tempfile.mkdtemp(prefix="periovision-live-"))
 PASSWORDS = {role: f"Live-{role}-{secrets.token_hex(4)}9" for role in ("dentist", "technician", "auditor", "admin")}

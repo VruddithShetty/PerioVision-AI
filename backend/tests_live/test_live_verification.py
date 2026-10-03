@@ -5,6 +5,7 @@ from the input (they change when the input changes) and that nothing is reported
 unless a model produced it. Run from backend/:  python -m pytest tests_live -q
 """
 import io
+import json
 
 import cv2
 import numpy as np
@@ -325,3 +326,53 @@ def test_live_api_response_is_live_and_not_synthetic(client, dentist, denpar_ima
     assert body["data"]["mode"] == "live" and body["data"]["source"] != "synthetic_demo"
     prog = client.get(f"/api/patients/{pid}/progression", headers={**dentist, **UA}).get_json()
     assert prog["error"] is None
+
+
+# ---------- whole-film panoramic estimate ----------
+def test_panoramic_films_get_a_validated_whole_film_estimate(services, panoramic_images):
+    from app import config
+
+    if not (config.WEIGHTS_DIR / "panoramic_severity.pt").exists():
+        pytest.skip("panoramic whole-film models not installed")
+    a = services["analyse"](_gray(panoramic_images[0]), services["new_patient"](), "2026-01-01")
+    b = services["analyse"](_gray(panoramic_images[1]), services["new_patient"](), "2026-01-01")
+    pa = a["panoramic_assessment"]
+    assert pa and pa["level"].startswith("patient")
+    metrics = json.loads((config.WEIGHTS_DIR / "panoramic_severity_metrics.json").read_text())
+    wt = pa["worst_tooth"]
+    q = metrics["conformal_q90_from_val"]
+    assert wt["interval_90"][0] == pytest.approx(max(0, wt["bone_loss_pct"] - q), abs=0.11)
+    assert wt["interval_90"][1] == pytest.approx(min(100, wt["bone_loss_pct"] + q), abs=0.11)
+    assert wt["test"]["test_MAE"] == metrics["test_MAE"]             # accuracy shown is read from the metrics file
+    for jaw in ("maxilla", "mandible"):
+        p = pa["screen"][jaw]
+        assert 0.0 <= p["probability"] <= 1.0 and p["bone_loss_suggested"] == (p["probability"] >= p["threshold"])
+    pb = b["panoramic_assessment"]
+    assert (pa["worst_tooth"]["bone_loss_pct"], pa["screen"]["maxilla"]["probability"]) !=         (pb["worst_tooth"]["bone_loss_pct"], pb["screen"]["maxilla"]["probability"]), "output does not depend on the film"
+    # per-tooth numbers stay withheld on panoramic films
+    assert all(t["bone_loss_pct"] is None for t in a["teeth"])
+
+
+def test_periapical_films_get_no_panoramic_estimate(services, denpar_images):
+    r = services["analyse"](_gray(denpar_images[0]), services["new_patient"](), "2026-01-01")
+    assert r["image_type"] == "periapical" and r["panoramic_assessment"] is None
+
+
+def test_tampered_panoramic_model_is_refused(services, panoramic_images):
+    from app import config
+    from app.ml.panoramic.whole_film import whole_film
+
+    path = config.WEIGHTS_DIR / "panoramic_severity.pt"
+    if not path.exists():
+        pytest.skip("panoramic whole-film models not installed")
+    original = path.read_bytes()
+    try:
+        data = bytearray(original)
+        data[len(data) // 2] ^= 0x01
+        path.write_bytes(bytes(data))
+        services["container"].reset_models()
+        out = whole_film().assess(_gray(panoramic_images[0]))
+        assert out is None or "worst_tooth" not in out
+    finally:
+        path.write_bytes(original)
+        services["container"].reset_models()

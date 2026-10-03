@@ -15,7 +15,8 @@ export default function ModelTrustPage() {
   if (isLoading) return <LoadingRows rows={8} />;
   if (error || !data) return <ErrorState error={error} retry={refetch} />;
   const cal = data.calibration;
-  const verified = data.models.every((m) => m.signature_valid);
+  // a missing optional model is fine; a present-but-unsigned model never is
+  const verified = data.models.every((m) => m.signature_valid || (m.optional && !m.present));
 
   return (
     <div>

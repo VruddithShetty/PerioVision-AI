@@ -145,6 +145,20 @@ def build_pdf(analysis: dict, patient: dict, progression: dict, reviewer: dict |
     story += [Paragraph("<b>Risk</b>", styles["Heading3"]),
               Paragraph(f"{risk_text}<i>{risk['disclaimer']}</i>", small)]
 
+    pa = analysis.get("panoramic_assessment")
+    if pa:
+        lines = []
+        for jaw, v in (pa.get("screen") or {}).items():
+            lines.append(f"{jaw}: generalised bone loss {'suggested' if v['bone_loss_suggested'] else 'not suggested'} "
+                         f"(probability {v['probability']:.2f}; test AUC {v['test']['test_auc']:.2f})")
+        wt = pa.get("worst_tooth")
+        if wt:
+            lines.append(f"worst tooth: about {wt['bone_loss_pct']:.0f} % bone loss, 90 % interval "
+                         f"{wt['interval_90'][0]:.0f}-{wt['interval_90'][1]:.0f} %, possible stages {'/'.join(wt['stage_set'])} "
+                         f"(test error {wt['test']['test_MAE']:.1f} points)")
+        story += [Paragraph("<b>Whole-film panoramic estimate (patient level)</b>", styles["Heading3"]),
+                  Paragraph("; ".join(lines) + ". <i>" + pa["note"] + "</i>", small)]
+
     review = analysis.get("review", {})
     story.append(Paragraph("<b>Clinician review</b>", styles["Heading3"]))
     if reviewer:

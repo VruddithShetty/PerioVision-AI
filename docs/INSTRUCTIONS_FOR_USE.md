@@ -17,7 +17,7 @@ Dentists (review and sign-off), dental technicians (upload), auditors (security 
 | Image | Support |
 |---|---|
 | **Periapical radiographs** | Validated. Bone-loss error averages 7.4 percentage points (median 5.0); the stage matches the specialist label for 73 % of teeth. |
-| Panoramic radiographs | Teeth are detected and numbered (FDI) only. **No bone-loss numbers are given:** tested against expert grading of 240 panoramic films, they were not accurate enough (worst-tooth error 18.6 points). Take periapical films of the teeth you want measured. |
+| Panoramic radiographs | Teeth are detected and numbered (FDI). **No per-tooth bone-loss numbers** (not accurate enough on panoramic films). Instead a **whole-film estimate** for the patient: generalised bone loss suggested yes / no for each jaw (test AUC 0.85 / 0.87) and the worst tooth's bone loss with a 90 % range (average error 11 points, stage agreement 69 %; it underestimates very severe cases). Take periapical films of the teeth you want measured. |
 | Bitewings, CBCT, intra-oral photos, other X-rays | Not supported. Images with no detectable teeth are rejected. |
 | File types | PNG, JPEG or DICOM (.dcm), up to 16 MB. Identifying DICOM tags and image metadata are removed on upload. |
 | Quality | Images that are too small, blurred or flat are rejected. Borderline images are flagged for review. |

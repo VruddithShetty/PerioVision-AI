@@ -70,3 +70,6 @@ def reset_models():
     tooth_detector.cache_clear()
     landmark_detector.cache_clear()
     registry().reset()
+    from app.ml.panoramic import whole_film
+
+    whole_film._instance = None

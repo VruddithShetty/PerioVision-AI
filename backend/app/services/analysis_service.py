@@ -236,6 +236,12 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
         raise QualityRejected(quality)
     enhanced, bgr = found["enhanced"], found["bgr"]
     heatmap = found["explain_model"].gradcam_heatmap(bgr, detections) if found["explain_model"] else None
+    panoramic_assessment = None
+    if live and image_type == "panoramic":
+        # Per-tooth panoramic bone loss is not reported; the validated whole-film models give a patient-level estimate.
+        from app.ml.panoramic.whole_film import whole_film
+
+        panoramic_assessment = whole_film().assess(gray)
 
     q = calibration.current_q()
     t_exp = config.THRESHOLDS["explainability"]
@@ -347,6 +353,7 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
         "summary": patient_summary,
         "risk": risk,
         "alignment": alignment,
+        "panoramic_assessment": panoramic_assessment,
         "progression": progression,
         "previous_analysis_id": prev["analysis_id"] if prev else None,
         "calibration": {"calibrated": q is not None, "q": q,

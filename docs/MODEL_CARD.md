@@ -35,6 +35,21 @@ The weakest teeth (mAP@0.5:0.95 of about 0.47-0.49) are the upper canines and pr
 
 154 panoramic films from Aga Khan University (Zenodo 10538750, 4,035 specialist-outlined teeth): detection recall **93.8 %**, precision **94.1 %**, correct FDI number for **96.9 %** of detected teeth, tooth-level F1 with the right number **91.0 %** (`docs/evidence/detector_external_aku_2026-10-03.json`). Root-apex points on the same films (748 teeth): median error 7.4 % of tooth length; the panoramic shortfall is in CEJ / crest placement.
 
+### Panoramic whole-film models (patient level, measured)
+
+Per-tooth bone loss is withheld on panoramic films; two whole-image ConvNeXt-T models (1024 x 512) give a
+patient-level estimate instead (`app/ml/panoramic/whole_film.py`, trained with `notebooks/train_panoramic_colab.ipynb`).
+
+| Model | Training data | Held-out test | Result |
+|---|---|---|---|
+| Generalised bone loss, per jaw | ToothXpert MM-OPG, 8,047 films (894 validation) | official 450-film test split | maxilla AUC **0.850** (sensitivity 69 %, specificity 81 %); mandible AUC **0.874** (80 % / 75 %) |
+| Worst-tooth bone loss % | BRAR, 690 films (fine-tuned from the screen model; 149 validation) | 149 BRAR films | MAE **11.4** points (median 8.0; predicting the mean: 18.0); stage agreement **68.5 %**; grade agreement 65.1 %; 90 % interval ±26.5 points, coverage 90.6 % |
+
+Compared with the per-tooth landmark route on panoramic films (18.6 points, 46 % stage agreement), this is clearly
+better, but the interval is wide, so no film gets a single-stage set and every panoramic case goes to review. It tends
+to underestimate very severe cases (regression toward the mean). Thresholds, interval and test metrics shown in the
+app are read from the metrics files. Raw outputs: `docs/evidence/panoramic_*_metrics_2026-10-03.json`.
+
 ### Landmarks and bone loss (measured)
 
 Trained on [DenPAR](https://zenodo.org/records/16645076) (CC BY 4.0), official split 649 / 150 / 200 radiographs; per-tooth keypoints were derived with `backend/scripts/convert_denpar.py` (each tooth's worst site). Results on the 200 test radiographs (615 teeth):
