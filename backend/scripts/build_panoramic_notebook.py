@@ -36,7 +36,7 @@ If Colab disconnects, just **Run all** again: finished steps are skipped and tra
 **Before running D:** upload the current detector `backend/weights/dental_yolov8n.pt` to `MyDrive/PerioVision/current/`.
 Without it, step D is skipped.
 
-At the end, download `MyDrive/PerioVision/export_panoramic/` and give it to Claude: every model comes with
+At the end, download `MyDrive/PerioVision/export_panoramic/` and copy it to the laptop: every model comes with
 its held-out test metrics, and the app only switches a model on if those metrics pass.
 """),
          code("""
@@ -215,7 +215,7 @@ for f in sorted(glob.glob(f"{EXPORT}/*metrics.json")):
           md("""
 ## Done
 Download `MyDrive/PerioVision/export_panoramic/` (right-click → Download), extract it into
-`C:\\Users\\<you>\\Downloads\\export_panoramic`, and tell Claude. Each model is installed only if its held-out
+`C:\\Users\\<you>\\Downloads\\export_panoramic`, and install it from there. Each model is installed only if its held-out
 test metrics pass; otherwise panoramic bone loss stays off.
 """)]
 
@@ -245,7 +245,7 @@ for key, (fname, what, note) in SINGLE.items():
 `Runtime` → `Change runtime type` → **T4 GPU** → Save, then `Runtime` → **Run all** and allow Google Drive.
 {note} If Colab disconnects, Run all again: training resumes from Drive.
 
-Results go to `MyDrive/PerioVision/export_panoramic/` in this account; download that folder and give it to Claude.
+Results go to `MyDrive/PerioVision/export_panoramic/` in this account; download that folder to the laptop.
 """)]
     for c in cells[1:]:
         src = "".join(c["source"])
