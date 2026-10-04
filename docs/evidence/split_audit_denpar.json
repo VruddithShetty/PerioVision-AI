@@ -1,0 +1,89 @@
+{
+  "dataset": "denpar",
+  "root_name": "Dataset",
+  "images_per_split": {
+    "test": 200,
+    "train": 650,
+    "val": 150
+  },
+  "check_patient_overlap": "UNVERIFIABLE (dataset publishes no patient IDs)",
+  "unreadable_images": 0,
+  "exact_duplicates_across_splits": 4,
+  "exact_duplicates_total_images_minus_unique": 9,
+  "exact_duplicate_groups": [
+    [
+      "train:1029.jpg",
+      "val:1028.jpg"
+    ],
+    [
+      "train:1099.jpg",
+      "train:1100.jpg"
+    ],
+    [
+      "train:1198.jpg",
+      "train:1217.jpg"
+    ],
+    [
+      "train:1256.jpg",
+      "train:1257.jpg"
+    ],
+    [
+      "train:164.jpg",
+      "test:166.jpg"
+    ],
+    [
+      "train:2.jpg",
+      "train:4.jpg"
+    ],
+    [
+      "train:29.jpg",
+      "val:158.jpg"
+    ],
+    [
+      "train:314.jpg",
+      "train:315.jpg"
+    ],
+    [
+      "train:903.jpg",
+      "val:899.jpg"
+    ]
+  ],
+  "near_duplicate_candidates_across_splits": 5,
+  "near_duplicates_confirmed_across_splits": 5,
+  "near_duplicate_confirmed": [
+    {
+      "a": "train:1029.jpg",
+      "b": "val:1028.jpg",
+      "hamming": 0,
+      "ncc_128px": 1.0
+    },
+    {
+      "a": "train:164.jpg",
+      "b": "test:166.jpg",
+      "hamming": 0,
+      "ncc_128px": 1.0
+    },
+    {
+      "a": "train:29.jpg",
+      "b": "val:158.jpg",
+      "hamming": 0,
+      "ncc_128px": 1.0
+    },
+    {
+      "a": "train:903.jpg",
+      "b": "val:899.jpg",
+      "hamming": 0,
+      "ncc_128px": 1.0
+    },
+    {
+      "a": "val:853.jpg",
+      "b": "test:852.jpg",
+      "hamming": 0,
+      "ncc_128px": 1.0
+    }
+  ],
+  "min_ncc": 0.97,
+  "check_duplicates": "FAIL (leak across splits)",
+  "max_hamming": 4,
+  "note": "Near-duplicate pairs are candidates, not proof: inspect them. Different patients' films taken on the same machine can look alike at 8x8 resolution; the same film re-exported usually gives hamming 0-3."
+}

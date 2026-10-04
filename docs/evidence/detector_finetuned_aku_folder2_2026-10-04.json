@@ -1,0 +1,13 @@
+{
+  "dataset": "Aga Khan University OPG teeth segmentation & numbering (Zenodo 10538750, CC BY 4.0)",
+  "films": 96,
+  "folders": [
+    "folder 2"
+  ],
+  "teeth_ground_truth": 2580,
+  "detected_iou50": 2485,
+  "detection_recall": 0.9632,
+  "detection_precision": 0.9722,
+  "numbering_accuracy_of_detected": 0.9763,
+  "tooth_level_F1_with_correct_number": 0.9447
+}

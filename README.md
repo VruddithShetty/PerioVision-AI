@@ -103,7 +103,7 @@ On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 
 ## Known limitations (honest)
 
-- Measured on held-out data ([docs/MODEL_CARD.md](docs/MODEL_CARD.md); re-run commands in [docs/VERIFICATION_REPORT.md](docs/VERIFICATION_REPORT.md)): tooth detector 95.8 % mAP@0.5 on DENTEX and 91 % found-and-correctly-numbered on an external hospital's films; periapical bone-loss error 7.4 points, 73 % stage agreement, 92 % interval coverage (DenPAR).
+- Measured on held-out data ([docs/MODEL_CARD.md](docs/MODEL_CARD.md); re-run commands in [docs/VERIFICATION_REPORT.md](docs/VERIFICATION_REPORT.md)): tooth detector: 89.6 % (95 % CI 88.3–90.8) found-and-correctly-numbered on 250 films from a hospital it was not trained on; after fine-tuning on part of that hospital's films, 94.5 % on its 96 unseen films (the deployed model) and 89.1 % of diseased teeth on the DENTEX official test; periapical bone-loss error 7.4 points, 73 % stage agreement, 92 % interval coverage (DenPAR).
 - Panoramic films get no per-tooth bone-loss numbers (not accurate enough against expert grading of 240 films). Instead whole-film models give a patient-level estimate: bone loss per jaw (test AUC 0.85 / 0.87) and the worst tooth's bone loss (error 11 points, 69 % stage agreement).
 - Uncertainty intervals are honest but wide (on average ±19 points at 90 %), so most teeth still go to dentist review.
 - The risk model estimates current disease from clinical factors (AUC 0.65); it does not use the radiograph or predict progression.

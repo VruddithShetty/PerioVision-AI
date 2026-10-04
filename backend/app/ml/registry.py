@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 MODEL_SPECS = {
     "tooth_detector": {"file": "dental_yolov8n.pt", "task": "detect",
-                       "purpose": "YOLO11m tooth detection with FDI tooth numbers (trained on DENTEX)"},
+                       "purpose": "YOLO11m tooth detection with FDI tooth numbers (DENTEX, fine-tuned on Aga Khan folders 1+3)"},
     "landmarks": {"file": "dental_landmark_yolov8n-pose.pt", "task": "pose",
                   "purpose": "YOLO-pose CEJ / root apex / bone crest keypoints"},
     # Optional whole-film panoramic models (torch state dicts; see app/ml/panoramic/whole_film.py)

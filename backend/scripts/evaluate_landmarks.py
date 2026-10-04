@@ -11,9 +11,12 @@ split that was NOT used to compute q (for DenPAR, q came from the validation spl
 
 Usage (from backend/):
     python scripts/evaluate_landmarks.py --images <pose>/images/test --labels <pose>/labels/test --out eval.json
+    add --per-tooth-csv teeth.csv to keep one row per labelled tooth (needed for confidence intervals,
+    confusion matrices and error analysis: python -m research.compute_ci).
 Label format per line: class cx cy w h  cej_x cej_y v  apex_x apex_y v  crest_x crest_y v (normalised).
 """
 import argparse
+import csv
 import glob
 import json
 import os
@@ -65,6 +68,7 @@ def main() -> int:
     ap.add_argument("--labels", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--per-tooth-csv", help="write one row per labelled tooth (found or missed) to this CSV")
     ap.add_argument("--metrics-out", help="also write the result as the deployed-pipeline metrics file "
                                           "(e.g. weights/pipeline_test_metrics.json) shown on the About page")
     args = ap.parse_args()
@@ -74,6 +78,7 @@ def main() -> int:
     files = files[:args.limit] if args.limit else files
     labelled = found = 0
     rows, kp_err, types, t0 = [], {k: [] for k in KEYS}, {}, time.time()
+    per_tooth = []
     for n, img_path in enumerate(files, 1):
         label = os.path.join(args.labels, os.path.splitext(os.path.basename(img_path))[0] + ".txt")
         gray = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
@@ -89,25 +94,44 @@ def main() -> int:
         types[res["image_type"]] = types.get(res["image_type"], 0) + 1
         dets, lms, used = res["detections"], res["landmarks"], set()
         labelled += len(truth)
-        for ref in truth:
+        for t_idx, ref in enumerate(truth):
             best = max(((i, _iou(d["bbox"], ref["bbox"])) for i, d in enumerate(dets) if i not in used),
                        key=lambda x: x[1], default=(None, 0.0))
+            ref_pct = bone_loss_for_tooth(ref)["bone_loss_pct"]
+            base = {"image": os.path.basename(img_path), "tooth_index": t_idx, "image_type": res["image_type"],
+                    "image_w": w, "image_h": h, "ref_pct": ref_pct, "iou": round(best[1], 4)}
             if best[0] is None or best[1] < 0.5:
+                per_tooth.append({**base, "status": "missed"})
                 continue
             used.add(best[0])
             found += 1
             lm = lms.get(dets[best[0]]["tooth_id"])
             if not measured(lm):
                 rows.append({"measured": False})
+                per_tooth.append({**base, "status": "not_measured", "tooth_id": dets[best[0]].get("tooth_id")})
                 continue
             p = bone_loss_for_tooth(lm)["bone_loss_pct"]
             r = bone_loss_for_tooth(ref)["bone_loss_pct"]
             if p is None or r is None:
                 continue
             root = float(np.linalg.norm(np.subtract(ref["root_apex"], ref["cej"])))
+            kp_row = {}
             for k in KEYS:
                 kp_err[k].append(100.0 * float(np.linalg.norm(np.subtract(lm[k], ref[k]))) / max(root, 1e-6))
+                kp_row[f"{k}_err_pct_root"] = round(kp_err[k][-1], 3)
+                kp_row[f"{k}_dx_px"] = round(float(lm[k][0] - ref[k][0]), 2)
+                kp_row[f"{k}_dy_px"] = round(float(lm[k][1] - ref[k][1]), 2)
             unc = predict_interval(p, q, calibration.scale_for(lm))
+            per_tooth.append({**base, "status": "measured", "tooth_id": dets[best[0]].get("tooth_id"),
+                              "pred_pct": round(p, 3), "abs_err": round(abs(p - ref_pct), 3),
+                              "ref_stage": stage_for_pct(ref_pct), "pred_stage": stage_for_pct(p),
+                              "root_length_px": round(root, 2), "det_confidence": dets[best[0]].get("confidence"),
+                              "kpt_conf_min": min((lm.get("keypoint_confidences") or {"_": None}).values(), key=lambda v: v or 0),
+                              "landmark_confidence": lm.get("landmark_confidence"),
+                              "tta_disagreement_pct": lm.get("tta_disagreement_pct"),
+                              "half_width": unc["half_width"], "set_size": unc["set_size"],
+                              "stage_set": "|".join(unc["stage_set"]),
+                              "covered": None if q is None else abs(p - ref_pct) <= unc["half_width"], **kp_row})
             rows.append({"measured": True, "pred": p, "ref": r, "err": abs(p - r),
                          "stage_ok": stage_for_pct(p) == stage_for_pct(r),
                          "half_width": unc["half_width"], "disagreement": lm.get("tta_disagreement_pct"),
@@ -141,6 +165,12 @@ def main() -> int:
         },
         "calibration_file_source": (calibration.load() or {}).get("source"),
     }
+    if args.per_tooth_csv and per_tooth:
+        cols = sorted({k for r in per_tooth for k in r}, key=lambda k: (k not in per_tooth[-1], k))
+        with open(args.per_tooth_csv, "w", newline="", encoding="utf-8") as f:
+            wr = csv.DictWriter(f, fieldnames=cols)
+            wr.writeheader()
+            wr.writerows(per_tooth)
     for path in filter(None, (args.out, args.metrics_out)):
         with open(path, "w", encoding="utf-8") as f:
             json.dump(out, f, indent=2)

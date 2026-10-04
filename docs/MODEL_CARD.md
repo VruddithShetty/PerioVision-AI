@@ -8,7 +8,7 @@ Decision support for dental professionals reviewing panoramic or periapical radi
 
 | Component | File | What it is | Status |
 |---|---|---|---|
-| Tooth detector | `weights/dental_yolov8n.pt` (file name kept for compatibility) | YOLO11m at 1280 px, 32 classes named by FDI number (11-48) | Trained on a free Colab T4 GPU with `notebooks/train_periovision_colab.ipynb`. Test set (63 held-out DENTEX panoramic X-rays): **precision 94.1 %, recall 94.5 %, mAP50 95.8 %, mAP50-95 56.1 %**; tooth-level F1 94.8 % (right FDI number, IoU ≥ 0.5) |
+| Tooth detector | `weights/dental_yolov8n.pt` (file name kept for compatibility) | YOLO11m at 1280 px, 32 classes named by FDI number (11-48) | **Deployed since 2026-10-04: trained on DENTEX, then fine-tuned on Aga Khan University folders 1 and 3** (`notebooks/train_panoramic_D_colab.ipynb`). Held-out results: Aga Khan folder 2 (96 unseen films, same hospital) tooth-level F1 with the right number **94.5 %**; DENTEX official disease test, diseased teeth found with the right number **89.1 %**. The previous DENTEX-only detector (63-film DENTEX test: precision 94.1 %, recall 94.5 %, mAP50 95.8 %, F1 94.8 %) is kept as `weights_backup/20261004-095323/`. CIs: `docs/RESULTS_WITH_CI.md` |
 | Landmark model | `weights/dental_landmark_yolov8n-pose.pt` (file name kept for compatibility) | YOLO11m-pose at 1024 px, 3 keypoints per tooth (CEJ, root apex, bone crest) | Trained on DenPAR (1000 periapical X-rays, specialist-verified labels) with `notebooks/train_landmarks_colab.ipynb`. on 200 held-out DenPAR periapical test X-rays (615 teeth): 99.0 % tooth recall, pose mAP@0.5 96.9 %, bone-loss mean absolute error 7.64 percentage points (median 5.11), 73.1 % stage agreement; 90 % conformal intervals reached 91.5 % coverage |
 | Grad-CAM | `ml/explainability/gradcam.py` | Gradient-weighted activation maps over the detector's P3-P5 neck layers | Works on the signed detector |
 | Staging/grading | `ml/measurement/staging.py` | 2017 AAP/EFP bands applied to radiographic bone loss | Rule-based |
@@ -31,9 +31,21 @@ Trained on the public [DENTEX](https://huggingface.co/datasets/ibrahimhamamci/DE
 
 The weakest teeth (mAP@0.5:0.95 of about 0.47-0.49) are the upper canines and premolars (13, 14, 15, 23, 24). The strongest are the lower first and second molars (36, 46, 37). On one unseen low-resolution image from the team's dataset (512 × 256), the full pipeline found 26 teeth, all with model-assigned FDI numbers; the previous detector found 2.
 
-### Tooth detector: external test (different hospital and machine)
+### Tooth detector: external test, then adaptation
 
-154 panoramic films from Aga Khan University (Zenodo 10538750, 4,035 specialist-outlined teeth): detection recall **93.8 %**, precision **94.1 %**, correct FDI number for **96.9 %** of detected teeth, tooth-level F1 with the right number **91.0 %** (`docs/evidence/detector_external_aku_2026-10-03.json`). Root-apex points on the same films (748 teeth): median error 7.4 % of tooth length; the panoramic shortfall is in CEJ / crest placement.
+**Step 1. Different hospital, no adaptation (previous DENTEX-only detector).** All **250** panoramic films from Aga Khan University (Zenodo 10538750, 6,615 specialist-outlined teeth): detection recall **91.7 %** (95 % CI 90.6–92.8), precision **93.2 %** (92.3–94.1), correct FDI number for **96.9 %** of detected teeth, tooth-level F1 with the right number **89.6 %** (88.3–90.8); film-level bootstrap (`docs/evidence/detector_external_aku_all250_2026-10-04.json`, `docs/RESULTS_WITH_CI.md`). An earlier run reported 91.0 % on 154 films because the script skipped folder 2, whose label folder is spelled `annnotations`; see `docs/DATA_SPLITS.md`. Root-apex points on the same films (748 teeth): median error 7.4 % of tooth length; the panoramic shortfall is in CEJ / crest placement.
+
+**Step 2. Adaptation (deployed detector).** The detector was then fine-tuned on Aga Khan folders 1 and 3 (154 films;
+70 / 15 / 15 split of those films for training, model selection and a check) and tested on **folder 2, 96 films it
+never saw** (2,580 teeth): tooth-level F1 with the right number rose from 87.4 % to **94.5 %** on the same films. On
+the DENTEX official disease test (1,600 diseased teeth) the share found with the right number fell from 91.2 % to
+**89.1 %** (some forgetting). Evidence: `docs/evidence/detector_finetune_comparison_2026-10-04.json`, re-measured in
+`docs/evidence/detector_finetuned_aku_folder2_2026-10-04.json`.
+
+**What this means for the claims.** Folder 2 is the same hospital and machine as the fine-tuning films, so 94.5 % is
+a *held-out* result, not a *different-hospital* result. The only different-hospital number for this project is
+Step 1's 89.6 %, measured with the previous detector. A new different-hospital test set would be needed to make
+that claim for the deployed detector.
 
 ### Panoramic whole-film models (patient level, measured)
 

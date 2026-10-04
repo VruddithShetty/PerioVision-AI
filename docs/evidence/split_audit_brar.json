@@ -1,0 +1,32 @@
+{
+  "dataset": "brar",
+  "root_name": "data",
+  "images_per_split": {
+    "test": 149,
+    "train": 690,
+    "val": 149
+  },
+  "patients_per_split": {
+    "test": 149,
+    "train": 690,
+    "val": 149
+  },
+  "images_per_patient_max": 1,
+  "patient_overlap": {
+    "train&val": 0,
+    "test&train": 0,
+    "test&val": 0
+  },
+  "check_patient_overlap": "PASS",
+  "unreadable_images": 0,
+  "exact_duplicates_across_splits": 0,
+  "exact_duplicates_total_images_minus_unique": 0,
+  "exact_duplicate_groups": [],
+  "near_duplicate_candidates_across_splits": 69,
+  "near_duplicates_confirmed_across_splits": 0,
+  "near_duplicate_confirmed": [],
+  "min_ncc": 0.97,
+  "check_duplicates": "PASS",
+  "max_hamming": 4,
+  "note": "Near-duplicate pairs are candidates, not proof: inspect them. Different patients' films taken on the same machine can look alike at 8x8 resolution; the same film re-exported usually gives hamming 0-3."
+}
