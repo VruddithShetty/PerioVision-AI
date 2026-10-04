@@ -180,6 +180,7 @@ else:
 """),
           code("""
 # 7. Model D: fine-tune the current tooth detector on Aga Khan; keep it only if the held-out test improves
+from ultralytics import YOLO
 CUR = f"{ROOT}/current/dental_yolov8n.pt"
 if not need_D:
     print("Model D already trained or switched off in RUN - skipping")
