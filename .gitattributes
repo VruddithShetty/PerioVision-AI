@@ -1,0 +1,3 @@
+# Signed files must reach every clone byte-for-byte (no line-ending conversion), or their signatures fail.
+backend/weights/** -text binary
+backend/keys/*.pub -text

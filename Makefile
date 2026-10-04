@@ -6,7 +6,7 @@ PYTHON ?= python
 
 setup:
 	cd backend && $(PYTHON) -m pip install -r requirements-dev.txt
-	@test -f .env || (cp .env.example .env && echo "Created .env from .env.example - edit the values")
+	$(PYTHON) backend/scripts/setup_local.py
 	@if [ -f frontend/package.json ]; then cd frontend && npm install; fi
 
 backend:

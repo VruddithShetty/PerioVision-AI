@@ -3,7 +3,8 @@
 LabelMe polygons (crown + root) with the FDI number in `group_id` become boxes whose class index matches
 the PerioVision tooth detector exactly: 11-18 -> 0-7, 21-28 -> 8-15, 31-38 -> 16-23, 41-48 -> 24-31.
 Films are split 70 / 15 / 15 (seeded) so no film appears in two splits; the test split is kept for the
-before / after comparison and never used for training.
+before / after comparison and never used for training. All three folders are used (folder 2 spells its label
+folder "annnotations"; versions before 2026-10-04 missed it, so the first fine-tune saw folders 1 and 3 only).
 
 Usage:  python convert_aku_labelme.py --src <.../dataset> --out <folder>
 """
@@ -22,7 +23,10 @@ def main() -> int:
     ap.add_argument("--src", required=True)
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
-    anns = sorted(glob.glob(os.path.join(os.path.expanduser(args.src), "*", "annotations", "*.json")))
+    src = os.path.expanduser(args.src)
+    # folder 2 of the published archive spells its label folder "annnotations" (three n)
+    anns = sorted(glob.glob(os.path.join(src, "*", "annotations", "*.json")) +
+                  glob.glob(os.path.join(src, "*", "annnotations", "*.json")))
     random.Random(0).shuffle(anns)  # audit-ok: seeded film-level split
     n = len(anns)
     counts = {"train": 0, "val": 0, "test": 0}

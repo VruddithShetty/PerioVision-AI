@@ -1,0 +1,31 @@
+{
+  "dataset": "Aga Khan University OPG folder 2: 96 films never used in training (Zenodo 10538750, CC BY 4.0)",
+  "model": "yolo11m, trained on DENTEX then fine-tuned on Aga Khan folders 1 and 3",
+  "test_precision": 0.9556,
+  "test_recall": 0.9421,
+  "test_mAP50": 0.9744,
+  "test_mAP50_95": 0.7675,
+  "before_finetune_same_films": {
+    "precision": 0.8999,
+    "recall": 0.8524,
+    "mAP50": 0.897,
+    "mAP50_95": 0.3493
+  },
+  "tooth_level_found_with_correct_number": {
+    "aku_folder2_96_films": 0.9403,
+    "dentex_official_test_250_films": 0.8912
+  },
+  "previous_model_same_measures": {
+    "aku_folder2_96_films": 0.8578,
+    "dentex_official_test_250_films": 0.9119
+  },
+  "previous_model_dentex_split_test": {
+    "test_precision": 0.9405,
+    "test_recall": 0.9447,
+    "test_mAP50": 0.9577,
+    "test_mAP50_95": 0.5613
+  },
+  "note": "Better on unseen Aga Khan films (+8.2 points found-with-correct-number); 2.1 points lower on the DENTEX official test set (some forgetting). Combined over 4,180 teeth: 92.2 % vs 87.8 %.",
+  "conf": 0.25,
+  "iou": 0.5
+}

@@ -1,0 +1,36 @@
+{
+  "aku_folder2_films": 96,
+  "dentex_test_films": 250,
+  "before": {
+    "aku_folder2": {
+      "teeth": 2580,
+      "found_iou50": 0.8849,
+      "correct_number_of_found": 0.9693,
+      "found_with_correct_number": 0.8578,
+      "precision": 0.9191,
+      "F1_correct_number": 0.874
+    },
+    "dentex_test": {
+      "teeth": 1600,
+      "found_iou50": 0.9506,
+      "correct_number_of_found": 0.9592,
+      "found_with_correct_number": 0.9119
+    }
+  },
+  "after": {
+    "aku_folder2": {
+      "teeth": 2580,
+      "found_iou50": 0.9632,
+      "correct_number_of_found": 0.9763,
+      "found_with_correct_number": 0.9403,
+      "precision": 0.9722,
+      "F1_correct_number": 0.9447
+    },
+    "dentex_test": {
+      "teeth": 1600,
+      "found_iou50": 0.9269,
+      "correct_number_of_found": 0.9616,
+      "found_with_correct_number": 0.8912
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "dataset": "DenPAR periapical (CC BY 4.0), official split",
+  "model": "yolo11m-pose",
+  "imgsz": 1024,
+  "pose_mAP50_test": 0.9692,
+  "pose_mAP50_95_test": 0.8308,
+  "box_mAP50_test": 0.9713,
+  "test": {
+    "teeth_labelled": 615,
+    "teeth_found_iou50": 609,
+    "tooth_recall": 0.99,
+    "landmark_error_pct_of_root_length": {
+      "cej": 17.95,
+      "apex": 6.76,
+      "crest": 17.51
+    },
+    "all_found_teeth": {
+      "n_teeth": 591,
+      "bone_loss_MAE_pct_points": 7.64,
+      "bone_loss_median_abs_error": 5.11,
+      "within_5_points": 0.489,
+      "within_10_points": 0.772,
+      "stage_agreement": 0.731
+    },
+    "teeth_above_app_confidence": {
+      "n_teeth": 589,
+      "bone_loss_MAE_pct_points": 7.66,
+      "bone_loss_median_abs_error": 5.13,
+      "within_5_points": 0.487,
+      "within_10_points": 0.771,
+      "stage_agreement": 0.73
+    },
+    "share_above_app_confidence": 0.98
+  },
+  "val": {
+    "teeth_labelled": 468,
+    "teeth_found_iou50": 465,
+    "tooth_recall": 0.994,
+    "landmark_error_pct_of_root_length": {
+      "cej": 18.93,
+      "apex": 7.9,
+      "crest": 19.76
+    },
+    "all_found_teeth": {
+      "n_teeth": 456,
+      "bone_loss_MAE_pct_points": 8.33,
+      "bone_loss_median_abs_error": 5.49,
+      "within_5_points": 0.469,
+      "within_10_points": 0.743,
+      "stage_agreement": 0.664
+    },
+    "teeth_above_app_confidence": {
+      "n_teeth": 450,
+      "bone_loss_MAE_pct_points": 8.36,
+      "bone_loss_median_abs_error": 5.57,
+      "within_5_points": 0.469,
+      "within_10_points": 0.744,
+      "stage_agreement": 0.662
+    },
+    "share_above_app_confidence": 0.976
+  }
+}

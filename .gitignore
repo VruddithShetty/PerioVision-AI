@@ -72,3 +72,19 @@ backend/logs-production/
 dental_progression_ai/
 *.tsbuildinfo
 backend/tests_live/**/__pycache__/
+
+# ---------- Shipped model weights (needed to run; everything else in backend/weights stays local) ----------
+!backend/weights/dental_yolov8n.pt
+!backend/weights/dental_landmark_yolov8n-pose.pt
+!backend/weights/panoramic_screen.pt
+!backend/weights/panoramic_severity.pt
+!backend/weights/manifest.json
+!backend/weights/manifest.json.sig
+!backend/weights/conformal_calibration.json
+!backend/weights/detector_test_metrics.json
+!backend/weights/detector_test_metrics_dentex_v1.json
+!backend/weights/landmark_test_metrics.json
+!backend/weights/pipeline_test_metrics.json
+!backend/weights/panoramic_screen_metrics.json
+!backend/weights/panoramic_severity_metrics.json
+demo_logins.txt

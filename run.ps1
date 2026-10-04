@@ -18,7 +18,8 @@ function Use-Production {
 switch ($Target) {
     "setup" {
         Push-Location "$Root\backend"; python -m pip install -r requirements-dev.txt; Pop-Location
-        if (-not (Test-Path "$Root\.env")) { Copy-Item "$Root\.env.example" "$Root\.env"; Write-Host "Created .env from .env.example - edit the values" }
+        # .env with fresh secrets + demo logins, then verify the shipped weights and create this machine's signing key
+        python "$Root\backend\scripts\setup_local.py"; if ($LASTEXITCODE -ne 0) { throw "setup_local.py failed" }
         if (Test-Path "$Root\frontend\package.json") { Push-Location "$Root\frontend"; npm install; Pop-Location }
     }
     "backend" { Push-Location "$Root\backend"; python wsgi.py; Pop-Location }

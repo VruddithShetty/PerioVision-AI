@@ -1,0 +1,41 @@
+{
+  "files": {
+    "dental_bone_yolov8n-seg.pt": {
+      "sha256": "756fe8e17152e31199464e1975edf9b93dba5b28b9c83addb31d356318e998c5",
+      "size": 6756788
+    },
+    "dental_landmark_yolov8n-pose.pt": {
+      "sha256": "473fe80ad5976610d91cf23357f5fb3b240183755ba2bab711007ddb2c550a7d",
+      "size": 42299546
+    },
+    "dental_yolov8n.pt": {
+      "sha256": "a5f49d21f24716eb41def967fd5fa93ad12ca6d936628c085ee3e7135499d66e",
+      "size": 40630508
+    },
+    "landmark_detection_model/landmark_cnn.pt": {
+      "sha256": "19c5c3502d075855d68180b5a5bc146eecc8b13a2e57e48ee119523941cd7346",
+      "size": 21248751
+    },
+    "panoramic_screen.pt": {
+      "sha256": "7826e5df1b4c57c7d867e0ba65aeb6607ab035ee87265f05fe4a8e9d4dc24887",
+      "size": 55700463
+    },
+    "panoramic_severity.pt": {
+      "sha256": "3a176aad49e9fe044de369f24faa99292af26c555996b65038bb309886b0b174",
+      "size": 55699303
+    },
+    "risk_model/risk_model.pkl": {
+      "sha256": "ba3e5df47dbf01146c612e4cbd0518fd775ddff251e1d0df296039edbd35abdd",
+      "size": 9464788
+    },
+    "tooth_detection_yolov8n.pt": {
+      "sha256": "64bbd87f461cb7b38e3e2a4687c82ab8355861b64d34719be12927396d792549",
+      "size": 6263722
+    },
+    "yolov8n.pt": {
+      "sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",
+      "size": 6549796
+    }
+  },
+  "version": 1
+}

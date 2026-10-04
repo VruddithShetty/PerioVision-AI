@@ -1,0 +1,25 @@
+{
+  "task": "worst-tooth radiographic bone loss % from the whole panoramic film",
+  "dataset": "BRAR (CC BY 4.0), expert worst-tooth bone loss / root length",
+  "train_films": 690,
+  "val_films": 149,
+  "test_films": 149,
+  "test_MAE": 11.367,
+  "test_median_abs_error": 7.993,
+  "test_MAE_predicting_training_mean": 18.025,
+  "test_stage_agreement": 0.6846,
+  "test_grade_agreement": 0.651,
+  "conformal_q90_from_val": 26.512,
+  "test_interval_coverage": 0.906,
+  "test_reference_stage_in_set": 0.9933,
+  "test_set_sizes": {
+    "1": 0,
+    "2": 48,
+    "3": 101
+  },
+  "arch": "convnext_tiny",
+  "input_size": [
+    1024,
+    512
+  ]
+}

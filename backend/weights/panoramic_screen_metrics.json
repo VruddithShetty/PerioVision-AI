@@ -1,0 +1,30 @@
+{
+  "task": "generalised crestal bone loss, per jaw",
+  "dataset": "ToothXpert MM-OPG (Apache-2.0)",
+  "train_films": 8047,
+  "val_films": 894,
+  "test_films": 450,
+  "jaws": {
+    "maxilla": {
+      "test_auc": 0.8496,
+      "threshold_from_val": 0.51,
+      "test_sensitivity": 0.6917,
+      "test_specificity": 0.8139,
+      "test_accuracy": 0.7778,
+      "test_prevalence": 0.2956
+    },
+    "mandible": {
+      "test_auc": 0.874,
+      "threshold_from_val": 0.37,
+      "test_sensitivity": 0.8042,
+      "test_specificity": 0.7459,
+      "test_accuracy": 0.7644,
+      "test_prevalence": 0.3178
+    }
+  },
+  "arch": "convnext_tiny",
+  "input_size": [
+    1024,
+    512
+  ]
+}
