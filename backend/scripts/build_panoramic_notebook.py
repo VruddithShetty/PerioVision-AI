@@ -55,7 +55,11 @@ IMGSZ_D, EPOCHS_D = 1280, 40
          code("""
 # 1. GPU + Google Drive
 import subprocess, os, glob, json, shutil
-print(subprocess.run(["nvidia-smi"], capture_output=True, text=True).stdout or "NO GPU: Runtime > Change runtime type > T4 GPU")
+if not shutil.which("nvidia-smi"):
+    raise RuntimeError("NO GPU attached. Runtime > Change runtime type > T4 GPU > Save, then Run all again. "
+                       "If Colab says 'Cannot connect to GPU backend', this account's free GPU time is used up "
+                       "for today: try again later or use another Google account.")
+print(subprocess.run(["nvidia-smi"], capture_output=True, text=True).stdout)
 from google.colab import drive
 drive.mount("/content/drive")
 ROOT = "/content/drive/MyDrive/PerioVision"
