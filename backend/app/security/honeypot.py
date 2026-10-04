@@ -20,7 +20,7 @@ import logging
 import secrets
 
 from app.models.connection import db
-from app.security.crypto import get_encryptor
+from app.security.crypto import _derive, get_encryptor
 
 logger = logging.getLogger(__name__)
 
@@ -36,12 +36,36 @@ class HoneypotManager:
         self.patients = db["patients"]
         self.decoys = db["security_decoys"]
 
+    @staticmethod
+    def _tag_with(key: bytes, patient_id) -> str:
+        return hmac.new(_derive(key, b"honeypot-tag"), f"decoy:{patient_id}".encode(), hashlib.sha256).hexdigest()
+
     def _tag(self, patient_id) -> str:
-        key = get_encryptor().keyring.active_key
-        return hmac.new(key, f"decoy:{patient_id}".encode(), hashlib.sha256).hexdigest()
+        """Tag under the active key, using a key derived for this purpose (never the AES key itself)."""
+        return self._tag_with(get_encryptor().keyring.active_key, patient_id)
+
+    def _candidate_tags(self, patient_id) -> list[str]:
+        """Tags under every key in the ring, so decoys stay armed after a key rotation (the old key stays in
+        the ring until scripts/rotate_keys.py has re-tagged them). Also the pre-2026-10-04 format, which was
+        an HMAC under the raw encryption key."""
+        tags = []
+        for key in get_encryptor().keyring.keys.values():
+            tags.append(self._tag_with(key, patient_id))
+            tags.append(hmac.new(key, f"decoy:{patient_id}".encode(), hashlib.sha256).hexdigest())
+        return tags
 
     def is_decoy(self, patient_id) -> bool:
-        return self.decoys.find_one({"tag": self._tag(patient_id)}) is not None
+        return self.decoys.find_one({"tag": {"$in": self._candidate_tags(patient_id)}}) is not None
+
+    def retag_all(self, patient_ids) -> int:
+        """Re-tag existing decoys under the active key (run during key rotation). Returns how many."""
+        n = 0
+        for pid in patient_ids:
+            doc = self.decoys.find_one({"tag": {"$in": self._candidate_tags(pid)}})
+            if doc is not None and doc["tag"] != self._tag(pid):
+                self.decoys.update_one({"_id": doc["_id"]}, {"$set": {"tag": self._tag(pid)}})
+                n += 1
+        return n
 
     def deploy(self, count: int = 3) -> int:
         """Create decoys if fewer than `count` exist. Returns how many were added."""

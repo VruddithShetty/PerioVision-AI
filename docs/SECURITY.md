@@ -31,10 +31,10 @@ PerioVision AI is a clinical decision-support system. Its controls are **aligned
 | **Object-level access**: users only see patients they own or are on the care team for | `rbac.can_access_patient` | IDOR / horizontal privilege escalation |
 | **RSA-PSS model signing** + hash manifest; registry refuses to load and logs `MODEL_LOAD_REFUSED` | `security/model_signing.py`, `ml/registry.py`, `scripts/sign_model.py` | Model tampering / supply-chain swap |
 | **Signed reports** + `/api/reports/verify` | `services/report_service.py` | Forged or edited reports |
-| **Tamper-evident audit log**: hash chain (genesis included), unique sequence numbers, Merkle roots every 20 entries authenticated with `AUDIT_ANCHOR_KEY` and written to `backend/logs/merkle_anchors.jsonl` | `security/audit_log.py`, `scripts/verify_audit.py` | Undetected log edits, deletions, full rewrites |
+| **Tamper-evident audit log**: hash chain (genesis included), unique sequence numbers, Merkle roots every 20 entries authenticated with `AUDIT_ANCHOR_KEY` and written to `backend/logs/merkle_anchors.jsonl`. Since 2026-10-04: anchors are numbered and hash-chained (v2), the Merkle tree is domain-separated, an optional witness copy goes to `AUDIT_ANCHOR_WITNESS_DIR`, and verification reports `unanchored_entries` | `security/audit_log.py`, `scripts/verify_audit.py` | Undetected log edits, deletions, full rewrites |
 | **Upload guard**: size, extension, magic bytes, pixel limits, re-encode (drops EXIF), DICOM PHI tags removed, random names | `security/upload_guard.py` | Disguised files, decompression bombs, metadata leaks, path traversal |
 | **Adversarial / OOD heuristics** routed to review | `security/adversarial.py`, `ml/uncertainty/ood.py` | Manipulated inputs silently changing results |
-| **Decoy (honeypot) patients**: realistic, unflagged, tracked by HMAC tag; access revokes sessions and locks the account for 60 min | `security/honeypot.py` | ID enumeration, insider browsing |
+| **Decoy (honeypot) patients**: realistic, unflagged, tracked by an HMAC tag under a key derived for that purpose (stays armed through key rotation, re-tagged by `scripts/rotate_keys.py`); access revokes sessions and locks the account for 60 min | `security/honeypot.py` | ID enumeration, insider browsing |
 | **Security headers** (CSP `default-src 'none'`, nosniff, frame DENY, no-referrer, HSTS on HTTPS), `Cache-Control: no-store` | `app/__init__.py` | Clickjacking, MIME sniffing, caching PHI |
 | **CORS allow-list** (`CORS_ORIGINS`) | `app/__init__.py` | Cross-site API use |
 | **Strict input validation** (pydantic, extra fields forbidden) | `app/schemas/` | NoSQL operator injection (`{"$ne": null}`), mass assignment |
@@ -94,5 +94,21 @@ Design choices: auditors can verify the audit trail but never see PHI. Admins ma
 
 - Decoy records are excluded from normal lists by a system owner ID. Someone with direct database access could spot them. The design targets API-level probing.
 - In demo mode, data and audit anchors live in memory and disappear on restart.
+- Without `AUDIT_ANCHOR_WITNESS_DIR` on storage the server cannot rewrite, an attacker with full control of the server (database, anchor file and `AUDIT_ANCHOR_KEY`) can roll the log back to an earlier anchor. Entries after the newest anchor (up to 19) are protected by the hash chain only; verification shows how many.
+- IP addresses are stored only as keyed hashes (`hash_ip`), and there is no GeoIP lookup anywhere (tested in `tests/test_security_fixes.py`). Behind a reverse proxy, configure the proxy's real-client-IP header, otherwise every request shows the proxy's address.
+
+## 6. Security fixes of 2026-10-04
+
+Each fix has a test in `backend/tests/test_security_fixes.py` that **fails on the code before the fix** (checked by stashing the fix: 7 of 11 new tests failed) and passes after it.
+
+| Issue | Before | After |
+|---|---|---|
+| Decoys disarmed by key rotation | Decoy tags were HMACs under the raw active AES key. After a routine key rotation every existing decoy stopped triggering, silently. | Tags use an HKDF-derived key; lookups try every key in the ring and the old format; `rotate_keys.py` re-tags decoys. |
+| Patient search broken by key rotation | Blind indexes were not rebuilt, so old patients disappeared from name / phone search after rotation. | `PHIEncryptor.reindex_record`, called by `rotate_keys.py`. |
+| Anchor deletion undetected | Anchors were independent records; deleting one (or the newest one plus the entries it covered) left no trace. | v2 anchors carry `anchor_seq` and `prev_anchor`; a gap or reorder is reported. Optional witness copy catches a rollback of the newest anchor. |
+| Merkle second-preimage pattern | Odd layers duplicated the last leaf, so `[a,b,c]` and `[a,b,c,c]` shared a root (the CVE-2012-2459 pattern; limited here because the HMAC also covers the count). | RFC 6962-style leaf / node prefixes, odd node promoted. v1 anchors still verify. |
+| Silent unanchored tail | Verification said "intact" while up to 19 newest entries could be deleted without trace. | `unanchored_entries` is reported. |
+
+The four weaknesses listed in the project brief (deterministic AES-CBC with a static IV, an unanchored Merkle root, GeoIP leakage, a static honeypot) are **not present in this code**: encryption is AES-256-GCM with a fresh random 96-bit nonce, roots were already HMAC-anchored outside the database, no GeoIP code exists, and decoys were already randomised. Tests now guard each of these so they cannot come back.
 - The rate limiter's in-memory store is per process. Use `REDIS_URL` with multiple workers.
 - The adversarial checks are heuristics tuned on 30 real radiographs, not a certified defence.

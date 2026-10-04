@@ -27,8 +27,12 @@ def main() -> int:
             if enc.is_token(value) and not value.startswith(f"enc:v1:{active}:"):
                 updates[field] = enc.rotate_token(value, aad=field.encode())
         if updates:
-            db["patients"].update_one({"_id": doc["_id"]}, {"$set": updates})
             fields += len(updates)
+        # search indexes are keyed by the active key: rebuild them, or old patients drop out of search
+        reindexed = enc.reindex_record({**doc, **updates})
+        updates.update({f"{f}_idx": reindexed[f"{f}_idx"] for f in enc.INDEXED_FIELDS if f"{f}_idx" in reindexed})
+        if updates:
+            db["patients"].update_one({"_id": doc["_id"]}, {"$set": updates})
     for doc in db["doctors"].find({"mfa_secret": {"$ne": None}}):
         value = doc.get("mfa_secret")
         if enc.is_token(value) and not value.startswith(f"enc:v1:{active}:"):
@@ -50,7 +54,12 @@ def main() -> int:
                 break
             except Exception:
                 continue
-    print(f"Re-encrypted {fields} fields and {blobs} files under key '{active}'.")
+    from app.security.honeypot import DECOY_OWNER, HoneypotManager
+
+    decoy_ids = [d["patient_id"] for d in db["patients"].find({"doctor_id": DECOY_OWNER}, {"patient_id": 1})]
+    retagged = HoneypotManager().retag_all(decoy_ids)
+    print(f"Re-encrypted {fields} fields and {blobs} files under key '{active}'; "
+          f"rebuilt search indexes; re-tagged {retagged} decoy records.")
     return 0
 
 

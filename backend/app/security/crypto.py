@@ -171,6 +171,15 @@ class PHIEncryptor:
         digest = hmac.new(self._pseudo_key, str(identifier).encode(), hashlib.sha256).hexdigest()
         return f"P-{digest[:10]}"
 
+    def reindex_record(self, doc: dict) -> dict:
+        """Recompute the blind indexes under the active key. The index key is derived from the active key,
+        so after a rotation old indexes no longer match searches; scripts/rotate_keys.py calls this."""
+        for field in self.INDEXED_FIELDS:
+            value = doc.get(field)
+            if self.is_token(value):
+                doc[f"{field}_idx"] = self.get_blind_index(self.decrypt_random(value, aad=field.encode()))
+        return doc
+
     # ---------- documents ----------
     def encrypt_patient_record(self, doc: dict) -> dict:
         """Encrypt sensitive fields and add blind indexes for search."""
