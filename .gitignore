@@ -87,5 +87,7 @@ backend/tests_live/**/__pycache__/
 !backend/weights/pipeline_test_metrics.json
 !backend/weights/panoramic_screen_metrics.json
 !backend/weights/panoramic_severity_metrics.json
+!backend/weights/canary_expected.json
+!backend/weights/evidence_summary.json
 demo_logins.txt
 backend/keys/publisher_model_signing.pub

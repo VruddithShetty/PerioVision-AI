@@ -8,6 +8,7 @@ Sub-commands (run from backend/; all work on CPU, faster with a GPU; no GUI):
                  validation films, labelled split=val, for calibration work.
   mmopg-screen   Panoramic bone-loss screen (maxilla / mandible) on the official MM-OPG 450-film test split.
   nhanes-risk    Clinical risk model on the NHANES 2013-14 temporal test cycle (both model variants).
+  pdcnn-wholefilm  EXTERNAL test: both whole-film panoramic models on PDCNN films (periodontitis yes / no).
   yolo-detector  Tooth detector on any YOLO-format test folder (e.g. the DENTEX test split): per-film
                  true / false positives, misses and correct FDI numbers.
 
@@ -286,6 +287,38 @@ def pdcnn_brar(args) -> int:
     return 0
 
 
+def pdcnn_wholefilm(args) -> int:
+    """EXTERNAL test of both whole-film panoramic models (trained on MM-OPG and BRAR) on PDCNN films, a source
+    neither saw. PDCNN publishes a film-level label in the file name: perio_* (periodontitis) or non_perio_*.
+    That label is periodontitis yes / no, not the models' own targets (generalised crestal bone loss per jaw;
+    worst-tooth bone loss %), so the result measures transfer to another population and labelling protocol."""
+    import glob
+
+    wd = _weights_dir(args.weights)
+    screen, sm, device = _whole_film_net(wd, "panoramic_screen", 2)
+    severity, vm, _ = _whole_film_net(wd, "panoramic_severity", 1)
+    files = sorted(glob.glob(os.path.join(os.path.expanduser(args.data), "*.png")))
+    if args.limit:
+        files = files[:: max(1, len(files) // args.limit)][: args.limit]   # deterministic, spread over both classes
+    rows = []
+    for i in range(0, len(files), 64):                                       # chunks keep memory bounded
+        chunk = files[i:i + 64]
+        grays = [cv2.imread(f, cv2.IMREAD_GRAYSCALE) for f in chunk]
+        ok = [k for k, g in enumerate(grays) if g is not None]
+        chunk, grays = [chunk[k] for k in ok], [grays[k] for k in ok]
+        prob = 1 / (1 + np.exp(-_predict(screen, device, grays, sm["input_size"])))
+        pct = np.clip(_predict(severity, device, grays, vm["input_size"])[:, 0], 0, 100)
+        for f, p, s, g in zip(chunk, prob, pct, grays):
+            flags = [p[j] >= sm["jaws"][jaw]["threshold_from_val"] for j, jaw in enumerate(("maxilla", "mandible"))]
+            name = os.path.basename(f)
+            rows.append({"film": name, "perio": int(not name.startswith("non_perio")),
+                         "screen_maxilla": round(float(p[0]), 5), "screen_mandible": round(float(p[1]), 5),
+                         "screen_max_prob": round(float(max(p)), 5), "screen_flag": bool(any(flags)),
+                         "worst_tooth_pct": round(float(s), 3), "image_w": g.shape[1], "image_h": g.shape[0]})
+    _write(rows, args.out)
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -305,12 +338,19 @@ def main(argv=None) -> int:
     s.add_argument("--split", default="test")
     s.add_argument("--imgsz", type=int, default=1024)
     s.add_argument("--out", required=True)
+    s = sub.add_parser("pdcnn-wholefilm")
+    s.add_argument("--data", required=True, help="PDCNN Images folder (perio_*.png / non_perio_*.png)")
+    s.add_argument("--out", required=True)
+    s.add_argument("--weights")
+    s.add_argument("--limit", type=int, default=0, help="evaluate an evenly spread subset of this many films")
     s = sub.add_parser("dentex-disease")
     s.add_argument("--data", required=True, help="DENTEX_test/disease (with input/ and label/)")
     s.add_argument("--out", required=True)
     args = ap.parse_args(argv)
     if args.cmd == "pdcnn-brar":
         return pdcnn_brar(args)
+    if args.cmd == "pdcnn-wholefilm":
+        return pdcnn_wholefilm(args)
     if args.cmd == "dentex-disease":
         return dentex_disease(args)
     return {"brar-severity": brar_severity, "mmopg-screen": mmopg_screen, "nhanes-risk": nhanes_risk,

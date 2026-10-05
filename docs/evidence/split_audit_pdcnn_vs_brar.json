@@ -1,0 +1,27 @@
+{
+  "dataset": "folder",
+  "root_name": "Images",
+  "images_per_split": {
+    "external": 1747
+  },
+  "check_patient_overlap": "UNVERIFIABLE (dataset publishes no patient IDs)",
+  "unreadable_images": 0,
+  "exact_duplicates_across_splits": 0,
+  "exact_duplicates_total_images_minus_unique": 0,
+  "exact_duplicate_groups": [],
+  "near_duplicate_candidates_across_splits": 0,
+  "near_duplicates_confirmed_across_splits": 0,
+  "near_duplicate_confirmed": [],
+  "min_ncc": 0.97,
+  "check_duplicates": "PASS",
+  "against": {
+    "images": 988,
+    "exact_matches": 0,
+    "near_duplicate_candidates": 561,
+    "near_duplicates_confirmed": 0,
+    "confirmed": [],
+    "check": "PASS"
+  },
+  "max_hamming": 4,
+  "note": "Near-duplicate pairs are candidates, not proof: inspect them. Different patients' films taken on the same machine can look alike at 8x8 resolution; the same film re-exported usually gives hamming 0-3."
+}

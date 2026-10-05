@@ -11,6 +11,10 @@ Default (--method adaptive), normalised split conformal:
      normal and mirrored readings (percentage points);
   3. half B gives the scores |error| / sigma(x) that set q;
   4. --test-images/--test-labels (a split NOT used above) measures the coverage actually reached.
+  5. Asymmetric margins (default): half B also stores signed scores (reference - predicted) / sigma(x); each
+     side of the interval gets its own quantile at 1 - alpha / 2 (coverage >= 1 - alpha by the union bound).
+     The landmark model underestimates severe bone loss, so the upper margin is wider. Coverage is reported
+     per reference stage for both the symmetric and the asymmetric interval, and the manifest is re-signed.
 --method standard keeps fixed-width intervals (q from half B, sigma = 1).
 
 The previous calibration file is kept as a timestamped backup next to it.
@@ -121,6 +125,7 @@ def main() -> int:
     spec = fit_sigma(A) if args.method == "adaptive" else None
     held_out = test if test else A                 # coverage on the test split, else the other half
     scores = np.array([abs(r["pred"] - r["ref"]) / sigma(spec, r["d"]) for r in B])
+    signed = np.array([(r["ref"] - r["pred"]) / sigma(spec, r["d"]) for r in B])
     err = np.array([abs(r["pred"] - r["ref"]) for r in held_out])
     levels = {}
     for cov in LEVELS:
@@ -133,6 +138,24 @@ def main() -> int:
         }
     ho_pred = np.array([r["pred"] for r in held_out])
     ho_ref = np.array([r["ref"] for r in held_out])
+    ho_sig = np.array([sigma(spec, r["d"]) for r in held_out])
+    ho_stage = np.where(ho_ref < 15, "I", np.where(ho_ref <= 33, "II", "III"))
+    for cov in LEVELS:
+        tail = 1 - (1 - cov) / 2
+        q_up, q_dn = conformal_quantile(signed, tail), conformal_quantile(-signed, tail)
+        lvl = levels[str(cov)]
+        if np.isfinite(q_up) and np.isfinite(q_dn):
+            q_up, q_dn = max(0.0, float(q_up)), max(0.0, float(q_dn))
+            inside = (ho_ref >= ho_pred - q_dn * ho_sig) & (ho_ref <= ho_pred + q_up * ho_sig)
+            lvl["asymmetric"] = {"q_lower": round(q_dn, 5), "q_upper": round(q_up, 5),
+                                 "coverage": round(float(inside.mean()), 4),
+                                 "mean_width_pct": round(float(((q_dn + q_up) * ho_sig).mean()), 3),
+                                 "coverage_by_reference_stage": {s: round(float(inside[ho_stage == s].mean()), 4)
+                                                                 for s in ("I", "II", "III") if (ho_stage == s).any()}}
+        if lvl["q_from_half"] is not None:
+            sym = np.abs(ho_ref - ho_pred) <= lvl["q_from_half"] * ho_sig
+            lvl["symmetric_coverage_by_reference_stage"] = {s: round(float(sym[ho_stage == s].mean()), 4)
+                                                            for s in ("I", "II", "III") if (ho_stage == s).any()}
     data = {
         "created": dt.datetime.now(dt.timezone.utc).isoformat(),
         "method": "normalised split conformal" if spec else "split conformal",
@@ -145,6 +168,7 @@ def main() -> int:
         "image_type": args.image_type,
         "n_scores": int(len(scores)),
         "scores": [round(float(s), 5) for s in scores],
+        "signed_scores": [round(float(s), 5) for s in signed],
         "sigma": spec,
         "levels": levels,
         "mean_absolute_error_pct": round(float(np.mean(np.abs(ho_pred - ho_ref))), 3),
@@ -156,11 +180,21 @@ def main() -> int:
         print(f"Previous calibration kept as {backup.name}")
     with open(config.CALIBRATION_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
+    try:
+        from app.security.model_signing import Signer
+
+        Signer().sign_manifest(config.WEIGHTS_DIR)
+        print("Re-signed weights/manifest.json (the calibration file is part of the signed manifest).")
+    except Exception as exc:  # the app refuses an unsigned calibration, so say so loudly
+        print(f"WARNING: could not re-sign the manifest ({exc}); run scripts/sign_model.py or the app will refuse "
+              "this calibration and withhold per-tooth numbers.")
     calibration.reset_cache()
     print(f"Saved {data['method']} calibration: {len(scores)} scores, held-out MAE {data['mean_absolute_error_pct']} points.")
     for cov, lvl in levels.items():
         print(f"  target {cov}: q = {lvl['q_from_half']}  held-out coverage = {lvl['empirical_coverage_other_half']}"
-              f"  mean half-width = {lvl['mean_half_width_pct']}")
+              f"  mean half-width = {lvl['mean_half_width_pct']}  by stage {lvl.get('symmetric_coverage_by_reference_stage')}")
+        if "asymmetric" in lvl:
+            print(f"    asymmetric: {lvl['asymmetric']}")
     return 0
 
 

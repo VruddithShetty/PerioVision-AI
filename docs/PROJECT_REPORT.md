@@ -27,7 +27,7 @@ A premium React web application with 3D dental visuals exposes the whole workflo
 
 The main limitations are honest ones:
 
-- both models are trained and measured on held-out test sets (detector 95.8 % mAP@0.5; landmarks bone-loss error 7.6 points, 73 % stage agreement), but landmarks are validated on periapical X-rays only;
+- both models are trained and measured on held-out test sets (detector 95.8 % mAP@0.5; landmarks bone-loss error 7.6 points, 73 % stage agreement), but landmarks are tested on periapical X-rays only, on held-out films of their training dataset;
 - uncertainty is calibrated (91.5 % coverage at 90 %) but wide, so most teeth still go to dentist review;
 - the clinical risk model is trained on NHANES but modest (AUC 0.65), and it is fused with the radiograph by a documented rule, not a learned weight.
 
@@ -223,7 +223,7 @@ This was verified end to end both in the browser and in `tests/test_api.py::test
 
 ## 10. Honest limitations
 
-1. **Landmarks validated on periapical X-rays only.** The landmark model (YOLO11m-pose on DenPAR) reached 99.0 % tooth recall, bone-loss MAE 7.64 points and 73.1 % stage agreement on 200 held-out periapical X-rays; on panoramic images it is applied to zoomed crops and those teeth are always reviewed. Earlier state: The tooth detector was retrained (YOLO11m on public DENTEX data, free Colab GPU). It scores 94.1 % precision, 94.5 % recall, 95.8 % mAP@0.5 and 94.8 % tooth-level F1 on 63 held-out test X-rays, and it found 26 teeth on a real image where the old model found 2. The keypoint model still predicts one box spanning many teeth, so landmarks fall back to labelled estimates; its training labels were generated geometrically, not drawn by clinicians.
+1. **Landmarks tested on periapical X-rays only (same-source held-out).** The landmark model (YOLO11m-pose on DenPAR) reached 99.0 % tooth recall, bone-loss MAE 7.64 points and 73.1 % stage agreement on 200 held-out periapical X-rays; on panoramic images it is applied to zoomed crops and those teeth are always reviewed. Earlier state: The tooth detector was retrained (YOLO11m on public DENTEX data, free Colab GPU). It scores 94.1 % precision, 94.5 % recall, 95.8 % mAP@0.5 and 94.8 % tooth-level F1 on 63 held-out test X-rays, and it found 26 teeth on a real image where the old model found 2. The keypoint model still predicts one box spanning many teeth, so landmarks fall back to labelled estimates; its training labels were generated geometrically, not drawn by clinicians.
 2. **Uncertainty is calibrated but wide.** Conformal calibration on DenPAR validation teeth gives 91.5 % coverage on the test split at the 90 % target, with a radius of 18.6 points, so only about 10 % of teeth get a single-stage answer and the rest are reviewed.
 3. **Risk fusion is rule-based.** The clinical model is trained and validated (AUC 0.65); its combination with the radiograph is a documented rule because no dataset links radiographs to outcomes.
 4. **Accuracy is claimed only where it was measured.** Detector metrics come from the DENTEX test split, landmark and bone-loss metrics from the DenPAR test split; nothing is claimed for panoramic landmark accuracy.

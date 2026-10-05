@@ -1,8 +1,10 @@
 """RSA-PSS (SHA-256) signing and verification for model weights and generated reports.
 
 * Model weights: `weights/manifest.json` lists every weight file with its SHA-256
-  and size; `weights/manifest.json.sig` is an RSA-PSS signature over that
-  manifest. `app/ml/registry.py` refuses to load any file that is missing from
+  and size, plus every JSON file that changes what a model outputs (the conformal
+  calibration, the whole-film decision thresholds and conformal radius, and the
+  risk model's coefficients, listed under `external/`); `weights/manifest.json.sig`
+  is an RSA-PSS signature over that manifest. `app/ml/registry.py` refuses to load any file that is missing from
   the signed manifest or whose hash no longer matches.
 * Reports: the SHA-256 of the PDF bytes is signed, and the signature is stored
   with the report record so `/api/reports/verify` can check it later.
@@ -27,7 +29,10 @@ from app import config
 
 PSS = padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH)
 MANIFEST_NAME = "manifest.json"
-WEIGHT_SUFFIXES = {".pt", ".pth", ".onnx", ".pkl", ".joblib"}
+WEIGHT_SUFFIXES = {".pt", ".pth", ".onnx", ".pkl", ".joblib", ".json"}
+# Model-behaviour files kept outside weights/ (they live with the code); signed under these manifest keys.
+EXTERNAL_FILES = {"external/risk_model_nhanes.json":
+                  Path(__file__).resolve().parent.parent / "ml" / "fusion" / "risk_model_nhanes.json"}
 
 
 class SigningError(RuntimeError):
@@ -103,9 +108,12 @@ class Signer:
     def build_manifest(self, weights_dir: Path) -> dict:
         files = {}
         for p in sorted(Path(weights_dir).rglob("*")):
-            if p.is_file() and p.suffix.lower() in WEIGHT_SUFFIXES:
+            if p.is_file() and p.suffix.lower() in WEIGHT_SUFFIXES and p.name != MANIFEST_NAME:
                 rel = p.relative_to(weights_dir).as_posix()
                 files[rel] = {"sha256": sha256_file(p), "size": p.stat().st_size}
+        for key, p in EXTERNAL_FILES.items():
+            if p.is_file():
+                files[key] = {"sha256": sha256_file(p), "size": p.stat().st_size}
         return {"version": 1, "files": files}
 
     def sign_manifest(self, weights_dir: Path) -> dict:
@@ -132,10 +140,13 @@ class Signer:
                 return {"verified": False, "reason": "manifest signature invalid (manifest altered)"}
         except SigningError as exc:
             return {"verified": False, "reason": str(exc)}
+        external = {v.resolve(): k for k, v in EXTERNAL_FILES.items()}
         try:
             rel = path.resolve().relative_to(weights_dir.resolve()).as_posix()
         except ValueError:
-            return {"verified": False, "reason": "file is outside the weights folder"}
+            rel = external.get(path.resolve())
+            if rel is None:
+                return {"verified": False, "reason": "file is outside the weights folder"}
         entry = json.loads(body).get("files", {}).get(rel)
         if entry is None:
             return {"verified": False, "reason": "file is not in the signed manifest"}

@@ -60,7 +60,26 @@ def model_trust():
         "flag_reasons": reasons,
         "models": container.registry().status(),
         "risk_model": {"type": MODEL_TYPE, "version": MODEL_VERSION},
+        "evidence": _evidence_summary(),
     })
+
+
+def _evidence_summary() -> dict:
+    """Every accuracy number with HOW it was tested (same-source held-out vs cross-source external), from the
+    signed weights/evidence_summary.json written by research.compute_ci. Unsigned or missing: not shown."""
+    import json
+
+    from app import config
+    from app.security.model_signing import Signer
+
+    path = config.WEIGHTS_DIR / "evidence_summary.json"
+    if not path.exists():
+        return {"available": False, "reason": "not generated (run python -m research.compute_ci)", "rows": []}
+    check = Signer().verify_weight_file(path)
+    if not check.get("verified"):
+        return {"available": False, "reason": f"refused: {check.get('reason')}", "rows": []}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return {"available": True, "generated": data.get("generated"), "rows": data.get("rows", [])}
 
 
 @bp.get("/api/models/metrics")

@@ -274,3 +274,22 @@ def test_per_tooth_gradcam_needs_a_verified_model_and_rbac(client, dentist, audi
     assert client.get(url, headers=dentist).status_code == 404        # demo mode: no verified model, no fake map
     assert client.get(url, headers=auditor).status_code == 403        # auditors never see clinical images
     assert client.get(url.replace(a["teeth"][0]["tooth_id"], "99"), headers=dentist).status_code == 404
+
+
+
+def test_model_trust_shows_how_each_number_was_tested(client, dentist):
+    from app import config
+    from app.security.model_signing import Signer
+
+    path = config.WEIGHTS_DIR / "evidence_summary.json"
+    path.write_text('{"generated": "t", "rows": [{"task": "x", "metric": "MAE", "value": 7.3, "ci95": null, "n": 576,'
+                    ' "unit_of_n": "teeth", "status": "VERIFIED", "pct": false, "test_type": "same-source held-out",'
+                    ' "small_sample": false, "note": ""}]}', encoding="utf-8")
+    try:
+        assert not data(client.get("/api/models/trust", headers=dentist))["evidence"]["available"]   # unsigned
+        Signer().sign_manifest(config.WEIGHTS_DIR)
+        ev = data(client.get("/api/models/trust", headers=dentist))["evidence"]
+        assert ev["available"] and ev["rows"][0]["test_type"] == "same-source held-out"
+    finally:
+        path.unlink()
+        Signer().sign_manifest(config.WEIGHTS_DIR)

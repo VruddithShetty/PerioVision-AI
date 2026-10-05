@@ -236,7 +236,7 @@ export default function AnalysisViewerPage() {
                         <p className={s.bone_loss_suggested ? "mt-1 font-semibold text-review-400" : "mt-1 font-semibold text-teal-400"}>
                           {s.bone_loss_suggested ? "Generalised bone loss suggested" : "Not suggested"}
                         </p>
-                        <p className="text-[11px] text-mist-500">probability {s.probability.toFixed(2)} · test AUC {s.test.test_auc.toFixed(2)}</p>
+                        <p className="text-[11px] text-mist-500">probability {s.probability.toFixed(2)} · AUC {s.test.test_auc.toFixed(2)} on held-out films of its training dataset</p>
                       </div>
                     );
                   })}
@@ -251,7 +251,7 @@ export default function AnalysisViewerPage() {
                       about <b style={{ color: stageColor(w.stage) }}>{w.bone_loss_pct.toFixed(0)}%</b> bone loss · 90% range {w.interval_90[0].toFixed(0)}–{w.interval_90[1].toFixed(0)}% · possible stages {w.stage_set.join(" / ")}
                     </p>
                     <p className="mt-1 text-[11px] text-mist-500">
-                      Tested on {w.test.test_films} held-out films: average error {w.test.test_MAE.toFixed(1)} points, stage agreement {Math.round(w.test.test_stage_agreement * 100)}%. Tends to underestimate very severe cases.
+                      Tested on {w.test.test_films} held-out films from its training dataset (BRAR, same source): average error {w.test.test_MAE.toFixed(1)} points, stage agreement {Math.round(w.test.test_stage_agreement * 100)}%. Tends to underestimate very severe cases.
                     </p>
                   </div>
                 );
@@ -300,7 +300,7 @@ export default function AnalysisViewerPage() {
               {!a.risk.top_factors.length && <li className="text-sm text-mist-500">No strong contributing factors.</li>}
             </ul>
             {a.risk.missing_inputs.length > 0 && <p className="mt-3 text-xs text-review-400">Missing: {a.risk.missing_inputs.join(", ")}</p>}
-            <p className="mt-3 text-[11px] text-mist-500">{a.risk.model_type}{a.risk.validation ? ` (validated on ${a.risk.validation.test_n.toLocaleString()} people, AUC ${a.risk.validation.roc_auc.toFixed(2)})` : ""} · {a.risk.disclaimer}</p>
+            <p className="mt-3 text-[11px] text-mist-500">{a.risk.model_type}{a.risk.validation ? ` (tested on ${a.risk.validation.test_n.toLocaleString()} people from a later NHANES cycle, AUC ${a.risk.validation.roc_auc.toFixed(2)})` : ""} · {a.risk.disclaimer}</p>
           </Card>
         </div>
       </div>

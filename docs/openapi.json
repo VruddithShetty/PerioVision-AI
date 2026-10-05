@@ -1167,6 +1167,57 @@
         ]
       }
     },
+    "/api/analyses/{analysis_id}/teeth/{tooth_id}/gradcam": {
+      "get": {
+        "summary": "Grad-CAM of one tooth's detection only (computed on demand from the stored radiograph).",
+        "operationId": "analysis_tooth_gradcam_get",
+        "tags": [
+          "analysis"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired or invalid token / session (Zero Trust check)"
+          },
+          "403": {
+            "description": "Role lacks the permission, or account blocked"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-permission": "analysis:read",
+        "parameters": [
+          {
+            "name": "analysis_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tooth_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
     "/api/audit/anchor": {
       "post": {
         "summary": "Publish (anchor) a Merkle root now",

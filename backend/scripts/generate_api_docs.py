@@ -194,7 +194,23 @@ lines = [
     "- **Errors:** 401 not authenticated, 403 not allowed, 404 not found (also used for records you may not see), "
     "409 conflict (e.g. report before sign-off), 415 rejected upload, 422 validation (`error.details` lists fields), 429 rate limit.",
     "- **Privacy:** patients appear in logs only as pseudonyms (`P-…`); radiographs and reports are stored AES-256-GCM encrypted.",
+    "- **Accuracy figures carry their test type.** `GET /api/models/trust` returns `evidence.rows`, each with `test_type`: "
+    "*same-source held-out* (unseen data from the training dataset), *same-hospital held-out*, *temporal hold-out* "
+    "(same survey, later cycle) or *cross-source external* (another hospital, population or labelling protocol). Only "
+    "the last says anything about other sites. The table below is the deployed, signed `weights/evidence_summary.json` "
+    "(`python -m research.compute_ci`); the example response further down comes from a demo instance without it.",
     "",
+]
+_ev = BACKEND / "weights" / "evidence_summary.json"
+if _ev.exists():
+    _rows = json.loads(_ev.read_text(encoding="utf-8"))["rows"]
+    lines += ["### Accuracy figures by test type", "", "| Test type | Model / test set | Metric | Value | n |", "|---|---|---|---|---|"]
+    for _r in sorted(_rows, key=lambda r: (r["test_type"], r["task"])):
+        _v = f"{_r['value'] * 100:.1f} %" if _r["pct"] else f"{_r['value']:.3f}"
+        lines.append(f"| {_r['test_type']} | {_r['task']} | {_r['metric']} | {_v} | {_r['n']}"
+                     f"{' (small sample)' if _r['small_sample'] else ''} |")
+    lines.append("")
+lines += [
     "## Endpoint index",
     "",
     "| Method | Path | Permission | Summary |",

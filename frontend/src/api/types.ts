@@ -299,6 +299,8 @@ export interface SystemStatus {
   audit_chain_intact: boolean;
   audit_entries: number;
   calibrated: boolean;
+  /** startup self-check: every model re-run on fixed inputs and compared with its signed recorded outputs */
+  model_self_check?: { status: "pass" | "fail" | "not_run" | "not_recorded" | "error"; message?: string };
 }
 
 export interface Dashboard {
@@ -368,6 +370,14 @@ export interface ModelTrust {
   flag_reasons: Record<string, number>;
   models: ModelStatus[];
   risk_model: { type: string; version: string };
+  /** every measured number with how it was tested (signed weights/evidence_summary.json) */
+  evidence?: {
+    available: boolean;
+    reason?: string;
+    generated?: string;
+    rows: { task: string; metric: string; value: number; ci95: [number, number] | null; n: number; unit_of_n: string;
+      status: string; pct: boolean; test_type: string; small_sample: boolean; note: string }[];
+  };
 }
 
 export interface AdminConfig {

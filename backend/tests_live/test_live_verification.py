@@ -173,6 +173,76 @@ def test_missing_calibration_never_brings_back_panoramic_numbers(services, panor
         calibration.reset_cache()
 
 
+@pytest.mark.parametrize("damage", ["missing", "corrupt", "unsigned_edit"])
+def test_untrustworthy_calibration_withholds_every_per_tooth_number(services, denpar_images, damage):
+    """Fail closed: without a trustworthy calibration NO film type gets per-tooth numbers, periapical included."""
+    from app import config
+    from app.ml.uncertainty import calibration
+
+    path = config.CALIBRATION_FILE
+    original = path.read_bytes()
+    try:
+        if damage == "missing":
+            path.unlink()
+        elif damage == "corrupt":
+            path.write_bytes(original[: len(original) // 2])          # truncated JSON
+        else:
+            data = json.loads(original)
+            data["scores"] = [s / 10 for s in data["scores"]]          # 10x narrower intervals, not re-signed
+            path.write_text(json.dumps(data), encoding="utf-8")
+        calibration.reset_cache()
+        r = services["analyse"](_gray(denpar_images[0]), services["new_patient"](), "2026-01-01")
+        assert r["image_type"] == "periapical" and r["teeth"]
+        assert all(t["bone_loss_pct"] is None for t in r["teeth"])
+        assert all(t["measurement_status"] == "withheld_no_calibration" for t in r["teeth"])
+        assert "calibration_missing" in {x["code"] for x in r["review"]["reasons"]}
+        assert r["summary"]["stage"] is None
+    finally:
+        path.write_bytes(original)
+        calibration.reset_cache()
+
+
+def test_periapical_intervals_use_the_asymmetric_calibration(services, denpar_images):
+    from app.ml.uncertainty import calibration
+
+    bounds = calibration.current_bounds()
+    assert bounds is not None
+    r = services["analyse"](_gray(denpar_images[1]), services["new_patient"](), "2026-01-01")
+    for t in r["teeth"]:
+        if t["bone_loss_pct"] is None:
+            continue
+        u = t["uncertainty"]
+        if calibration.load().get("signed_scores"):
+            assert u["upper_margin"] / u["lower_margin"] == pytest.approx(bounds[1] / bounds[0], rel=1e-3)
+
+
+def test_model_self_check_passes_then_catches_drift(services):
+    from app import config
+    from app.ml import canary
+    from app.ml.uncertainty import review_router
+    from app.security.model_signing import Signer
+
+    canary.record()
+    Signer().sign_manifest(config.WEIGHTS_DIR)
+    assert canary.run()["status"] == "pass"
+    path = config.WEIGHTS_DIR / canary.EXPECTED_FILE
+    good = path.read_text(encoding="utf-8")
+    try:
+        data = json.loads(good)
+        data["fingerprints"]["panoramic_severity"] = [v + 5.0 for v in data["fingerprints"]["panoramic_severity"]]
+        path.write_text(json.dumps(data), encoding="utf-8")
+        assert canary.run()["status"] == "fail"                       # unsigned change: refused
+        Signer().sign_manifest(config.WEIGHTS_DIR)                     # even signed, the outputs no longer match
+        res = canary.run()
+        assert res["status"] == "fail" and "panoramic_severity" in res["message"]
+        routed = review_router.route([], {"verdict": "pass"}, {"is_ood": False}, False)
+        assert "model_self_check_failed" in {x["code"] for x in routed["reasons"]}
+    finally:
+        path.write_text(good, encoding="utf-8")
+        Signer().sign_manifest(config.WEIGHTS_DIR)
+        canary.run()
+
+
 def test_stage_follows_the_documented_bands(services, denpar_images):
     from app.ml.measurement.staging import stage_for_pct
 
@@ -220,11 +290,14 @@ def test_conformal_intervals_use_the_calibrated_q(services, denpar_images):
         if t["bone_loss_pct"] is None:
             continue
         lo, hi = t["uncertainty"]["interval"]
-        # half-width = q * sigma(mirrored-pass disagreement of THIS tooth) (sigma = 1 for fixed-width calibration)
-        half = q * calibration.scale_for(t)
+        # margins = (q_lower, q_upper) * sigma(mirrored-pass disagreement of THIS tooth); asymmetric calibration:
+        # the upper margin is the wider one because the model underestimates severe bone loss
+        q_dn, q_up = calibration.current_bounds()
+        sig = calibration.scale_for(t)
+        half = max(q_dn, q_up) * sig
         assert t["uncertainty"]["half_width"] == pytest.approx(half, abs=0.01)
-        assert lo == pytest.approx(max(0.0, t["bone_loss_pct"] - half), abs=0.01)
-        assert hi == pytest.approx(min(100.0, t["bone_loss_pct"] + half), abs=0.01)
+        assert lo == pytest.approx(max(0.0, t["bone_loss_pct"] - q_dn * sig), abs=0.01)
+        assert hi == pytest.approx(min(100.0, t["bone_loss_pct"] + q_up * sig), abs=0.01)
         widths.append(round(half, 2))
     if (calibration.load() or {}).get("sigma"):
         assert len(set(widths)) > 1, "adaptive calibration but every tooth got the same width"
@@ -369,9 +442,10 @@ def test_panoramic_films_get_a_validated_whole_film_estimate(services, wide_pano
     assert pa and pa["level"].startswith("patient")
     metrics = json.loads((config.WEIGHTS_DIR / "panoramic_severity_metrics.json").read_text())
     wt = pa["worst_tooth"]
-    q = metrics["conformal_q90_from_val"]
-    assert wt["interval_90"][0] == pytest.approx(max(0, wt["bone_loss_pct"] - q), abs=0.11)
-    assert wt["interval_90"][1] == pytest.approx(min(100, wt["bone_loss_pct"] + q), abs=0.11)
+    q_dn = metrics.get("conformal_q90_lower_from_val", metrics["conformal_q90_from_val"])
+    q_up = metrics.get("conformal_q90_upper_from_val", metrics["conformal_q90_from_val"])
+    assert wt["interval_90"][0] == pytest.approx(max(0, wt["bone_loss_pct"] - q_dn), abs=0.11)
+    assert wt["interval_90"][1] == pytest.approx(min(100, wt["bone_loss_pct"] + q_up), abs=0.11)
     assert wt["test"]["test_MAE"] == metrics["test_MAE"]             # accuracy shown is read from the metrics file
     for jaw in ("maxilla", "mandible"):
         p = pa["screen"][jaw]
@@ -380,9 +454,11 @@ def test_panoramic_films_get_a_validated_whole_film_estimate(services, wide_pano
     assert (pa["worst_tooth"]["bone_loss_pct"], pa["screen"]["maxilla"]["probability"]) !=         (pb["worst_tooth"]["bone_loss_pct"], pb["screen"]["maxilla"]["probability"]), "output does not depend on the film"
     # per-tooth numbers stay withheld on panoramic films
     assert all(t["bone_loss_pct"] is None for t in a["teeth"])
-    # the uncertainty system itself flags the case: the 90 % interval spans more than one stage
-    if len(wt["stage_set"]) > 1:
-        assert "panoramic_stage_ambiguous" in {x["code"] for x in a["review"]["reasons"]}
+    # the uncertainty system itself flags the case (not only the film-type rule): with a 90 % interval this wide no
+    # film gets a single stage, so BOTH films must carry the uncertainty reason
+    for r in (a, b):
+        assert len(r["panoramic_assessment"]["worst_tooth"]["stage_set"]) > 1
+        assert "panoramic_stage_ambiguous" in {x["code"] for x in r["review"]["reasons"]}
     # the whole-film estimate is the radiograph's evidence in the fused risk
     fusion = a["risk"]["fusion"]
     assert fusion["radiographic_level"] == {"I": "low", "II": "moderate", "III": "high", "IV": "high"}[wt["stage"]]

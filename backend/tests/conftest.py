@@ -36,6 +36,8 @@ import pytest  # noqa: E402
 from app.security.model_signing import Signer  # noqa: E402
 
 Signer().generate_keypair()  # test key pair in the temporary keys folder
+Path(os.environ["WEIGHTS_DIR"]).mkdir(parents=True, exist_ok=True)
+Signer().sign_manifest(Path(os.environ["WEIGHTS_DIR"]))  # signs the risk model coefficients (external/)
 
 from app import create_app  # noqa: E402
 

@@ -1,0 +1,25 @@
+{
+  "note": "Expected outputs of every model on fixed synthetic inputs; see app/ml/canary.py.",
+  "fingerprints": {
+    "tooth_detector": [
+      23.648463,
+      87.416417,
+      0.000225
+    ],
+    "landmarks": [
+      195.345971,
+      199.726693,
+      724.833618
+    ],
+    "panoramic_screen": [
+      0.119154,
+      -0.457119
+    ],
+    "panoramic_severity": [
+      15.698616
+    ],
+    "risk_model": [
+      0.713
+    ]
+  }
+}

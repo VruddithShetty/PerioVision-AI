@@ -21,5 +21,19 @@
   "input_size": [
     1024,
     512
-  ]
+  ],
+  "conformal_q90_lower_from_val": 14.938,
+  "conformal_q90_upper_from_val": 35.791,
+  "test_interval_coverage_asymmetric": 0.9128,
+  "test_interval_coverage_by_stage_asymmetric": {
+    "I": 0.8788,
+    "II": 1.0,
+    "III": 0.8333
+  },
+  "test_interval_coverage_by_stage_symmetric": {
+    "I": 1.0,
+    "II": 1.0,
+    "III": 0.7407
+  },
+  "interval_note": "Asymmetric split conformal (alpha/2 per side, from validation films' signed errors); scripts/calibrate_panoramic_interval.py"
 }

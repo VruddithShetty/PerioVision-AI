@@ -59,7 +59,12 @@ class WholeFilmModels:
             path = registry().get(name)                 # signature-checked; None if missing / refused
             metrics_path = config.WEIGHTS_DIR / f"{name}_metrics.json"
             result = None
-            if path is not None and metrics_path.exists():
+            metrics_ok = metrics_path.exists() and registry().signer.verify_weight_file(
+                metrics_path, config.WEIGHTS_DIR).get("verified", False)
+            if path is not None and metrics_path.exists() and not metrics_ok:
+                logger.error("[SECURITY] Refusing %s: its metrics file (thresholds, conformal radius) fails the "
+                             "signed manifest", name)
+            if path is not None and metrics_ok:
                 try:
                     import torch
 
@@ -105,16 +110,24 @@ class WholeFilmModels:
                           "test": {k: m["jaws"][jaw][k] for k in ("test_auc", "test_sensitivity", "test_specificity")}}
                     for j, jaw in enumerate(("maxilla", "mandible"))}
                 out["screen_validation"] = {"dataset": m["dataset"], "test_films": m["test_films"]}
-            if severity is not None:
+            if severity is not None and not (m_has_q := "conformal_q90_from_val" in severity[1]):
+                logger.error("Panoramic severity metrics carry no conformal radius; the estimate is withheld.")
+            if severity is not None and m_has_q:
                 net, m = severity
                 pct = float(np.clip(net(self._input(gray, m["input_size"]))[0, 0].item(), 0.0, 100.0))
-                q = float(m["conformal_q90_from_val"])
-                low, high = max(0.0, pct - q), min(100.0, pct + q)
+                # Asymmetric margins when calibrated (scripts/calibrate_panoramic_interval.py): the model underestimates
+                # severe cases, so the interval reaches further up; otherwise the symmetric radius.
+                q_dn = float(m.get("conformal_q90_lower_from_val", m["conformal_q90_from_val"]))
+                q_up = float(m.get("conformal_q90_upper_from_val", m["conformal_q90_from_val"]))
+                low, high = max(0.0, pct - q_dn), min(100.0, pct + q_up)
                 out["worst_tooth"] = {
                     "bone_loss_pct": round(pct, 1), "stage": stage_for_pct(pct),
                     "interval_90": [round(low, 1), round(high, 1)], "stage_set": stages_overlapping(low, high),
-                    "test": {k: m[k] for k in ("test_MAE", "test_stage_agreement", "test_interval_coverage",
-                                               "test_films")},
+                    "test": {**{k: m[k] for k in ("test_MAE", "test_stage_agreement", "test_films")},
+                             # coverage of the interval actually shown (asymmetric when calibrated)
+                             "test_interval_coverage": m.get("test_interval_coverage_asymmetric",
+                                                             m["test_interval_coverage"]),
+                             "test_type": "same-source held-out (BRAR test split)"},
                     "dataset": m["dataset"]}
         return out
 

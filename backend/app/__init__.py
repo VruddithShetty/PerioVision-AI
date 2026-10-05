@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 import os
+import sys
 
 from flask import Flask, request
 from flask_cors import CORS
@@ -120,4 +121,8 @@ def create_app(seed_accounts: bool = True) -> Flask:
             seed()
         except Exception as exc:  # the demo must never block startup
             logger.warning("Demo data seeding skipped: %s", exc)
+    if seed_accounts and os.getenv("MODEL_SELF_CHECK", "1") == "1" and "pytest" not in sys.modules:
+        from app.ml import canary
+
+        canary.start_in_background()   # warms the models up and checks them against their recorded outputs
     return app

@@ -39,19 +39,24 @@ def conformal_quantile(scores, coverage: float) -> float:
     return float(scores[k - 1])
 
 
-def predict_interval(pred_pct: float | None, q: float | None, scale: float = 1.0) -> dict:
-    """Interval pred +/- q * scale. scale = 1 for standard split conformal; for normalised (adaptive)
-    conformal it is the tooth's difficulty sigma(x), and q was calibrated on |error| / sigma(x)."""
+def predict_interval(pred_pct: float | None, q: float | None, scale: float = 1.0, q_upper: float | None = None) -> dict:
+    """Interval [pred - q * scale, pred + q_upper * scale] (q_upper = q when not given: symmetric).
+
+    scale = 1 for standard split conformal; for normalised (adaptive) conformal it is the tooth's difficulty
+    sigma(x), and q was calibrated on |error| / sigma(x). With an asymmetric calibration q is the lower and
+    q_upper the upper margin, each from its own tail (alpha / 2 each), so coverage stays >= 1 - alpha while
+    the interval can reach further up than down for a model that underestimates severe bone loss."""
     if pred_pct is None:
         return {"interval": None, "stage_set": [], "set_size": 0, "calibrated": q is not None, "half_width": None}
     if q is None or not math.isfinite(q):
         return {"interval": [0.0, 100.0], "stage_set": ["I", "II", "III"], "set_size": 3, "calibrated": False,
                 "half_width": None}
-    half = q * scale
-    low, high = max(0.0, pred_pct - half), min(100.0, pred_pct + half)
+    up = q if q_upper is None or not math.isfinite(q_upper) else q_upper
+    low, high = max(0.0, pred_pct - q * scale), min(100.0, pred_pct + up * scale)
     stage_set = stages_overlapping(low, high)
     return {"interval": [round(low, 2), round(high, 2)], "stage_set": stage_set, "set_size": len(stage_set),
-            "calibrated": True, "half_width": round(half, 3)}
+            "calibrated": True, "half_width": round(max(q, up) * scale, 3),   # conservative bound for progression
+            "lower_margin": round(q * scale, 3), "upper_margin": round(up * scale, 3)}
 
 
 def empirical_coverage(preds, refs, q: float) -> float:

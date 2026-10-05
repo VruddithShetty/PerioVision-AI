@@ -20,8 +20,8 @@
 - Grad-CAM-family heatmaps with LayerCAM weighting (5× better localisation on a tooth than classic Grad-CAM, measured), for all teeth or for one selected tooth, and a per-tooth periodontal-attention check
 - Adaptive split-conformal uncertainty (each tooth's interval widens when its normal and mirrored readings disagree), stage sets, mandatory clinician review router
 - Longitudinal progression with registration that must line up the teeth themselves, plus a measurement-error rule: changes smaller than the error are never called progression
-- Risk fusion: a clinical model trained on CDC NHANES (validated on a later survey cycle, plain-language odds ratios) combined with the radiograph's measured stage by a documented rule
-- Panoramic films: tooth detection and FDI numbering (validated on an external hospital's data) plus a validated whole-film estimate (bone loss per jaw, worst-tooth bone loss and stage, with its own conformal interval that drives review); per-tooth bone loss is measured on periapical films only. About 11 s per panoramic film on a laptop CPU
+- Risk fusion: a clinical model trained on CDC NHANES (tested on a later cycle of the same survey, plain-language odds ratios) combined with the radiograph's measured stage by a documented rule
+- Panoramic films: tooth detection and FDI numbering (tested on another hospital's films: 89.6 % with the previous detector; the deployed one, fine-tuned on that hospital, 94.5 % on its unseen films) plus a whole-film estimate tested on held-out films of its training datasets (bone loss per jaw, worst-tooth bone loss and stage, with its own conformal interval that drives review); per-tooth bone loss is measured on periapical films only. About 11 s per panoramic film on a laptop CPU
 - No invented numbers: anything unmeasured shows as "not measured" or "insufficient data", enforced by a build-time test
 
 **Security (O6)**

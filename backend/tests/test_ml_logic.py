@@ -323,3 +323,59 @@ def test_risk_is_withheld_not_defaulted_when_inputs_are_missing(clinical, missin
 
 def test_visit_date_parsing_in_progression():
     assert compare_visits(_analysis("2025-01-01", []), _analysis(dt.date(2025, 6, 1).isoformat(), [])) == []
+
+
+
+def test_tampered_risk_coefficients_are_refused(tmp_path, monkeypatch):
+    """The risk model's coefficients are part of the signed manifest: an edited copy gives no score at all."""
+    import json as _json
+
+    from app.ml.fusion import multimodal_risk
+    from app.security import model_signing
+
+    copy = tmp_path / "risk_model_nhanes.json"
+    data = _json.loads(multimodal_risk.MODEL_FILE.read_text(encoding="utf-8"))
+    data["models"]["with_hba1c"]["intercept"] += 2.0                  # silently raise every risk
+    copy.write_text(_json.dumps(data), encoding="utf-8")
+    monkeypatch.setattr(multimodal_risk, "MODEL_FILE", copy)
+    monkeypatch.setitem(model_signing.EXTERNAL_FILES, "external/risk_model_nhanes.json", copy)
+    multimodal_risk.load_model.cache_clear()
+    try:
+        r = predict_patient_risk({"age": 50, "sex": "male", "smoking_status": "never", "diabetic": False, "hba1c": 5.5})
+        assert r["status"] == "unavailable" and r["probability"] is None
+    finally:
+        multimodal_risk.load_model.cache_clear()
+
+
+def test_interval_margins_can_be_asymmetric():
+    up = predict_interval(20.0, 10.0, 1.0, 25.0)
+    assert up["interval"] == [10.0, 45.0] and up["lower_margin"] == 10.0 and up["upper_margin"] == 25.0
+    assert up["half_width"] == 25.0 and "III" in up["stage_set"]
+    assert predict_interval(20.0, 10.0)["interval"] == [10.0, 30.0]      # symmetric when no upper margin is given
+
+
+def test_film_type_routing_uses_count_shape_and_arches():
+    from app.services.analysis_service import _route_film
+
+    class Pose:
+        def __init__(self, n):
+            self.n = n
+
+        def detect_teeth(self, _bgr):
+            return [({"tooth_id": f"P{i}"}, {}) for i in range(self.n)]
+
+    def dets(ids):
+        return [{"tooth_id": i, "tooth_id_source": "model_fdi_class", "bbox": [0, 0, 1, 1]} for i in ids]
+
+    pano = np.zeros((1000, 2000), np.uint8)      # panoramic proportions
+    peri = np.zeros((900, 1200), np.uint8)       # periapical proportions
+    assert _route_film(pano, dets(["11", "12", "21", "31", "41"]), Pose(0), None)[:2] == ("panoramic", None)
+    assert _route_film(peri, dets([str(10 + i) for i in range(12)]), Pose(5), None)[0] == "panoramic"  # squashed pano
+    assert _route_film(peri, dets(["11", "12", "21", "31", "41", "42"]), Pose(3), None)[:2] == ("panoramic", None)
+    # the case the count-only rule misrouted: 3 detector teeth, 3 periapical teeth, periapical shape
+    assert _route_film(peri, dets(["36", "37", "35"]), Pose(3), None)[:2] == ("periapical", None)
+    # ambiguous: 5 teeth from one arch on a periapical-shaped film -> periapical, but flagged
+    decision, reason, _ = _route_film(peri, dets(["34", "35", "36", "37", "38"]), Pose(4), None)
+    assert decision == "periapical" and reason
+    # few teeth on a panoramic-shaped film: flagged whichever way it goes
+    assert _route_film(pano, dets(["11"]), Pose(0), None)[1]

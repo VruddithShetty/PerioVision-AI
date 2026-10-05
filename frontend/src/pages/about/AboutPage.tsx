@@ -20,8 +20,8 @@ function MeasuredAccuracy() {
   const cov = m.conformal?.levels?.["0.9"];
   return (
     <>
-      {det ? `Tooth detector (${det.model}) on held-out test X-rays: ${pct(det.test_precision)} precision, ${pct(det.test_recall)} recall, ${pct(det.test_mAP50)} mAP@0.5. ` : "Tooth detector: no test metrics installed. "}
-      {lm ? `Landmarks on ${lm.n_teeth} held-out ${m.conformal?.image_type ?? ""} teeth: bone-loss error ${lm.bone_loss_MAE_pct_points.toFixed(1)} points, ${pct(lm.stage_agreement)} stage agreement` : "Landmarks: no test metrics installed"}
+      {det ? `Tooth detector (${det.model}) on unseen films from the hospital it was fine-tuned on (same-hospital test; the different-hospital result is on the Model trust page): ${pct(det.test_precision)} precision, ${pct(det.test_recall)} recall, ${pct(det.test_mAP50)} mAP@0.5. ` : "Tooth detector: no test metrics installed. "}
+      {lm ? `Landmarks on ${lm.n_teeth} held-out ${m.conformal?.image_type ?? ""} teeth from their training dataset (DenPAR, same source; not yet tested at another clinic): bone-loss error ${lm.bone_loss_MAE_pct_points.toFixed(1)} points, ${pct(lm.stage_agreement)} stage agreement` : "Landmarks: no test metrics installed"}
       {cov?.empirical_coverage_other_half != null ? `, ${pct(cov.empirical_coverage_other_half)} coverage of the 90 % conformal interval (${cov.mean_half_width_pct != null ? `on average ±${cov.mean_half_width_pct.toFixed(1)} points, wider for harder teeth` : `±${cov.q_from_half?.toFixed(1)} points`}). ` : ". "}
       {m.conformal?.image_type ? `Per-tooth bone loss is measured on ${m.conformal.image_type} X-rays only. Panoramic films get tooth detection and numbering plus a separately tested whole-film estimate for the patient (worst-tooth bone loss with a 90 % interval, and a bone-loss screen per jaw), never per-tooth numbers.` : "Landmarks are not calibrated, so every case is reviewed."}
     </>
@@ -113,7 +113,7 @@ export default function AboutPage({ embedded = false }: { embedded?: boolean }) 
           <li>Decision-support tool; not a certified medical device.</li>
           <li>Controls are aligned with HIPAA safeguards, not certified.</li>
           <li><MeasuredAccuracy /></li>
-          <li>Risk: a logistic model trained on NHANES (7,417 adults; validated AUC 0.65 on 3,855 others) gives the clinical level. It does not read the radiograph; the radiograph's measured stage is combined with it by a documented rule (the higher level wins), not by a learned weight.</li>
+          <li>Risk: a logistic model trained on NHANES (7,417 adults; AUC 0.65 on 3,855 people from a later cycle of the same US survey, not an external population; its probabilities run about 5 points high there) gives the clinical level. It does not read the radiograph; the radiograph's measured stage is combined with it by a documented rule (the higher level wins), not by a learned weight.</li>
         </ul>
       </Card>
     </>

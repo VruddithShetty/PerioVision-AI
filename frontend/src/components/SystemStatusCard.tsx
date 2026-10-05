@@ -27,7 +27,7 @@ export function SystemStatusCard({ status }: { status?: SystemStatus }) {
         </div>
       ) : (
         <div className="space-y-2">
-          <Row ok={status.database} label="Database" detail={status.mode === "demo" ? "In-memory (demo mode)" : "MongoDB"} icon={<Database className="h-4 w-4" />} />
+          <Row ok={status.database} label="Database" detail={status.mode === "demo" ? "In-memory (demo mode): everything added is erased when the backend restarts" : "MongoDB"} icon={<Database className="h-4 w-4" />} />
           <Row
             ok={status.models_verified}
             label="Model signatures"
@@ -35,7 +35,16 @@ export function SystemStatusCard({ status }: { status?: SystemStatus }) {
             icon={<FileLock2 className="h-4 w-4" />}
           />
           <Row ok={status.audit_chain_intact} label="Audit chain" detail={`${status.audit_entries} entries verified`} icon={<Activity className="h-4 w-4" />} />
-          <Row ok={status.calibrated} label="Uncertainty calibration" detail={status.calibrated ? "Conformal calibration loaded" : "Not calibrated: every case goes to review"} icon={<Gauge className="h-4 w-4" />} />
+          <Row ok={status.calibrated} label="Uncertainty calibration" detail={status.calibrated ? "Signed conformal calibration loaded" : "Missing or not signed: per-tooth bone loss is withheld"} icon={<Gauge className="h-4 w-4" />} />
+          {status.model_self_check && (
+            <Row
+              ok={status.model_self_check.status === "pass"}
+              label="Model self-check"
+              detail={{ pass: "Every model reproduces its recorded outputs", fail: `FAILED: ${status.model_self_check.message ?? ""}`, not_run: "Running in the background…",
+                not_recorded: "No recorded outputs yet (run scripts/sign_model.py)", error: `Could not run: ${status.model_self_check.message ?? ""}` }[status.model_self_check.status]}
+              icon={<Activity className="h-4 w-4" />}
+            />
+          )}
         </div>
       )}
     </Card>

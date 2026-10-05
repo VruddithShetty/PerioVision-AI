@@ -13,7 +13,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # backend/
 
 from app import config  # noqa: E402
-from app.security.model_signing import Signer, SigningError  # noqa: E402
+from app.security.model_signing import EXTERNAL_FILES, Signer, SigningError  # noqa: E402
 
 
 def main() -> int:
@@ -32,10 +32,22 @@ def main() -> int:
             manifest = signer.build_manifest(args.weights)
             bad = 0
             for rel in manifest["files"]:
-                res = signer.verify_weight_file(os.path.join(args.weights, rel), args.weights)
+                path = EXTERNAL_FILES.get(rel) or os.path.join(args.weights, rel)
+                res = signer.verify_weight_file(path, args.weights)
                 print(("OK      " if res["verified"] else "FAILED  ") + rel + ("" if res["verified"] else f"  ({res['reason']})"))
                 bad += not res["verified"]
             return 1 if bad else 0
+        signer.sign_manifest(args.weights)              # models must verify before their outputs are recorded
+        if os.path.abspath(args.weights) == os.path.abspath(str(config.WEIGHTS_DIR)):
+            try:
+                from app.ml import canary
+                from app.services import container
+
+                container.reset_models()
+                canary.record()
+                print("Recorded the model self-check outputs (canary_expected.json)")
+            except Exception as exc:
+                print(f"WARNING: self-check outputs not recorded ({exc})")
         manifest = signer.sign_manifest(args.weights)
         for rel, info in manifest["files"].items():
             print(f"signed  {rel}  sha256={info['sha256'][:16]}...")

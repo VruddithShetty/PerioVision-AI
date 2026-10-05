@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import logging
 
 import numpy as np
 
@@ -15,13 +16,32 @@ from app import config
 from app.ml.uncertainty.conformal import conformal_quantile, empirical_coverage
 
 _cache: dict | None = None
+logger = logging.getLogger(__name__)
 
 
 def load() -> dict | None:
+    """The calibration, or None when the file is missing, unreadable or fails the signed manifest.
+
+    Fail closed: without a trustworthy calibration no per-tooth bone-loss number is reported at all
+    (analysis_service.measured_image_types), rather than an uncalibrated one.
+    """
     global _cache
     if _cache is None and config.CALIBRATION_FILE.exists():
-        with open(config.CALIBRATION_FILE, encoding="utf-8") as f:
-            _cache = json.load(f)
+        from app.security.model_signing import Signer
+
+        check = Signer().verify_weight_file(config.CALIBRATION_FILE)
+        if not check.get("verified"):
+            logger.error("[SECURITY] Refusing calibration file: %s", check.get("reason"))
+            return None
+        try:
+            with open(config.CALIBRATION_FILE, encoding="utf-8") as f:
+                data = json.load(f)
+            if not isinstance(data, dict) or not data.get("scores"):
+                raise ValueError("no scores")
+            _cache = data
+        except (ValueError, OSError) as exc:
+            logger.error("Calibration file unreadable (%s); per-tooth numbers are withheld.", type(exc).__name__)
+            return None
     return _cache
 
 
@@ -51,6 +71,29 @@ def current_q(coverage: float | None = None) -> float | None:
     coverage = coverage or config.THRESHOLDS["uncertainty"]["coverage"]
     q = conformal_quantile(cal["scores"], coverage)
     return q if np.isfinite(q) else None
+
+
+def current_bounds(coverage: float | None = None) -> tuple[float, float] | None:
+    """(lower q, upper q) for the configured coverage, or None when uncalibrated.
+
+    With signed scores (reference - predicted) / sigma on file, each side gets its own quantile at
+    1 - alpha / 2 (asymmetric split conformal; coverage >= 1 - alpha by the union bound). The landmark model
+    underestimates severe bone loss, so the upper margin is the wider one. Without signed scores: (q, q).
+    """
+    cal = load()
+    if not cal or not cal.get("scores"):
+        return None
+    coverage = coverage or config.THRESHOLDS["uncertainty"]["coverage"]
+    signed = cal.get("signed_scores")
+    if not signed:
+        q = current_q(coverage)
+        return None if q is None else (q, q)
+    s = np.asarray(signed, float)
+    tail = 1.0 - (1.0 - coverage) / 2.0
+    q_up, q_dn = conformal_quantile(s, tail), conformal_quantile(-s, tail)
+    if not (np.isfinite(q_up) and np.isfinite(q_dn)):
+        return None
+    return max(0.0, float(q_dn)), max(0.0, float(q_up))
 
 
 def save(scores, preds, refs, source: str, notes: str = "", split_seed: int = 0) -> dict:

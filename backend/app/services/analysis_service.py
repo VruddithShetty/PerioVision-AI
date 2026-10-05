@@ -51,10 +51,13 @@ MIN_PANORAMIC_ASPECT = 1.6
 def measured_image_types() -> set[str]:
     """Film types on which per-tooth bone loss is reported: the type the landmark model was validated on.
 
-    Without a calibration file the validated type is unknown, so only periapical films (the type the
-    landmark model was trained on) are measured; panoramic per-tooth numbers never come back by accident.
+    Fail closed: without a trustworthy calibration (file missing, unreadable or not in the signed manifest) no
+    film type is measured, so no per-tooth number is ever shown without its calibrated interval.
     """
-    validated = (calibration.load() or {}).get("image_type") or "periapical"
+    cal = calibration.load()
+    if cal is None:
+        return set()
+    validated = cal.get("image_type") or "periapical"
     if config.THRESHOLDS["landmarks"].get("measure_unvalidated_image_types", False):
         return {validated, "periapical", "panoramic"}
     return {validated}
@@ -204,14 +207,13 @@ def locate_teeth(gray: np.ndarray, force_demo: bool = False, panoramic_landmarks
         detector, lm_model = container.tooth_detector(), container.landmark_detector()
     live = detector is not None and detector.available
     detections = detector.detect_teeth(bgr) if live else demo_detections(enhanced)
-    image_type = "panoramic"
+    image_type, film_type_uncertain = "panoramic", None
     landmarks = None
     explain_model, explain_name = (detector, "tooth detector") if live else (None, None)
-    if live and lm_model.available and len(detections) < MIN_PANORAMIC_TEETH:
-        # A periapical film: the panoramic detector sees too little, so the keypoint model
-        # (trained on periapical films) finds the teeth and their landmarks itself.
-        periapical = lm_model.detect_teeth(bgr)
-        if len(periapical) > len(detections):
+    if live and lm_model.available:
+        decision, film_type_uncertain, periapical = _route_film(gray, detections, lm_model, bgr)
+        if decision == "periapical":
+            # The keypoint model (trained on periapical films) finds the teeth and their landmarks itself.
             image_type = "periapical"
             detections = [d for d, _ in periapical]
             landmarks = {d["tooth_id"]: lm for d, lm in periapical}
@@ -221,8 +223,40 @@ def locate_teeth(gray: np.ndarray, force_demo: bool = False, panoramic_landmarks
     if landmarks is None:
         landmarks = lm_model.detect_landmarks(detections, bgr) if (live and lm_model.available) \
             else {d["tooth_id"]: demo_landmarks(gray, d) for d in detections}
-    return {"live": live, "image_type": image_type, "detections": detections, "landmarks": landmarks,
+    return {"live": live, "image_type": image_type, "film_type_uncertain": film_type_uncertain,
+            "detections": detections, "landmarks": landmarks,
             "explain_model": explain_model, "explain_model_name": explain_name, "enhanced": enhanced, "bgr": bgr}
+
+
+def _route_film(gray: np.ndarray, detections: list[dict], lm_model, bgr) -> tuple[str, str | None, list]:
+    """Panoramic or periapical, from three signals instead of the tooth count alone.
+
+    n = teeth the panoramic detector finds, shape = long / short side, arches = whether it numbers teeth in
+    both the upper (1x, 2x) and lower (3x, 4x) arch (a periapical film shows one). Checked on 545 films of known
+    type (200 DenPAR periapical, 100 BRAR, 100 Aga Khan and 145 team panoramic films, 2026-10-05): the previous
+    count-only rule misrouted 1 silently; this rule routes all 545 correctly and flags 2 as uncertain. The
+    thresholds were chosen with those same films, so treat this as a sanity check, not an independent test.
+    Returns (decision, uncertainty reason or None, periapical detections).
+    """
+    h, w = gray.shape[:2]
+    n, shape = len(detections), max(h, w) / min(h, w)
+    ids = [d["tooth_id"] for d in detections if d.get("tooth_id_source") == "model_fdi_class"]
+    both_arches = any(i[0] in "12" for i in ids) and any(i[0] in "34" for i in ids)
+    if n >= 10 or (n >= MIN_PANORAMIC_TEETH and shape >= MIN_PANORAMIC_ASPECT) or (n >= 6 and both_arches):
+        return "panoramic", None, []
+    periapical = lm_model.detect_teeth(bgr)
+    pose_n = len(periapical)
+    if n < MIN_PANORAMIC_TEETH:
+        if shape < MIN_PANORAMIC_ASPECT and pose_n >= max(1, n):
+            return "periapical", None, periapical
+        if pose_n > n:
+            return "periapical", (f"Few teeth ({n}) on a panoramic-shaped film (long/short side {shape:.2f}); "
+                                  "treated as periapical."), periapical
+        return "panoramic", f"Only {n} teeth found and the film type is unclear.", []
+    if pose_n >= 1:
+        return "periapical", (f"{n} teeth found on a periapical-shaped film (long/short side {shape:.2f}) from one "
+                              "arch; treated as periapical."), periapical
+    return "panoramic", f"{n} teeth on a periapical-shaped film, but no periapical teeth found; film type unclear.", []
 
 
 def measured(lm: dict | None) -> bool:
@@ -260,8 +294,11 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
     heatmap = found["explain_model"].gradcam_heatmap(bgr, detections) if found["explain_model"] else None
     panoramic_assessment = None
     extra_review = []
+    if found.get("film_type_uncertain"):
+        extra_review.append({"code": "film_type_uncertain",
+                             "message": found["film_type_uncertain"] + " Check that the film type is right."})
     if live and image_type == "panoramic":
-        # Per-tooth panoramic bone loss is not reported; the validated whole-film models give a patient-level estimate.
+        # Per-tooth panoramic bone loss is not reported; the tested whole-film models give a patient-level estimate.
         from app.ml.panoramic.whole_film import whole_film
 
         if max(h, w) / min(h, w) >= MIN_PANORAMIC_ASPECT:
@@ -275,6 +312,7 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
                            "Upload the original panoramic export or a periapical film."})
 
     q = calibration.current_q()
+    bounds = calibration.current_bounds()
     t_exp = config.THRESHOLDS["explainability"]
     clinical = container.patient_manager().clinical_profile(patient_doc)
     teeth = []
@@ -292,8 +330,9 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
     for i, det in enumerate(detections):
         lm = landmarks.get(det["tooth_id"])
         if not measure_this_type:
-            bl, roi, attention = {"bone_loss_pct": None, "status": f"not_validated_on_{image_type}"}, None, None
-            lm, lm_source = {}, f"not_validated_on_{image_type}"
+            withheld = "withheld_no_calibration" if calibration.load() is None else f"not_validated_on_{image_type}"
+            bl, roi, attention = {"bone_loss_pct": None, "status": withheld}, None, None
+            lm, lm_source = {}, withheld
         elif measured(lm):
             bl = bone_loss_for_tooth(lm, pixel_spacing_mm)
             roi = periodontal_roi(det["bbox"], lm["cej"], lm["bone_crest"], t_exp["roi_margin_fraction"])
@@ -321,7 +360,9 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
             "bone_loss_pct": pct,
             "cej_to_crest_mm": bl.get("cej_to_crest_mm"),
             "stage": stage_for_pct(pct, clinical.get("teeth_lost_perio")),
-            "uncertainty": predict_interval(pct, q, calibration.scale_for(lm) if pct is not None else 1.0),
+            "uncertainty": predict_interval(pct, bounds[0] if bounds else None,
+                                            calibration.scale_for(lm) if pct is not None else 1.0,
+                                            bounds[1] if bounds else None),
             "roi": list(roi) if roi else None,
             "roi_attention": attention,
             "flags": {

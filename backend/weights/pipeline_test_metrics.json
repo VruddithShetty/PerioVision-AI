@@ -1,38 +1,37 @@
 {
   "images": 200,
   "image_types_detected": {
-    "periapical": 199,
-    "panoramic": 1
+    "periapical": 200
   },
   "teeth_labelled_with_all_keypoints": 596,
-  "teeth_matched_iou50": 575,
-  "tooth_recall": 0.9648,
-  "teeth_measured": 575,
+  "teeth_matched_iou50": 578,
+  "tooth_recall": 0.9698,
+  "teeth_measured": 578,
   "teeth_not_measured": 0,
-  "bone_loss_MAE_pct_points": 7.31,
-  "bone_loss_median_abs_error": 4.92,
-  "within_5_points": 0.513,
-  "within_10_points": 0.7983,
-  "stage_agreement": 0.7339,
+  "bone_loss_MAE_pct_points": 7.366,
+  "bone_loss_median_abs_error": 4.955,
+  "within_5_points": 0.5121,
+  "within_10_points": 0.7958,
+  "stage_agreement": 0.7336,
   "landmark_error_pct_of_root_length_mean": {
-    "cej": 17.86,
-    "root_apex": 5.88,
-    "bone_crest": 17.44
+    "cej": 17.88,
+    "root_apex": 5.89,
+    "bone_crest": 17.49
   },
   "conformal": {
     "target_coverage": 0.9,
-    "q": 2.375,
-    "empirical_interval_coverage": 0.9235,
-    "reference_stage_in_prediction_set": 0.9774,
+    "q": 2.342,
+    "empirical_interval_coverage": 0.9343,
+    "reference_stage_in_prediction_set": 0.9827,
     "set_size_counts": {
-      "1": 64,
-      "2": 322,
-      "3": 189
+      "1": 61,
+      "2": 262,
+      "3": 255
     },
     "adaptive": true,
-    "mean_half_width_pct": 18.968,
-    "coverage_easier_half": 0.9097,
-    "coverage_harder_half": 0.9373
+    "mean_half_width_pct": 23.114,
+    "coverage_easier_half": 0.91,
+    "coverage_harder_half": 0.9585
   },
   "calibration_file_source": "DenPAR periapical radiographs, specialist-verified CEJ / apex / bone-level labels (CC BY 4.0)"
 }

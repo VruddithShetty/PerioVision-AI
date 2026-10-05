@@ -126,6 +126,11 @@ def inspect_upload(data: bytes, filename: str) -> CleanUpload:
         except Exception:
             raise UploadRejected("The image could not be decoded.") from None
         _check_dims(height, width)
+        # A cut-off file still decodes: OpenCV fills the missing rows with flat grey, which hides exactly the roots
+        # and bone crest the measurement needs. Require the format's end marker instead of trusting the decoder.
+        tail = data.rstrip(b"\x00")
+        if (kind == "jpeg" and not tail.endswith(b"\xff\xd9")) or (kind == "png" and b"IEND" not in data[-64:]):
+            raise UploadRejected("The image file is incomplete (cut off before its end). Upload the full file.")
         img = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), cv2.IMREAD_GRAYSCALE)
         if img is None:
             raise UploadRejected("The image could not be decoded.")

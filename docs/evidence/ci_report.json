@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-04T08:56:53.021373+00:00",
+  "generated": "2026-10-05T17:59:43.108121+00:00",
   "bootstrap_resamples": 2000,
   "rows": [
     {
@@ -12,7 +12,9 @@
       "ci_method": "-",
       "status": "PLACEHOLDER",
       "pct": true,
-      "note": "run: notebooks/priority1_eval_colab.ipynb on Colab, then copy dentex_detector_per_film.csv here"
+      "note": "run: notebooks/priority1_eval_colab.ipynb on Colab, then copy dentex_detector_per_film.csv here",
+      "test_type": "same-source held-out",
+      "small_sample": true
     },
     {
       "task": "PREVIOUS detector (DENTEX only), DENTEX 63-film split test",
@@ -24,7 +26,9 @@
       "ci_method": "-",
       "status": "PLACEHOLDER",
       "pct": true,
-      "note": "run: bootstrap of mAP needs per-box predictions; report the point value without a CI"
+      "note": "run: bootstrap of mAP needs per-box predictions; report the point value without a CI",
+      "test_type": "same-source held-out",
+      "small_sample": true
     },
     {
       "task": "DEPLOYED detector, DENTEX official disease test (only diseased teeth outlined)",
@@ -39,7 +43,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": "precision not measurable: healthy teeth are not labelled in this set"
+      "note": "precision not measurable: healthy teeth are not labelled in this set",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "DEPLOYED detector (DENTEX + AKU fine-tune), AKU folder 2: unseen films, same hospital",
@@ -54,7 +60,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-hospital held-out",
+      "small_sample": true
     },
     {
       "task": "DEPLOYED detector (DENTEX + AKU fine-tune), AKU folder 2: unseen films, same hospital",
@@ -69,7 +77,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-hospital held-out",
+      "small_sample": true
     },
     {
       "task": "DEPLOYED detector (DENTEX + AKU fine-tune), AKU folder 2: unseen films, same hospital",
@@ -84,7 +94,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-hospital held-out",
+      "small_sample": true
     },
     {
       "task": "DEPLOYED detector (DENTEX + AKU fine-tune), AKU folder 2: unseen films, same hospital",
@@ -99,7 +111,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-hospital held-out",
+      "small_sample": true
     },
     {
       "task": "PREVIOUS detector (DENTEX only), AKU all 250 films: different hospital",
@@ -114,7 +128,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "cross-source external",
+      "small_sample": false
     },
     {
       "task": "PREVIOUS detector (DENTEX only), AKU all 250 films: different hospital",
@@ -129,7 +145,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "cross-source external",
+      "small_sample": false
     },
     {
       "task": "PREVIOUS detector (DENTEX only), AKU all 250 films: different hospital",
@@ -144,7 +162,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "cross-source external",
+      "small_sample": false
     },
     {
       "task": "PREVIOUS detector (DENTEX only), AKU all 250 films: different hospital",
@@ -159,7 +179,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "cross-source external",
+      "small_sample": false
     },
     {
       "task": "PREVIOUS detector (DENTEX only), AKU folder 2 (same films as the deployed row)",
@@ -174,7 +196,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
     },
     {
       "task": "PREVIOUS detector (DENTEX only), AKU folder 2 (same films as the deployed row)",
@@ -189,7 +213,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
     },
     {
       "task": "PREVIOUS detector (DENTEX only), AKU folder 2 (same films as the deployed row)",
@@ -204,7 +230,9 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
     },
     {
       "task": "PREVIOUS detector (DENTEX only), AKU folder 2 (same films as the deployed row)",
@@ -219,187 +247,332 @@
       "ci_method": "film-level bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "tooth recall (IoU >= 0.5)",
-      "value": 0.964765100671141,
+      "value": 0.9697986577181208,
       "ci95": [
-        0.9480069324090121,
-        0.9799674457429048
+        0.9564515453612147,
+        0.9830220713073005
       ],
       "n": 596,
       "unit_of_n": "labelled teeth in 200 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "bone-loss MAE (percentage points)",
-      "value": 7.310156521739131,
+      "value": 7.365726643598615,
       "ci95": [
-        6.608679396092362,
-        8.116277488982165
+        6.6238979071887645,
+        8.157726143933852
       ],
-      "n": 575,
-      "unit_of_n": "measured teeth in 199 films",
+      "n": 578,
+      "unit_of_n": "measured teeth in 200 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": false,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "median absolute error (points)",
-      "value": 4.920000000000002,
+      "value": 4.955,
       "ci95": [
         4.32,
-        5.41
+        5.439999999999998
       ],
-      "n": 575,
-      "unit_of_n": "measured teeth in 199 films",
+      "n": 578,
+      "unit_of_n": "measured teeth in 200 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": false,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "within 10 points",
-      "value": 0.7982608695652174,
+      "value": 0.7958477508650519,
       "ci95": [
-        0.7622294372294371,
-        0.8338927596405415
+        0.7591613482630795,
+        0.8316339159426146
       ],
-      "n": 575,
-      "unit_of_n": "measured teeth in 199 films",
+      "n": 578,
+      "unit_of_n": "measured teeth in 200 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "exact stage agreement (I/II/III)",
-      "value": 0.7339130434782609,
+      "value": 0.7335640138408305,
       "ci95": [
-        0.6928414998186604,
-        0.7728055077452668
+        0.6906822636941267,
+        0.7728027247583084
       ],
-      "n": 575,
-      "unit_of_n": "measured teeth in 199 films",
+      "n": 578,
+      "unit_of_n": "measured teeth in 200 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "90 % interval coverage",
-      "value": 0.9234782608695652,
+      "value": 0.9342560553633218,
       "ci95": [
-        0.8998164573077576,
-        0.9449398167646322
+        0.911230838288671,
+        0.9541595925297114
       ],
-      "n": 575,
-      "unit_of_n": "measured teeth in 199 films",
+      "n": 578,
+      "unit_of_n": "measured teeth in 200 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
+    },
+    {
+      "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
+      "metric": "90 % interval coverage, reference stage I",
+      "value": 0.9853479853479854,
+      "ci95": [
+        0.9691119691119691,
+        0.9965870307167235
+      ],
+      "n": 273,
+      "unit_of_n": "teeth with reference stage I",
+      "ci_method": "cluster bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
+    },
+    {
+      "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
+      "metric": "stage recall, reference stage I",
+      "value": 0.8424908424908425,
+      "ci95": [
+        0.7923855469789727,
+        0.8888888888888888
+      ],
+      "n": 273,
+      "unit_of_n": "teeth with reference stage I",
+      "ci_method": "cluster bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
+    },
+    {
+      "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
+      "metric": "90 % interval coverage, reference stage II",
+      "value": 0.9565217391304348,
+      "ci95": [
+        0.9199938271604938,
+        0.9831530510894531
+      ],
+      "n": 161,
+      "unit_of_n": "teeth with reference stage II",
+      "ci_method": "cluster bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
+    },
+    {
+      "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
+      "metric": "stage recall, reference stage II",
+      "value": 0.5403726708074534,
+      "ci95": [
+        0.4505793967620315,
+        0.6217948717948718
+      ],
+      "n": 161,
+      "unit_of_n": "teeth with reference stage II",
+      "ci_method": "cluster bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
+    },
+    {
+      "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
+      "metric": "90 % interval coverage, reference stage III",
+      "value": 0.8125,
+      "ci95": [
+        0.7398197242841994,
+        0.8775510204081632
+      ],
+      "n": 144,
+      "unit_of_n": "teeth with reference stage III",
+      "ci_method": "cluster bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
+    },
+    {
+      "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
+      "metric": "stage recall, reference stage III",
+      "value": 0.7430555555555556,
+      "ci95": [
+        0.6524745605920445,
+        0.8200128205128204
+      ],
+      "n": 144,
+      "unit_of_n": "teeth with reference stage III",
+      "ci_method": "cluster bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
+    },
+    {
+      "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
+      "metric": "severe (stage III) called stage I",
+      "value": 0.0763888888888889,
+      "ci95": [
+        0.04318732966175298,
+        0.13160436291776428
+      ],
+      "n": 144,
+      "unit_of_n": "teeth with reference stage III",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "the dangerous error: severe bone loss reported as mild",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "tooth recall (IoU >= 0.5)",
-      "value": 0.9645868465430016,
+      "value": 0.96964586846543,
       "ci95": [
-        0.9472795384975071,
-        0.9809696798560936
+        0.9551993103448276,
+        0.9826094504830918
       ],
       "n": 593,
       "unit_of_n": "labelled teeth in 198 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "bone-loss MAE (percentage points)",
-      "value": 7.32374125874126,
+      "value": 7.37953043478261,
       "ci95": [
-        6.622220939283861,
-        8.099982574246454
+        6.675373787581316,
+        8.174261958660093
       ],
-      "n": 572,
-      "unit_of_n": "measured teeth in 197 films",
+      "n": 575,
+      "unit_of_n": "measured teeth in 198 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": false,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "median absolute error (points)",
-      "value": 4.905000000000001,
+      "value": 4.95,
       "ci95": [
-        4.3149999999999995,
-        5.326374999999995
+        4.34,
+        5.380000000000003
       ],
-      "n": 572,
-      "unit_of_n": "measured teeth in 197 films",
+      "n": 575,
+      "unit_of_n": "measured teeth in 198 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": false,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "within 10 points",
-      "value": 0.7972027972027972,
+      "value": 0.7947826086956522,
       "ci95": [
-        0.7609803754344178,
-        0.8324594683969683
+        0.7593842328460089,
+        0.8279413730436588
       ],
-      "n": 572,
-      "unit_of_n": "measured teeth in 197 films",
+      "n": 575,
+      "unit_of_n": "measured teeth in 198 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "exact stage agreement (I/II/III)",
-      "value": 0.7342657342657343,
+      "value": 0.7339130434782609,
       "ci95": [
-        0.6941904754498655,
-        0.7717770034843205
+        0.6936282065640251,
+        0.7726535480023852
       ],
-      "n": 572,
-      "unit_of_n": "measured teeth in 197 films",
+      "n": 575,
+      "unit_of_n": "measured teeth in 198 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "90 % interval coverage",
-      "value": 0.9230769230769231,
+      "value": 0.9339130434782609,
       "ci95": [
-        0.8989721552670517,
-        0.9447346792924781
+        0.9128098951491557,
+        0.9541446208112875
       ],
-      "n": 572,
-      "unit_of_n": "measured teeth in 197 films",
+      "n": 575,
+      "unit_of_n": "measured teeth in 198 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Panoramic bone-loss screen, maxilla (MM-OPG test)",
@@ -414,7 +587,9 @@
       "ci_method": "Hanley-McNeil (approximation)",
       "status": "APPROX",
       "pct": false,
-      "note": "replace with the bootstrap: run notebooks/priority1_eval_colab.ipynb on Colab"
+      "note": "replace with the bootstrap: run notebooks/priority1_eval_colab.ipynb on Colab",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Panoramic bone-loss screen, maxilla (MM-OPG test)",
@@ -429,7 +604,9 @@
       "ci_method": "Wilson",
       "status": "FROM-COUNTS",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Panoramic bone-loss screen, maxilla (MM-OPG test)",
@@ -444,7 +621,9 @@
       "ci_method": "Wilson",
       "status": "FROM-COUNTS",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Panoramic bone-loss screen, mandible (MM-OPG test)",
@@ -459,7 +638,9 @@
       "ci_method": "Hanley-McNeil (approximation)",
       "status": "APPROX",
       "pct": false,
-      "note": "replace with the bootstrap: run notebooks/priority1_eval_colab.ipynb on Colab"
+      "note": "replace with the bootstrap: run notebooks/priority1_eval_colab.ipynb on Colab",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Panoramic bone-loss screen, mandible (MM-OPG test)",
@@ -474,7 +655,9 @@
       "ci_method": "Wilson",
       "status": "FROM-COUNTS",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Panoramic bone-loss screen, mandible (MM-OPG test)",
@@ -489,7 +672,128 @@
       "ci_method": "Wilson",
       "status": "FROM-COUNTS",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
+    },
+    {
+      "task": "Panoramic worst-tooth bone loss (BRAR test)",
+      "metric": "90 % interval coverage, reference stage I",
+      "value": 0.8787878787878788,
+      "ci95": [
+        0.7575757575757576,
+        0.9696969696969697
+      ],
+      "n": 33,
+      "unit_of_n": "films with reference stage I",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
+    },
+    {
+      "task": "Panoramic worst-tooth bone loss (BRAR test)",
+      "metric": "stage recall, reference stage I",
+      "value": 0.7878787878787878,
+      "ci95": [
+        0.6363636363636364,
+        0.9090909090909091
+      ],
+      "n": 33,
+      "unit_of_n": "films with reference stage I",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
+    },
+    {
+      "task": "Panoramic worst-tooth bone loss (BRAR test)",
+      "metric": "90 % interval coverage, reference stage II",
+      "value": 1.0,
+      "ci95": [
+        1.0,
+        1.0
+      ],
+      "n": 62,
+      "unit_of_n": "films with reference stage II",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
+    },
+    {
+      "task": "Panoramic worst-tooth bone loss (BRAR test)",
+      "metric": "stage recall, reference stage II",
+      "value": 0.5645161290322581,
+      "ci95": [
+        0.43548387096774194,
+        0.6935483870967742
+      ],
+      "n": 62,
+      "unit_of_n": "films with reference stage II",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
+    },
+    {
+      "task": "Panoramic worst-tooth bone loss (BRAR test)",
+      "metric": "90 % interval coverage, reference stage III",
+      "value": 0.8333333333333334,
+      "ci95": [
+        0.7222222222222222,
+        0.9259259259259259
+      ],
+      "n": 54,
+      "unit_of_n": "films with reference stage III",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
+    },
+    {
+      "task": "Panoramic worst-tooth bone loss (BRAR test)",
+      "metric": "stage recall, reference stage III",
+      "value": 0.7592592592592593,
+      "ci95": [
+        0.6296296296296297,
+        0.8703703703703703
+      ],
+      "n": 54,
+      "unit_of_n": "films with reference stage III",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
+    },
+    {
+      "task": "Panoramic worst-tooth bone loss (BRAR test)",
+      "metric": "severe (stage III) called stage I",
+      "value": 0.037037037037037035,
+      "ci95": [
+        0.01021636794844559,
+        0.12535176917275476
+      ],
+      "n": 54,
+      "unit_of_n": "films with reference stage III",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "the dangerous error: severe bone loss reported as mild",
+      "test_type": "same-source held-out",
+      "small_sample": true
     },
     {
       "task": "Panoramic worst-tooth bone loss (BRAR test)",
@@ -504,7 +808,9 @@
       "ci_method": "bootstrap",
       "status": "VERIFIED",
       "pct": false,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Panoramic worst-tooth bone loss (BRAR test)",
@@ -519,7 +825,9 @@
       "ci_method": "bootstrap",
       "status": "VERIFIED",
       "pct": false,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Panoramic worst-tooth bone loss (BRAR test)",
@@ -534,22 +842,94 @@
       "ci_method": "Wilson",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
     },
     {
       "task": "Panoramic worst-tooth bone loss (BRAR test)",
       "metric": "90 % interval coverage",
-      "value": 0.9060402684563759,
+      "value": 0.912751677852349,
       "ci95": [
-        0.8484661894552181,
-        0.9432038255630963
+        0.856452134172779,
+        0.9483033356392266
       ],
       "n": 149,
       "unit_of_n": "films (1 patient each)",
       "ci_method": "Wilson",
       "status": "VERIFIED",
       "pct": true,
-      "note": ""
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
+    },
+    {
+      "task": "Panoramic whole-film models on PDCNN films (external: different source; label = periodontitis yes / no)",
+      "metric": "AUC, bone-loss screen (higher jaw probability)",
+      "value": 0.9634911228542319,
+      "ci95": [
+        0.9549379780530222,
+        0.9708974584200175
+      ],
+      "n": 1747,
+      "unit_of_n": "films (1173 with periodontitis)",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "cross-source external",
+      "small_sample": false
+    },
+    {
+      "task": "Panoramic whole-film models on PDCNN films (external: different source; label = periodontitis yes / no)",
+      "metric": "AUC, worst-tooth bone-loss estimate",
+      "value": 0.9525636341493119,
+      "ci95": [
+        0.9427080009667994,
+        0.9612257360470743
+      ],
+      "n": 1747,
+      "unit_of_n": "films (1173 with periodontitis)",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "cross-source external",
+      "small_sample": false
+    },
+    {
+      "task": "Panoramic whole-film models on PDCNN films (external: different source; label = periodontitis yes / no)",
+      "metric": "screen sensitivity at the deployed thresholds",
+      "value": 0.9207161125319693,
+      "ci95": [
+        0.9038454940612116,
+        0.9348401186882463
+      ],
+      "n": 1173,
+      "unit_of_n": "films",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "cross-source external",
+      "small_sample": false
+    },
+    {
+      "task": "Panoramic whole-film models on PDCNN films (external: different source; label = periodontitis yes / no)",
+      "metric": "screen specificity at the deployed thresholds",
+      "value": 0.8536585365853658,
+      "ci95": [
+        0.8223933093019158,
+        0.8802215581542854
+      ],
+      "n": 574,
+      "unit_of_n": "films",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "cross-source external",
+      "small_sample": false
     },
     {
       "task": "Clinical risk model (NHANES 2013-14 temporal test), with hba1c",
@@ -564,7 +944,9 @@
       "ci_method": "bootstrap",
       "status": "VERIFIED",
       "pct": false,
-      "note": ""
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
     },
     {
       "task": "Clinical risk model (NHANES 2013-14 temporal test), with hba1c",
@@ -579,7 +961,77 @@
       "ci_method": "bootstrap",
       "status": "VERIFIED",
       "pct": false,
-      "note": ""
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), with hba1c",
+      "metric": "calibration in the large (mean predicted - observed)",
+      "value": 0.050189669520103765,
+      "ci95": [
+        0.03492128900778211,
+        0.06532257097276263
+      ],
+      "n": 3855,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "positive = predictions run high",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), with hba1c",
+      "metric": "observed prevalence in the high band (>= 0.65)",
+      "value": 0.5470737913486005,
+      "ci95": [
+        0.4976407893175082,
+        0.5955954368317303
+      ],
+      "n": 393,
+      "unit_of_n": "people (mean predicted 0.699)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), with hba1c",
+      "metric": "observed prevalence in the moderate band (0.35-0.65)",
+      "value": 0.44190219829519967,
+      "ci95": [
+        0.42140332445989986,
+        0.4626009791251858
+      ],
+      "n": 2229,
+      "unit_of_n": "people (mean predicted 0.485)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), with hba1c",
+      "metric": "observed prevalence in the low band (< 0.35)",
+      "value": 0.23925385239253852,
+      "ci95": [
+        0.2162738164853239,
+        0.26385357137480747
+      ],
+      "n": 1233,
+      "unit_of_n": "people (mean predicted 0.270)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
     },
     {
       "task": "Clinical risk model (NHANES 2013-14 temporal test), without hba1c",
@@ -594,7 +1046,9 @@
       "ci_method": "bootstrap",
       "status": "VERIFIED",
       "pct": false,
-      "note": ""
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
     },
     {
       "task": "Clinical risk model (NHANES 2013-14 temporal test), without hba1c",
@@ -609,14 +1063,84 @@
       "ci_method": "bootstrap",
       "status": "VERIFIED",
       "pct": false,
-      "note": ""
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), without hba1c",
+      "metric": "calibration in the large (mean predicted - observed)",
+      "value": 0.0507427182849937,
+      "ci95": [
+        0.035947411254728875,
+        0.06576809025851196
+      ],
+      "n": 3965,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "positive = predictions run high",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), without hba1c",
+      "metric": "observed prevalence in the high band (>= 0.65)",
+      "value": 0.5305555555555556,
+      "ci95": [
+        0.4789517543155086,
+        0.5815141422079602
+      ],
+      "n": 360,
+      "unit_of_n": "people (mean predicted 0.696)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), without hba1c",
+      "metric": "observed prevalence in the moderate band (0.35-0.65)",
+      "value": 0.44187026116259476,
+      "ci95": [
+        0.4220034411919851,
+        0.461924901054649
+      ],
+      "n": 2374,
+      "unit_of_n": "people (mean predicted 0.486)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), without hba1c",
+      "metric": "observed prevalence in the low band (< 0.35)",
+      "value": 0.24289195775792038,
+      "ci95": [
+        0.2197602513368552,
+        0.2676233350512051
+      ],
+      "n": 1231,
+      "unit_of_n": "people (mean predicted 0.273)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
     }
   ],
   "staging": {
     "periapical_denpar": {
       "all 200 films": {
-        "n": 575,
-        "n_clusters": 199,
+        "n": 578,
+        "n_clusters": 200,
         "labels": [
           "I",
           "II",
@@ -630,44 +1154,44 @@
           ],
           [
             57,
-            86,
-            16
+            87,
+            17
           ],
           [
             11,
             26,
-            106
+            107
           ]
         ],
-        "exact_stage_accuracy": 0.7339130434782609,
+        "exact_stage_accuracy": 0.7335640138408305,
         "exact_stage_accuracy_ci95": [
-          0.6928414998186604,
-          0.7728055077452668
+          0.6906822636941267,
+          0.7728027247583084
         ],
-        "within_one_stage_accuracy": 0.9808695652173913,
+        "within_one_stage_accuracy": 0.9809688581314879,
         "within_one_stage_accuracy_ci95": [
-          0.9687472778745645,
-          0.9913344887348353
+          0.9690189328743546,
+          0.9914089347079038
         ],
-        "kappa_linear": 0.6669021547156482,
+        "kappa_linear": 0.6671459783192913,
         "kappa_linear_ci95": [
-          0.6037268212243043,
-          0.7217579388807249
+          0.6003262008544052,
+          0.7239455049146042
         ],
-        "kappa_quadratic": 0.7541040143468065,
+        "kappa_quadratic": 0.7543779116009544,
         "kappa_quadratic_ci95": [
-          0.6960284916926724,
-          0.8032141643610544
+          0.6906135499070127,
+          0.8063830404535821
         ],
         "per_reference_stage_n": {
           "I": 273,
-          "II": 159,
-          "III": 143
+          "II": 161,
+          "III": 144
         }
       },
       "excluding the 2 test films duplicated in train/val": {
-        "n": 572,
-        "n_clusters": 197,
+        "n": 575,
+        "n_clusters": 198,
         "labels": [
           "I",
           "II",
@@ -681,39 +1205,39 @@
           ],
           [
             56,
-            86,
-            16
+            87,
+            17
           ],
           [
             11,
             26,
-            106
+            107
           ]
         ],
-        "exact_stage_accuracy": 0.7342657342657343,
+        "exact_stage_accuracy": 0.7339130434782609,
         "exact_stage_accuracy_ci95": [
-          0.6941904754498655,
-          0.7717770034843205
+          0.6936282065640251,
+          0.7726535480023852
         ],
-        "within_one_stage_accuracy": 0.9807692307692307,
+        "within_one_stage_accuracy": 0.9808695652173913,
         "within_one_stage_accuracy_ci95": [
-          0.9688629611289923,
-          0.9913796812867233
+          0.9690175974835302,
+          0.9911971830985915
         ],
-        "kappa_linear": 0.6676670825164854,
+        "kappa_linear": 0.6678969388761322,
         "kappa_linear_ci95": [
-          0.6042202852091609,
-          0.722598017134079
+          0.6033019294067102,
+          0.7212751861104808
         ],
-        "kappa_quadratic": 0.7545030205733058,
+        "kappa_quadratic": 0.7547670803180805,
         "kappa_quadratic_ci95": [
-          0.696959004801384,
-          0.80270597890778
+          0.6943117778652815,
+          0.8024567406525147
         ],
         "per_reference_stage_n": {
           "I": 271,
-          "II": 158,
-          "III": 143
+          "II": 160,
+          "III": 144
         }
       }
     },
@@ -768,5 +1292,131 @@
         "III": 54
       }
     }
+  },
+  "risk_calibration_deciles": {
+    "with_hba1c": [
+      {
+        "decile": 1,
+        "n": 386,
+        "mean_predicted": 0.205,
+        "observed": 0.171
+      },
+      {
+        "decile": 2,
+        "n": 386,
+        "mean_predicted": 0.269,
+        "observed": 0.259
+      },
+      {
+        "decile": 3,
+        "n": 386,
+        "mean_predicted": 0.321,
+        "observed": 0.282
+      },
+      {
+        "decile": 4,
+        "n": 386,
+        "mean_predicted": 0.364,
+        "observed": 0.303
+      },
+      {
+        "decile": 5,
+        "n": 386,
+        "mean_predicted": 0.409,
+        "observed": 0.386
+      },
+      {
+        "decile": 6,
+        "n": 385,
+        "mean_predicted": 0.455,
+        "observed": 0.431
+      },
+      {
+        "decile": 7,
+        "n": 385,
+        "mean_predicted": 0.501,
+        "observed": 0.442
+      },
+      {
+        "decile": 8,
+        "n": 385,
+        "mean_predicted": 0.547,
+        "observed": 0.501
+      },
+      {
+        "decile": 9,
+        "n": 385,
+        "mean_predicted": 0.612,
+        "observed": 0.564
+      },
+      {
+        "decile": 10,
+        "n": 385,
+        "mean_predicted": 0.7,
+        "observed": 0.54
+      }
+    ],
+    "without_hba1c": [
+      {
+        "decile": 1,
+        "n": 397,
+        "mean_predicted": 0.213,
+        "observed": 0.169
+      },
+      {
+        "decile": 2,
+        "n": 397,
+        "mean_predicted": 0.274,
+        "observed": 0.275
+      },
+      {
+        "decile": 3,
+        "n": 397,
+        "mean_predicted": 0.326,
+        "observed": 0.287
+      },
+      {
+        "decile": 4,
+        "n": 397,
+        "mean_predicted": 0.368,
+        "observed": 0.307
+      },
+      {
+        "decile": 5,
+        "n": 397,
+        "mean_predicted": 0.411,
+        "observed": 0.375
+      },
+      {
+        "decile": 6,
+        "n": 396,
+        "mean_predicted": 0.457,
+        "observed": 0.389
+      },
+      {
+        "decile": 7,
+        "n": 396,
+        "mean_predicted": 0.502,
+        "observed": 0.47
+      },
+      {
+        "decile": 8,
+        "n": 396,
+        "mean_predicted": 0.543,
+        "observed": 0.538
+      },
+      {
+        "decile": 9,
+        "n": 396,
+        "mean_predicted": 0.606,
+        "observed": 0.535
+      },
+      {
+        "decile": 10,
+        "n": 396,
+        "mean_predicted": 0.692,
+        "observed": 0.538
+      }
+    ]
   }
 }

@@ -42,7 +42,16 @@ LABELS = {
 
 @lru_cache(maxsize=1)
 def load_model() -> dict | None:
+    """The coefficients, only if they match the signed manifest (otherwise no risk score: fail closed)."""
     if not MODEL_FILE.exists():
+        return None
+    from app.security.model_signing import Signer
+
+    check = Signer().verify_weight_file(MODEL_FILE)
+    if not check.get("verified"):
+        import logging
+
+        logging.getLogger(__name__).error("[SECURITY] Refusing the risk model: %s", check.get("reason"))
         return None
     with open(MODEL_FILE, encoding="utf-8") as f:
         return json.load(f)
@@ -83,7 +92,8 @@ def predict_patient_risk(clinical: dict, image: dict | None = None) -> dict:
     base = {"model_type": MODEL_TYPE, "model_version": MODEL_VERSION}
     if model is None:
         return {**base, "status": "unavailable", "category": None, "probability": None, "top_factors": [],
-                "missing_inputs": [], "disclaimer": "No risk score: the risk model file is not installed."}
+                "missing_inputs": [], "disclaimer": "No risk score: the risk model file is missing or failed its "
+                                                    "signature check."}
     missing = missing_required(clinical)
     if missing:
         return {**base, "status": "insufficient_data", "category": None, "probability": None, "top_factors": [],
@@ -115,7 +125,8 @@ def predict_patient_risk(clinical: dict, image: dict | None = None) -> dict:
         "validation": {"source": model["source"], "outcome": model["outcome"], "test_n": test["n"],
                        "roc_auc": test["roc_auc"], "brier": test["brier"]},
         "disclaimer": (f"Share of US adults with this age, sex, smoking and diabetes profile who have moderate or "
-                       f"severe periodontitis (CDC/AAP), from NHANES; validated AUC {test['roc_auc']:.2f}. "
+                       f"severe periodontitis (CDC/AAP), from NHANES; AUC {test['roc_auc']:.2f} on a later cycle of the same survey "
+                       "(predictions ran about 5 points high there: the high band, predicted about 70 %, had 55 %). "
                        "The clinical model does not read the radiograph; the radiograph's evidence is combined with it in the fused level. It does not predict future progression."),
     }
 
@@ -137,7 +148,7 @@ def _radiographic_evidence(summary: dict | None, panoramic: dict | None) -> dict
     if summary.get("stage"):
         level, basis = STAGE_LEVEL[summary["stage"]], (
             f"per-tooth measurement: worst tooth stage {summary['stage']} "
-            f"({summary.get('max_bone_loss_pct')} % bone loss), validated on periapical films")
+            f"({summary.get('max_bone_loss_pct')} % bone loss), tested on held-out periapical films of the training dataset")
     elif (panoramic or {}).get("worst_tooth"):
         wt = panoramic["worst_tooth"]
         level, basis = STAGE_LEVEL[wt["stage"]], (

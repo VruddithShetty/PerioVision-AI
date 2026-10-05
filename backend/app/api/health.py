@@ -37,8 +37,21 @@ def system_status() -> dict:
         "models_verified": all(m["signature_valid"] or (m.get("optional") and not m["present"]) for m in models),
         "audit_chain_intact": chain["chain_intact"],
         "audit_entries": chain["entries_verified"],
-        "calibrated": config.CALIBRATION_FILE.exists(),
+        "calibrated": _calibration_loaded(),       # present AND readable AND in the signed manifest
+        "model_self_check": {k: v for k, v in _self_check().items() if k != "checks"},
     }
+
+
+def _calibration_loaded() -> bool:
+    from app.ml.uncertainty import calibration
+
+    return calibration.load() is not None
+
+
+def _self_check() -> dict:
+    from app.ml import canary
+
+    return canary.state()
 
 
 bp = Blueprint("health", __name__)

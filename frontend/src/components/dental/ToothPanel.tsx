@@ -68,7 +68,7 @@ export function ToothPanel({ tooth, coverage }: { tooth: Tooth | null; coverage:
               {tooth.bone_loss_pct === null && (
                 <p className="text-xs text-mist-400">
                   {tooth.measurement_status?.startsWith("not_validated_on_")
-                    ? "Not measured: bone loss is only validated on periapical X-rays. Take a periapical film of this tooth to measure it."
+                    ? "Not measured: per-tooth bone loss is only reported on periapical X-rays (the film type it was tested on). Take a periapical film of this tooth to measure it."
                     : "Not measured: the landmark model could not place CEJ, crest and apex on this tooth. Assess it clinically."}
                 </p>
               )}

@@ -28,6 +28,11 @@ def route(teeth: list[dict], quality: dict, ood: dict, demo_mode: bool,
 
     if demo_mode:
         add("demo_mode", "No verified model was available; results are demo placeholders.")
+    from app.ml import canary
+
+    if canary.state().get("status") == "fail":
+        add("model_self_check_failed", "The startup self-check found a model whose outputs differ from the ones "
+            "recorded when it was signed (" + str(canary.state().get("message")) + "). Treat every number as unverified.")
     uncal = [t["tooth_id"] for t in teeth if not t.get("uncertainty", {}).get("calibrated", False)]
     if uncal:
         add("uncalibrated", "Uncertainty is not calibrated for this model yet.", uncal)
@@ -43,12 +48,18 @@ def route(teeth: list[dict], quality: dict, ood: dict, demo_mode: bool,
     attention = [t["tooth_id"] for t in teeth if t.get("flags", {}).get("low_attention_validity")]
     if attention:
         add("low_attention_validity", "Model attention fell outside the periodontal region.", attention)
+    no_cal = [t["tooth_id"] for t in teeth if t.get("measurement_status") == "withheld_no_calibration"]
+    if no_cal:
+        add("calibration_missing", "No trustworthy uncertainty calibration is loaded (file missing, unreadable or "
+            "failing its signature), so no bone-loss number is reported. Restore weights/conformal_calibration.json "
+            "and re-sign the manifest.", no_cal)
     unvalidated = [t["tooth_id"] for t in teeth if str(t.get("measurement_status", "")).startswith("not_validated_on_")]
     if unvalidated:
         add("not_validated_image_type", f"Bone loss is not measured on {image_type} radiographs: the landmark model "
-            "is only validated on periapical films. Take a periapical film of the teeth of interest to measure them.",
+            "was only tested on periapical films. Take a periapical film of the teeth of interest to measure them.",
             unvalidated)
-    unmeasured = [t["tooth_id"] for t in teeth if t.get("bone_loss_pct") is None and t["tooth_id"] not in unvalidated]
+    unmeasured = [t["tooth_id"] for t in teeth if t.get("bone_loss_pct") is None
+                  and t["tooth_id"] not in unvalidated and t["tooth_id"] not in no_cal]
     if unmeasured:
         add("not_measured", "The landmark model could not place CEJ / crest / apex on these teeth, "
             "so no bone loss is reported for them; a clinician must assess them.", unmeasured)

@@ -74,6 +74,7 @@ def main() -> int:
     args = ap.parse_args()
 
     q = calibration.current_q()
+    bounds = calibration.current_bounds()          # the app's (asymmetric) margins, exactly as deployed
     files = sorted(glob.glob(os.path.join(args.images, "*.jpg")) + glob.glob(os.path.join(args.images, "*.png")))
     files = files[:args.limit] if args.limit else files
     labelled = found = 0
@@ -121,7 +122,9 @@ def main() -> int:
                 kp_row[f"{k}_err_pct_root"] = round(kp_err[k][-1], 3)
                 kp_row[f"{k}_dx_px"] = round(float(lm[k][0] - ref[k][0]), 2)
                 kp_row[f"{k}_dy_px"] = round(float(lm[k][1] - ref[k][1]), 2)
-            unc = predict_interval(p, q, calibration.scale_for(lm))
+            unc = predict_interval(p, bounds[0] if bounds else None, calibration.scale_for(lm),
+                                   bounds[1] if bounds else None)
+            inside = None if q is None else bool(unc["interval"][0] <= ref_pct <= unc["interval"][1])
             per_tooth.append({**base, "status": "measured", "tooth_id": dets[best[0]].get("tooth_id"),
                               "pred_pct": round(p, 3), "abs_err": round(abs(p - ref_pct), 3),
                               "ref_stage": stage_for_pct(ref_pct), "pred_stage": stage_for_pct(p),
@@ -131,11 +134,12 @@ def main() -> int:
                               "tta_disagreement_pct": lm.get("tta_disagreement_pct"),
                               "half_width": unc["half_width"], "set_size": unc["set_size"],
                               "stage_set": "|".join(unc["stage_set"]),
-                              "covered": None if q is None else abs(p - ref_pct) <= unc["half_width"], **kp_row})
+                              "lower_margin": unc.get("lower_margin"), "upper_margin": unc.get("upper_margin"),
+                              "covered": inside, **kp_row})
             rows.append({"measured": True, "pred": p, "ref": r, "err": abs(p - r),
                          "stage_ok": stage_for_pct(p) == stage_for_pct(r),
                          "half_width": unc["half_width"], "disagreement": lm.get("tta_disagreement_pct"),
-                         "covered": None if q is None else abs(p - r) <= unc["half_width"],
+                         "covered": inside,
                          "set_size": unc["set_size"], "ref_stage_in_set": stage_for_pct(r) in unc["stage_set"]})
         if n % 20 == 0 or n == len(files):
             print(f"[{n}/{len(files)}] {found} teeth matched, {time.time() - t0:.0f}s")

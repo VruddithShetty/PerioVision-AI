@@ -62,3 +62,14 @@ def test_exif_metadata_is_stripped():
     clean = inspect_upload(raw, "photo.jpg")
     assert b"Jane Example" not in clean.png_bytes
     assert Image.open(io.BytesIO(clean.png_bytes)).getexif().get(0x010E) is None
+
+
+@pytest.mark.parametrize("ext,fraction", [(".jpg", 0.5), (".jpg", 0.8), (".jpg", 0.97), (".png", 0.8)])
+def test_cut_off_image_is_rejected(ext, fraction):
+    """A truncated file decodes with its missing rows as flat grey (hiding roots and crest); it must be refused."""
+    img = (np.random.default_rng(0).random((600, 900)) * 255).astype(np.uint8)  # audit-ok: test image
+    ok, buf = cv2.imencode(ext, img)
+    data = buf.tobytes()
+    inspect_upload(data, "film" + ext)                                       # the complete file is fine
+    with pytest.raises(UploadRejected, match="incomplete|decoded"):
+        inspect_upload(data[: int(len(data) * fraction)], "film" + ext)

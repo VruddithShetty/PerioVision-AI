@@ -16,7 +16,7 @@ Dentists (review and sign-off), dental technicians (upload), auditors (security 
 
 | Image | Support |
 |---|---|
-| **Periapical radiographs** | Validated. Bone-loss error averages 7.4 percentage points (median 5.0); the stage matches the specialist label for 73 % of teeth. |
+| **Periapical radiographs** | Tested on 200 held-out films of the same dataset the model was trained on (DenPAR); not yet tested at another clinic. Bone-loss error averages 7.4 percentage points (median 5.0); the stage matches the specialist label for 73 % of teeth. |
 | Panoramic radiographs | Teeth are detected and numbered (FDI). **No per-tooth bone-loss numbers** (not accurate enough on panoramic films). Instead a **whole-film estimate** for the patient: generalised bone loss suggested yes / no for each jaw (test AUC 0.85 / 0.87) and the worst tooth's bone loss with a 90 % range (average error 11 points, stage agreement 69 %; it underestimates very severe cases). Take periapical films of the teeth you want measured. |
 | Bitewings, CBCT, intra-oral photos, other X-rays | Not supported. Images with no detectable teeth are rejected. |
 | File types | PNG, JPEG or DICOM (.dcm), up to 16 MB. Identifying DICOM tags and image metadata are removed on upload. |
@@ -24,7 +24,7 @@ Dentists (review and sign-off), dental technicians (upload), auditors (security 
 
 ## 4. Reading the results
 - **Bone loss %:** the crest's position between the CEJ and the root apex, as a percentage of root length. It is shown in mm only when the image carries DICOM pixel spacing.
-- **Interval and stage set:** the true value lies inside the shown interval for about 90 % of teeth (measured 92.2 % on held-out data). The interval is on average ±19 points: narrower (about ±14) where the model reads the tooth consistently, and wider (±40 or more) where its normal and mirrored readings disagree. If more than one stage fits inside it, the stage cannot be decided from the image and the case goes to review. That is the usual outcome, by design.
+- **Interval and stage set:** the true value lies inside the shown interval for about 90 % of teeth (measured 93.4 % on held-out data), but only for about 81 % of teeth with severe (stage III) bone loss, which the model tends to underestimate. That is why the interval reaches further up than down. It is narrower where the model reads the tooth consistently and wider where its normal and mirrored readings disagree. If more than one stage fits inside it, the stage cannot be decided from the image and the case goes to review. That is the usual outcome, by design.
 - **"Not measured":** the landmark model could not place the CEJ, crest and apex on that tooth. No number is shown. **Assess the tooth clinically.**
 - **Progression:** shown as a real change only when both radiographs are the same type, register to each other, and the change is larger than both readings' intervals combined (typically 30–40 points). Otherwise it reads "no change beyond measurement error" or "unreliable comparison". Small real changes over one or two years are usually **not** detectable from radiographs with this accuracy, so rely on clinical charting for them.
 - **Grade:** taken from measured progression when available, otherwise from bone loss ÷ age, raised by smoking or HbA1c as in the 2017 classification.

@@ -105,6 +105,39 @@ export default function ModelTrustPage() {
           {Object.keys(data.flag_reasons).length ? <ReasonBars data={data.flag_reasons} labels={REASON_LABEL} /> : <EmptyState title="No flags yet" />}
         </Card>
       </div>
+      <Card className="mt-6">
+        <CardTitle>How each number was tested</CardTitle>
+        <p className="mb-3 text-xs text-mist-400">
+          <b>Same-source held-out</b>: unseen data from the same dataset the model was trained on. It does not show how the model
+          does at another hospital. <b>Cross-source external</b>: a different hospital, population or labelling protocol.
+          Small sample = fewer than 100 cases: read the 95 % range, not the single number.
+        </p>
+        {data.evidence?.available ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="text-mist-500">
+                <tr><th className="py-1 pr-3">Model and test set</th><th className="pr-3">Metric</th><th className="pr-3">Value (95 % range)</th><th className="pr-3">n</th><th>Test type</th></tr>
+              </thead>
+              <tbody>
+                {data.evidence.rows.map((r, i) => {
+                  const f = (v: number) => (r.pct ? `${(v * 100).toFixed(1)} %` : v.toFixed(v < 1.5 ? 3 : 2));
+                  return (
+                    <tr key={i} className="border-t border-white/5 align-top">
+                      <td className="py-1 pr-3 text-mist-300">{r.task}</td>
+                      <td className="pr-3 text-mist-300">{r.metric}</td>
+                      <td className="pr-3 font-mono text-mist-100">{f(r.value)}{r.ci95 ? ` (${f(r.ci95[0])}–${f(r.ci95[1])})` : ""}</td>
+                      <td className="pr-3 text-mist-400">{r.n}{r.small_sample ? " · small sample" : ""}</td>
+                      <td><Badge tone={r.test_type.startsWith("cross-source") ? "ok" : "neutral"}>{r.test_type}</Badge></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-sm text-review-400">Test results are not available: {data.evidence?.reason ?? "not reported by the server"}.</p>
+        )}
+      </Card>
     </div>
   );
 }
