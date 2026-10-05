@@ -293,3 +293,15 @@ def test_model_trust_shows_how_each_number_was_tested(client, dentist):
     finally:
         path.unlink()
         Signer().sign_manifest(config.WEIGHTS_DIR)
+
+
+def test_production_refuses_analysis_without_a_verified_model(client, dentist, monkeypatch):
+    """Outside demo mode a missing / refused model gives 503 'cannot analyse', never demo-heuristic numbers."""
+    from app import config
+
+    pid = data(client.post("/api/patients", headers=dentist, json={"name": "Prod Patient", "age": 45}))["patient_id"]
+    up = client.post("/api/radiographs", headers=dentist, content_type="multipart/form-data",
+                     data={"image": (io.BytesIO(synthetic_radiograph(seed=3)), "scan.png")})
+    monkeypatch.setattr(config, "IS_DEMO", False)
+    r = client.post("/api/analyses", headers=dentist, json={"upload_id": data(up)["upload_id"], "patient_id": pid})
+    assert r.status_code == 503 and "cannot be analysed" in r.get_json()["error"]["message"]

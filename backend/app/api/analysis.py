@@ -15,7 +15,7 @@ from app.schemas import AnalyzeIn
 from app.security.audit_log import audit
 from app.security.zero_trust import secured
 from app.services import container, storage_service
-from app.services.analysis_service import QualityRejected, explain_tooth, run_analysis
+from app.services.analysis_service import ModelsUnavailable, QualityRejected, explain_tooth, run_analysis
 
 bp = Blueprint("analysis", __name__)
 logger = logging.getLogger(__name__)
@@ -63,6 +63,10 @@ def create_analysis():
             upload_meta={k: upload.get(k) for k in ("kind", "width", "height", "removed_metadata")})
     except QualityRejected as exc:
         return fail(422, "The radiograph did not pass the quality check.", exc.quality)
+    except ModelsUnavailable:
+        return fail(503, "No verified AI model is loaded (missing or failed its signature check), so this radiograph "
+                         "cannot be analysed. Nothing was estimated. Ask the administrator to restore and re-sign the "
+                         "model files.")
     except Exception:
         logger.exception("Analysis failed")
         audit().record("ANALYSIS_FAILED", outcome="error", actor=g.user["id"], resource=patient["pseudo_id"])

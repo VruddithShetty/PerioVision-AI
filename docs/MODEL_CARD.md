@@ -159,6 +159,9 @@ per film.
   calibration files) to `backend/weights_backup/<timestamp>/`. A backup folder is itself a valid install source:
   `.\run.ps1 install-models -From backend\weights_backup\<timestamp>` restores it, re-signs, records the self-check
   outputs and runs the tests. Restart the backend afterwards.
+- **No verified model outside demo mode = no analysis.** If the tooth detector is missing or fails its signature in a
+  production deployment, `POST /api/analyses` returns 503 "cannot be analysed" and logs `ANALYSIS_REFUSED_NO_MODEL`;
+  the demo heuristic is only ever used in demo mode, where every result is labelled demo.
 - **Demo mode is in-memory.** Everything added in demo mode is erased when the backend restarts; the dashboard's
   System status and the banner on every page say so.
 

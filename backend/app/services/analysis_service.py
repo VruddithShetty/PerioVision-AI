@@ -63,6 +63,10 @@ def measured_image_types() -> set[str]:
     return {validated}
 
 
+class ModelsUnavailable(Exception):
+    """No verified model outside demo mode: refuse instead of falling back to the demo heuristic."""
+
+
 class QualityRejected(Exception):
     def __init__(self, quality: dict):
         super().__init__("Radiograph rejected by the quality gate")
@@ -282,6 +286,11 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
     measured_types = measured_image_types()
     found = locate_teeth(gray, force_demo, panoramic_landmarks="panoramic" in measured_types)
     live, image_type, detections, landmarks = found["live"], found["image_type"], found["detections"], found["landmarks"]
+    if not live and not force_demo and not config.IS_DEMO:
+        # Production: a missing or refused model must never be replaced by the demo heuristic on a real patient.
+        audit().record("ANALYSIS_REFUSED_NO_MODEL", outcome="denied", actor=user["id"],
+                       resource=patient_doc["pseudo_id"], details={"reason": "no verified tooth detector"})
+        raise ModelsUnavailable()
     if live and not detections:
         # Neither the panoramic detector nor the periapical keypoint model found a single tooth:
         # this is not a dental radiograph we can analyse, so nothing is stored or reported.
