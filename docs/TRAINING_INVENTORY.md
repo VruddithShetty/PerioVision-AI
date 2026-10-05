@@ -15,9 +15,9 @@ numbers below were re-measured on the deployed files; CIs are in `docs/RESULTS_W
 | 8 | Clinical risk model, NHANES (`scripts/train_risk_model_nhanes.py`) | `app/ml/fusion/risk_model_nhanes.json` | **Yes** | AUC 0.650 (0.633–0.668) on a later survey cycle |
 | 9 | Two-site landmark model (`train_landmarks_twosite_colab`) | **not yet run / not downloaded** | No | — |
 
-Files in `backend/weights/` that the app does **not** load (left over from earlier versions): `dental_bone_yolov8n-seg.pt`,
-`tooth_detection_yolov8n.pt`, `landmark_detection_model/landmark_cnn.pt`, `risk_model/` (replaced by the NHANES
-JSON). `yolov8n.pt` is only a fallback if the trained detector is missing.
+Prototype files the app never loaded (`dental_bone_yolov8n-seg.pt`, `tooth_detection_yolov8n.pt`,
+`landmark_detection_model/`, `risk_model/`, the last replaced by the NHANES JSON) were moved out of `backend/weights/` to the
+gitignored `backend/weights_backup/legacy-prototype/` on 2026-10-04. `yolov8n.pt` is only a fallback if the trained detector is missing.
 
 ## Why Model C (PDCNN) is not in the app
 

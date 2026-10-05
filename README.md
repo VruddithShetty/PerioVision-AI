@@ -17,11 +17,11 @@
 **Clinical AI (synopsis objectives O1–O5)**
 - Image-quality gate, CLAHE, YOLO11m tooth detection with FDI numbers, CEJ / crest / apex landmarks
 - Per-tooth bone loss %, Stage I–IV and Grade A–C suggestions (2017 AAP/EFP)
-- Grad-CAM heatmaps with a periodontal-region attention check
+- Grad-CAM-family heatmaps with LayerCAM weighting (5× better localisation on a tooth than classic Grad-CAM, measured), for all teeth or for one selected tooth, and a per-tooth periodontal-attention check
 - Adaptive split-conformal uncertainty (each tooth's interval widens when its normal and mirrored readings disagree), stage sets, mandatory clinician review router
 - Longitudinal progression with registration that must line up the teeth themselves, plus a measurement-error rule: changes smaller than the error are never called progression
-- Clinical risk model trained on CDC NHANES (validated on a later survey cycle), with plain-language odds ratios
-- Panoramic films: tooth detection and FDI numbering (validated on an external hospital's data) plus a validated whole-film estimate (bone loss per jaw, worst-tooth bone loss and stage); per-tooth bone loss is measured on periapical films only
+- Risk fusion: a clinical model trained on CDC NHANES (validated on a later survey cycle, plain-language odds ratios) combined with the radiograph's measured stage by a documented rule
+- Panoramic films: tooth detection and FDI numbering (validated on an external hospital's data) plus a validated whole-film estimate (bone loss per jaw, worst-tooth bone loss and stage, with its own conformal interval that drives review); per-tooth bone loss is measured on periapical films only. About 11 s per panoramic film on a laptop CPU
 - No invented numbers: anything unmeasured shows as "not measured" or "insufficient data", enforced by a build-time test
 
 **Security (O6)**
@@ -106,7 +106,8 @@ On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 - Measured on held-out data ([docs/MODEL_CARD.md](docs/MODEL_CARD.md); re-run commands in [docs/VERIFICATION_REPORT.md](docs/VERIFICATION_REPORT.md)): tooth detector: 89.6 % (95 % CI 88.3–90.8) found-and-correctly-numbered on 250 films from a hospital it was not trained on; after fine-tuning on part of that hospital's films, 94.5 % on its 96 unseen films (the deployed model) and 89.1 % of diseased teeth on the DENTEX official test; periapical bone-loss error 7.4 points, 73 % stage agreement, 92 % interval coverage (DenPAR).
 - Panoramic films get no per-tooth bone-loss numbers (not accurate enough against expert grading of 240 films). Instead whole-film models give a patient-level estimate: bone loss per jaw (test AUC 0.85 / 0.87) and the worst tooth's bone loss (error 11 points, 69 % stage agreement).
 - Uncertainty intervals are honest but wide (on average ±19 points at 90 %), so most teeth still go to dentist review.
-- The risk model estimates current disease from clinical factors (AUC 0.65); it does not use the radiograph or predict progression.
+- Risk: the clinical model (trained on NHANES, AUC 0.65) does not read the radiograph; the radiograph's measured stage is combined with it by a documented rule (the higher level wins), not a learned weight. Neither part predicts future progression.
+- Progression: with today's landmark accuracy a per-tooth change counts only when it exceeds both readings' error ranges together (about ±35-40 points), so real changes over a year or two are usually reported as "no change beyond measurement error". The demo patients' trends use planted synthetic values and are labelled as such on every page.
 - Demo mode uses an in-memory database; nothing persists after a restart.
 - The development server is HTTP unless you enable the local certificate; production needs a TLS reverse proxy.
 

@@ -29,7 +29,7 @@ const PIPELINE = [
   { key: "lm", label: "Landmarks", detail: "CEJ · alveolar crest · apex", icon: Crosshair },
   { key: "exp", label: "Explain", detail: "Grad-CAM attention check", icon: Brain },
   { key: "unc", label: "Uncertainty", detail: "Conformal interval · review routing", icon: Sigma },
-  { key: "risk", label: "Risk", detail: "Clinical + image fusion", icon: Gauge },
+  { key: "risk", label: "Risk", detail: "NHANES clinical model + radiograph stage", icon: Gauge },
 ];
 
 function QualityCard({ q, upload }: { q: QualityResult; upload: UploadResult }) {

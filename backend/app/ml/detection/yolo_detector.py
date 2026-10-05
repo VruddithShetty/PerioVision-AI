@@ -82,3 +82,19 @@ class ToothDetectionModel:
 
             logging.getLogger(__name__).warning("Grad-CAM failed: %s", exc)
             return None
+
+    def gradcam_per_tooth(self, image_bgr: np.ndarray, detections: list[dict]):
+        """One Grad-CAM map per detection (that detection's score only), or None if unavailable."""
+        if self.model is None or not detections:
+            return None
+        from app.ml.explainability.gradcam import YOLOGradCAM
+
+        try:
+            if self._gradcam is None:
+                self._gradcam = YOLOGradCAM(self.model)
+            return self._gradcam.per_tooth(image_bgr, detections)
+        except Exception as exc:  # explainability failure is reported, not hidden
+            import logging
+
+            logging.getLogger(__name__).warning("Per-tooth Grad-CAM failed: %s", exc)
+            return None

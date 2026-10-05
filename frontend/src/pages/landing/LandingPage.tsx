@@ -190,13 +190,13 @@ export default function LandingPage() {
       <Section
         id="scanner"
         eyebrow="Interactive · drag across the X-ray"
-        title="Watch the AI read a panoramic radiograph"
+        title="Watch the AI read a radiograph"
         subtitle="Drag the scan bar. Behind it: FDI tooth numbers, the cemento-enamel junction (cyan), the alveolar crest (amber), the measured bone loss, and where the model focused its attention."
       >
         <div className="glass-strong p-3 md:p-5">
           <PanoramicScanner />
         </div>
-        <p className="mt-3 text-center text-xs text-mist-500">Illustration only. Real analyses run on uploaded radiographs inside the clinic app.</p>
+        <p className="mt-3 text-center text-xs text-mist-500">Illustration only, with made-up numbers. In the clinic app, per-tooth bone loss is reported on periapical films; panoramic films get tooth numbering and a whole-film estimate instead.</p>
       </Section>
 
       <Section id="workflow" eyebrow="The workflow" title="Detect → Explain → Verify → Secure">

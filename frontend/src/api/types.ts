@@ -118,6 +118,15 @@ export interface RiskResult {
   model_type: string;
   model_version: string;
   disclaimer: string;
+  /** clinical level fused with the radiograph's own evidence (documented rule: the higher of the two) */
+  fusion?: {
+    level: "low" | "moderate" | "high" | null;
+    clinical_level: "low" | "moderate" | "high" | null;
+    radiographic_level: "low" | "moderate" | "high" | null;
+    radiographic_basis: string | null;
+    rule: string;
+    reasons: string[];
+  };
 }
 
 export interface QualityResult {
@@ -220,7 +229,9 @@ export interface QueueItem {
 }
 
 export interface Progression {
-  visits: { analysis_id: string; visit_date: string; review_status: ReviewStatus }[];
+  /** true when any visit is a synthetic demo record (planted values; trends are illustrative only) */
+  demo_data?: boolean;
+  visits: { analysis_id: string; visit_date: string; mode?: "live" | "demo"; review_status: ReviewStatus }[];
   series: Record<string, { date: string; analysis_id: string; bone_loss_pct: number; stage: string | null }[]>;
   comparisons: Comparison[];
   latest: Comparison[];
@@ -438,6 +449,8 @@ export interface PerioChart {
 }
 
 export interface CarePlan {
+  /** true when the plan is built from a synthetic demo analysis */
+  demo_data?: boolean;
   stage: string | null;
   radiographic_stage: string | null;
   clinical_stage: string | null;

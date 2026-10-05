@@ -1,10 +1,12 @@
-"""Grad-CAM for YOLO (v8 / 11) detections, plus the periodontal region-of-interest attention check.
+"""Grad-CAM-family heatmaps (LayerCAM weighting) for YOLO (v8 / 11) detections, plus the periodontal
+region-of-interest attention check.
 
-One backward pass explains all detections at once: for every detected tooth we
-find the anchor that produced it, sum those class scores, and back-propagate to
-the three neck layers that feed the YOLO head (P3/P4/P5). Each layer's
-gradient-weighted activation map is upsampled and combined into one heatmap at
-the original image resolution.
+`heatmap` explains all detections at once: for every detected tooth we find the
+anchor that produced it, sum those class scores, and back-propagate to the three
+neck layers that feed the YOLO head (P3/P4/P5). Each layer's gradient-weighted
+activation map is upsampled and combined into one heatmap at the original image
+resolution. `per_tooth` back-propagates each detection's score on its own, which
+is what the per-tooth attention check needs (see per_tooth).
 
 `roi_attention` then asks, per tooth: how much of the attention inside the
 tooth's box falls on the periodontal region (the band between the CEJ and the
@@ -69,39 +71,80 @@ class YOLOGradCAM:
                 output.register_hook(lambda grad: self.gradients.__setitem__(idx, grad))
         return hook
 
-    def heatmap(self, image_bgr: np.ndarray, detections: list[dict]) -> np.ndarray | None:
-        """Return an HxW float32 heatmap in [0, 1] aligned with `image_bgr`, or None."""
-        if not detections:
-            return None
+    def _forward(self, image_bgr: np.ndarray, detections: list[dict]):
+        """Gradient-enabled forward pass; returns the score tensor of every detection (same order)."""
         torch = self.torch
         h, w = image_bgr.shape[:2]
         rgb = cv2.cvtColor(cv2.resize(image_bgr, (INPUT_SIZE, INPUT_SIZE)), cv2.COLOR_BGR2RGB)
         x = torch.from_numpy(np.ascontiguousarray(rgb.transpose(2, 0, 1))).float().unsqueeze(0) / 255.0
-
         self.activations.clear()
         self.gradients.clear()
         self.net.zero_grad()
-        with torch.enable_grad():
-            preds = self.net(x)
-            preds = preds[0] if isinstance(preds, (list, tuple)) else preds   # [1, 4 + nc, 8400]
-            boxes = preds[0, :4, :].detach().cpu().numpy().T                  # cx, cy, w, h
-            anchors = np.stack([boxes[:, 0] - boxes[:, 2] / 2, boxes[:, 1] - boxes[:, 3] / 2,
-                                boxes[:, 0] + boxes[:, 2] / 2, boxes[:, 1] + boxes[:, 3] / 2], axis=1)
-            sx, sy = INPUT_SIZE / w, INPUT_SIZE / h
-            target = 0
-            for det in detections:
-                b = np.array(det["bbox"], dtype=np.float64) * [sx, sy, sx, sy]
-                anchor = int(np.argmax(_iou_matrix(b, anchors)))
-                target = target + preds[0, 4 + int(det.get("class_index", 0)), anchor]
-            target.backward()
+        preds = self.net(x)
+        preds = preds[0] if isinstance(preds, (list, tuple)) else preds   # [1, 4 + nc, 8400]
+        boxes = preds[0, :4, :].detach().cpu().numpy().T                  # cx, cy, w, h
+        anchors = np.stack([boxes[:, 0] - boxes[:, 2] / 2, boxes[:, 1] - boxes[:, 3] / 2,
+                            boxes[:, 0] + boxes[:, 2] / 2, boxes[:, 1] + boxes[:, 3] / 2], axis=1)
+        sx, sy = INPUT_SIZE / w, INPUT_SIZE / h
+        scores = []
+        for det in detections:
+            b = np.array(det["bbox"], dtype=np.float64) * [sx, sy, sx, sy]
+            anchor = int(np.argmax(_iou_matrix(b, anchors)))
+            scores.append(preds[0, 4 + int(det.get("class_index", 0)), anchor])
+        return scores
 
+    def heatmap(self, image_bgr: np.ndarray, detections: list[dict]) -> np.ndarray | None:
+        """All detections at once: one backward pass of their summed scores. HxW float32 in [0, 1], or None."""
+        if not detections:
+            return None
+        with self.torch.enable_grad():
+            sum(self._forward(image_bgr, detections)).backward()
+        return self._combine(image_bgr.shape[:2])
+
+    def per_tooth(self, image_bgr: np.ndarray, detections: list[dict]) -> list[np.ndarray | None]:
+        """One map per detection, each back-propagating ONLY that detection's score (one shared forward pass).
+
+        Faithful per tooth: in the all-teeth map a tooth's box also collects gradient from its neighbours'
+        detections. Computed as one batched backward pass (about 2 s for a 4-tooth periapical film on a laptop CPU).
+        """
+        torch = self.torch
+        with torch.enable_grad():
+            scores = self._forward(image_bgr, detections)
+            if not scores:
+                return []
+            layers = [i for i in self.layers if i in self.activations]
+            try:
+                # All teeth in ONE batched backward pass (vector-Jacobian products with identity rows): the same
+                # maps as one backward per tooth (max difference 0.0 on a 4-tooth film) in about a quarter of the time.
+                grads = torch.autograd.grad(torch.stack(scores), [self.activations[i] for i in layers],
+                                            grad_outputs=torch.eye(len(scores)), is_grads_batched=True)
+                maps = []
+                for k in range(len(scores)):
+                    self.gradients = {i: g[k] for i, g in zip(layers, grads)}
+                    maps.append(self._combine(image_bgr.shape[:2]))
+                return maps
+            except RuntimeError:           # an op without batched-gradient support: one backward per tooth
+                maps = []
+                for i, score in enumerate(scores):
+                    self.gradients.clear()     # tensor hooks deliver this backward pass's gradient only
+                    score.backward(retain_graph=i < len(scores) - 1)
+                    maps.append(self._combine(image_bgr.shape[:2]))
+                return maps
+
+    def _combine(self, shape_hw) -> np.ndarray | None:
+        torch = self.torch
+        h, w = shape_hw
         combined = np.zeros((INPUT_SIZE, INPUT_SIZE), dtype=np.float32)
         for idx in self.layers:
             if idx not in self.gradients or idx not in self.activations:
                 continue
             grad, act = self.gradients[idx], self.activations[idx]
-            weights = grad.mean(dim=(2, 3), keepdim=True)
-            cam = torch.relu((weights * act).sum(dim=1))[0].detach().cpu().numpy()
+            # LayerCAM weighting (Jiang et al., IEEE TIP 2021): each location's activation is weighted by its OWN
+            # positive gradient. Classic Grad-CAM averages the gradient over the whole layer first, which on these
+            # detectors left a tooth's map no more concentrated on that tooth than chance (16 % of the map inside
+            # the tooth's box vs 14 % of the image); LayerCAM puts 82 % there (64 % on panoramic films, whose
+            # boxes cover about 1 % of the image). docs/evidence/gradcam_localisation_2026-10-04.json
+            cam = torch.relu((torch.relu(grad) * act).sum(dim=1))[0].detach().cpu().numpy()
             if cam.max() > 0:
                 cam = cam / cam.max()
             combined = np.maximum(combined, cv2.resize(cam.astype(np.float32), (INPUT_SIZE, INPUT_SIZE)))

@@ -1,0 +1,14 @@
+{
+ "question": "Does judging each tooth by its own explanation map (instead of the all-teeth map) change the periodontal-attention review flag?",
+ "films": 40,
+ "weighting": "LayerCAM (deployed)",
+ "threshold": 0.25,
+ "teeth": 129,
+ "flag_rate_all_teeth_map": 0.047,
+ "flag_rate_per_tooth_map": 0.031,
+ "flag_disagreement": 0.062,
+ "attention_median_all": 0.599,
+ "attention_median_own": 0.631,
+ "spearman": 0.66,
+ "per_tooth_seconds_per_film_median": 6.41
+}

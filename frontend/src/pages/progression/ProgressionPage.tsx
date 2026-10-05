@@ -5,7 +5,7 @@ import { useAnalysis, usePatient, useProgression } from "@/api/hooks";
 import type { Comparison } from "@/api/types";
 import { ToothTrendChart } from "@/components/charts/Charts";
 import { BeforeAfterSlider } from "@/components/dental/BeforeAfterSlider";
-import { EmptyState, ErrorState, LoadingRows, PageHeader, Stat, Table } from "@/components/ui/blocks";
+import { DemoDataBanner, EmptyState, ErrorState, LoadingRows, PageHeader, Stat, Table } from "@/components/ui/blocks";
 import { Badge, Card, CardTitle, Select } from "@/components/ui/primitives";
 import { fmtDate, PROGRESSION_TONE } from "@/lib/format";
 
@@ -48,6 +48,7 @@ export default function ProgressionPage() {
         title={patient?.patient_name ?? `Patient ${patientId}`}
         subtitle="Teeth are matched across visits by FDI number (or by position after radiograph registration). Comparisons that can't be trusted are labelled, never silently computed."
       />
+      {data.demo_data && <DemoDataBanner what="This progression timeline" />}
       {data.visits.length < 2 ? (
         <EmptyState title="Only one visit so far" body="Progression needs at least two analysed radiographs of this patient." action={<Link to={`/app/analysis/new?patient=${patientId}`} className="text-brand-300 hover:underline">Analyse another radiograph →</Link>} />
       ) : (

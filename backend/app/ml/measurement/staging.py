@@ -70,7 +70,11 @@ def grade_suggestion(max_bl_pct: float | None, age: int | None, clinical: dict |
         reasons.append(f"Bone loss / age ratio = {ratio:.2f}.")
 
     if grade is None:
-        return {"grade": None, "basis": None, "reasons": ["Not enough information (needs age or a previous visit)."]}
+        if max_bl_pct is None:
+            why = "No per-tooth bone-loss measurement on this film, and no measurable change from a previous visit."
+        else:
+            why = "Not enough information (needs the patient's age or a previous visit)."
+        return {"grade": None, "basis": None, "reasons": [why]}
 
     cigs = clinical.get("cigarettes_per_day")
     smoker = clinical.get("smoking_status") == "current"

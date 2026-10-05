@@ -86,7 +86,7 @@ def dashboard():
             "analyses_today": store.count({**scope, "created": {"$gte": today}}),
             "flagged_for_review": store.count({**scope, "review.status": "review_required"}),
             "stage_distribution": {s: store.count({**scope, "summary.stage": s}) for s in ("I", "II", "III", "IV")},
-            "risk_distribution": {r: store.count({**scope, "risk.category": r}) for r in ("low", "moderate", "high")},
+            "risk_distribution": {r: store.count({**scope, "risk.fusion.level": r}) for r in ("low", "moderate", "high")},
             "recent": [{"analysis_id": a["analysis_id"], "pseudo_id": a["pseudo_id"], "visit_date": a["visit_date"],
                         "created": a["created"], "review_status": a.get("review", {}).get("status"),
                         "mode": a.get("mode")} for a in store.recent(8, ids)],

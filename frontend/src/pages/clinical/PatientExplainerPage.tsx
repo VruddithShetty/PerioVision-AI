@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { Area, AreaChart, CartesianGrid, Legend, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useCarePlan } from "@/api/hooks";
 import { ToothCrossSection } from "@/components/dental/ToothCrossSection";
-import { ErrorState, LoadingRows } from "@/components/ui/blocks";
+import { DemoDataBanner, ErrorState, LoadingRows } from "@/components/ui/blocks";
 import { Button } from "@/components/ui/primitives";
 import { stageColor } from "@/lib/format";
 
@@ -67,6 +67,7 @@ export default function PatientExplainerPage() {
         <Link to={`/app/patients/${patientId}/care-plan`} className="flex items-center gap-1 text-sm text-mist-400 hover:text-mist-100"><ArrowLeft className="h-4 w-4" /> Back to care plan</Link>
         <Button variant="outline" icon={<Printer className="h-4 w-4" />} onClick={() => window.print()}>Print for the patient</Button>
       </div>
+      {plan.demo_data && <div className="print:hidden"><DemoDataBanner what="This explanation and its 10-year forecast" /></div>}
 
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-strong overflow-hidden">
         <div className="grid items-center gap-8 p-8 md:grid-cols-[1fr_300px]">

@@ -126,6 +126,23 @@ def test_review_router_flags_landmarks_used_outside_their_validated_image_type()
     assert [r["code"] for r in unvalidated["reasons"]] == ["landmarks_not_validated"]
 
 
+def test_review_router_uses_the_panoramic_conformal_interval():
+    ok, clean = {"verdict": "pass"}, {"is_ood": False}
+    tooth = {"tooth_id": "36", "uncertainty": {"calibrated": True, "set_size": 0}, "flags": {},
+             "landmark_source": "not_validated_on_panoramic", "measurement_status": "not_validated_on_panoramic",
+             "bone_loss_pct": None}
+    wide = {"worst_tooth": {"interval_90": [0.0, 52.3], "stage_set": ["I", "II", "III"]}}
+    codes = [r["code"] for r in route([tooth], ok, clean, False, "panoramic", "periapical", wide)["reasons"]]
+    assert "panoramic_stage_ambiguous" in codes and "not_validated_image_type" in codes
+    narrow = {"worst_tooth": {"interval_90": [0.0, 12.0], "stage_set": ["I"]}}
+    codes = [r["code"] for r in route([tooth], ok, clean, False, "panoramic", "periapical", narrow)["reasons"]]
+    assert "panoramic_stage_ambiguous" not in codes
+    no_model = [r["code"] for r in route([tooth], ok, clean, False, "panoramic", "periapical", {"screen": {}})["reasons"]]
+    assert "panoramic_estimate_unavailable" in no_model
+    extra = route([], ok, clean, False, extra_reasons=[{"code": "film_shape_not_panoramic", "message": "x"}])
+    assert extra["status"] == "review_required"
+
+
 # ---------- progression ----------
 def _analysis(date, teeth, source="model_fdi_class", align=0.9):
     return {"analysis_id": date, "visit_date": date, "image_size": [1000, 500], "alignment": {"confidence": align, "status": "success" if align >= 0.5 else "failed"},
@@ -230,7 +247,38 @@ def test_risk_is_monotonic_and_explained():
     assert high["top_factors"] and not low["top_factors"]            # the reference person has no raising factors
     assert high["model_type"] == "logistic regression trained on NHANES"
     assert high["validation"]["roc_auc"] > 0.6 and high["validation"]["test_n"] > 1000
-    assert "does not use the radiograph" in high["disclaimer"]
+    assert "does not read the radiograph" in high["disclaimer"]
+
+
+def test_risk_fuses_clinical_and_radiograph_evidence():
+    from app.ml.fusion.multimodal_risk import fuse_with_radiograph
+
+    clinical = predict_patient_risk({"age": 45, "sex": "female", "smoking_status": "never", "diabetic": False,
+                                     "hba1c": 5.4})
+    assert clinical["category"] == "low"
+    # a measured stage III radiograph raises the combined level; the trained probability is unchanged
+    fused = fuse_with_radiograph(clinical, {"stage": "III", "max_bone_loss_pct": 41.0})
+    assert fused["fusion"]["level"] == "high" and fused["fusion"]["radiographic_level"] == "high"
+    assert fused["probability"] == clinical["probability"] and fused["category"] == "low"
+    # panoramic: the whole-film estimate is the radiographic evidence
+    pano = {"worst_tooth": {"bone_loss_pct": 25.7, "stage": "II", "interval_90": [0.0, 52.3],
+                            "stage_set": ["I", "II", "III"]}}
+    assert fuse_with_radiograph(clinical, {"stage": None}, pano)["fusion"]["level"] == "moderate"
+    # measurable rapid progression is high whatever the stage
+    rapid = fuse_with_radiograph(clinical, {"stage": "I", "max_bone_loss_pct": 10.0, "max_velocity_pct_per_year": 9.0})
+    assert rapid["fusion"]["level"] == "high"
+    # no measurement on the film: the radiograph adds nothing and says so
+    none = fuse_with_radiograph(clinical, {"stage": None})
+    assert none["fusion"]["level"] == "low" and none["fusion"]["radiographic_level"] is None
+    assert "no bone-loss measurement" in none["fusion"]["reasons"][-1]
+    # missing clinical inputs: the radiograph alone sets the level
+    missing = fuse_with_radiograph(predict_patient_risk({"age": 45}), {"stage": "II", "max_bone_loss_pct": 20.0})
+    assert missing["probability"] is None and missing["fusion"]["level"] == "moderate"
+
+
+def test_grade_message_names_the_missing_measurement():
+    assert "No per-tooth bone-loss measurement" in grade_suggestion(None, 50)["reasons"][0]
+    assert "age" in grade_suggestion(30.0, None)["reasons"][0]
 
 
 def test_risk_comes_from_the_trained_coefficients():

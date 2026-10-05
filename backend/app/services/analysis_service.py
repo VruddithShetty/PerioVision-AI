@@ -41,6 +41,23 @@ from app.services.progression_service import compare_visits, usable_velocities
 logger = logging.getLogger(__name__)
 STAGE_ORDER = {"I": 1, "II": 2, "III": 3, "IV": 4}
 MIN_PANORAMIC_TEETH = 4   # fewer teeth from the panoramic detector -> try the periapical path
+# The whole-film panoramic models were trained on films with a long/short side ratio of 1.66 or more
+# (DENTEX, BRAR, Aga Khan); periapical films in DenPAR are 1.00-1.74 (99 % below 1.53). A film routed
+# to the panoramic path but shaped like a periapical film (or a panoramic squashed to a square on export)
+# gets no whole-film estimate.
+MIN_PANORAMIC_ASPECT = 1.6
+
+
+def measured_image_types() -> set[str]:
+    """Film types on which per-tooth bone loss is reported: the type the landmark model was validated on.
+
+    Without a calibration file the validated type is unknown, so only periapical films (the type the
+    landmark model was trained on) are measured; panoramic per-tooth numbers never come back by accident.
+    """
+    validated = (calibration.load() or {}).get("image_type") or "periapical"
+    if config.THRESHOLDS["landmarks"].get("measure_unvalidated_image_types", False):
+        return {validated, "periapical", "panoramic"}
+    return {validated}
 
 
 class QualityRejected(Exception):
@@ -172,11 +189,13 @@ def demo_landmarks(gray: np.ndarray, det: dict) -> dict:
     return lm
 
 
-def locate_teeth(gray: np.ndarray, force_demo: bool = False) -> dict:
+def locate_teeth(gray: np.ndarray, force_demo: bool = False, panoramic_landmarks: bool = True) -> dict:
     """Detect teeth and their CEJ / apex / crest landmarks: the same path for the app and for evaluation.
 
     Returns {live, image_type, detections, landmarks, explain_model}. `explain_model` is the model whose
     predictions produced the boxes, so Grad-CAM explains the model that actually made the detection.
+    `panoramic_landmarks=False` skips the landmark model on panoramic films (the app does not report
+    them, and the per-tooth crops take about 20 s on a CPU); evaluation scripts keep the default.
     """
     enhanced = apply_clahe(gray)
     bgr = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)  # models were trained on unenhanced radiographs
@@ -197,6 +216,8 @@ def locate_teeth(gray: np.ndarray, force_demo: bool = False) -> dict:
             detections = [d for d, _ in periapical]
             landmarks = {d["tooth_id"]: lm for d, lm in periapical}
             explain_model, explain_name = lm_model, "landmark (pose) model"
+    if landmarks is None and live and not panoramic_landmarks:
+        landmarks = {}
     if landmarks is None:
         landmarks = lm_model.detect_landmarks(detections, bgr) if (live and lm_model.available) \
             else {d["tooth_id"]: demo_landmarks(gray, d) for d in detections}
@@ -224,7 +245,8 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
                        resource=patient_doc["pseudo_id"], details={"reasons": [r["message"] for r in quality["reasons"]]})
         raise QualityRejected(quality)
 
-    found = locate_teeth(gray, force_demo)
+    measured_types = measured_image_types()
+    found = locate_teeth(gray, force_demo, panoramic_landmarks="panoramic" in measured_types)
     live, image_type, detections, landmarks = found["live"], found["image_type"], found["detections"], found["landmarks"]
     if live and not detections:
         # Neither the panoramic detector nor the periapical keypoint model found a single tooth:
@@ -237,11 +259,20 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
     enhanced, bgr = found["enhanced"], found["bgr"]
     heatmap = found["explain_model"].gradcam_heatmap(bgr, detections) if found["explain_model"] else None
     panoramic_assessment = None
+    extra_review = []
     if live and image_type == "panoramic":
         # Per-tooth panoramic bone loss is not reported; the validated whole-film models give a patient-level estimate.
         from app.ml.panoramic.whole_film import whole_film
 
-        panoramic_assessment = whole_film().assess(gray)
+        if max(h, w) / min(h, w) >= MIN_PANORAMIC_ASPECT:
+            panoramic_assessment = whole_film().assess(gray)
+        else:
+            extra_review.append({
+                "code": "film_shape_not_panoramic",
+                "message": f"The film's proportions (long/short side {max(h, w) / min(h, w):.2f}) are unlike the "
+                           f"panoramic films the whole-film models were trained on ({MIN_PANORAMIC_ASPECT} or more; "
+                           "a resized or cropped export, or a periapical film), so no whole-film estimate is given. "
+                           "Upload the original panoramic export or a periapical film."})
 
     q = calibration.current_q()
     t_exp = config.THRESHOLDS["explainability"]
@@ -249,19 +280,25 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
     teeth = []
     # Landmarks are only trusted on the film type they were validated on (calibration file "image_type").
     # On BRAR's 988 expert-graded panoramic films the per-tooth readings disagreed widely with the experts
-    # (docs/evidence/brar_panoramic_eval_*.json), so other film types get detection and numbering only.
-    validated_type = (calibration.load() or {}).get("image_type")
-    measure_this_type = (not live or validated_type is None or image_type == validated_type
-                         or config.THRESHOLDS["landmarks"].get("measure_unvalidated_image_types", False))
-    for det in detections:
+    # (docs/evidence/brar_panoramic_eval_*.json), so other film types get detection, numbering and (panoramic)
+    # the whole-film patient estimate only.
+    measure_this_type = not live or image_type in measured_types
+    # The periodontal-attention check is per tooth, so on films where bone loss is reported each tooth is
+    # judged by its OWN Grad-CAM map (its detection score alone). In the all-teeth map a tooth's box also
+    # collects gradient from neighbouring detections. One batched backward pass: about 2 s per periapical film.
+    tooth_maps = None
+    if live and measure_this_type and found["explain_model"] is not None:
+        tooth_maps = found["explain_model"].gradcam_per_tooth(bgr, detections)
+    for i, det in enumerate(detections):
         lm = landmarks.get(det["tooth_id"])
-        if measured(lm) and not measure_this_type:
+        if not measure_this_type:
             bl, roi, attention = {"bone_loss_pct": None, "status": f"not_validated_on_{image_type}"}, None, None
             lm, lm_source = {}, f"not_validated_on_{image_type}"
         elif measured(lm):
             bl = bone_loss_for_tooth(lm, pixel_spacing_mm)
             roi = periodontal_roi(det["bbox"], lm["cej"], lm["bone_crest"], t_exp["roi_margin_fraction"])
-            attention = roi_attention(heatmap, det["bbox"], roi)
+            own_map = tooth_maps[i] if tooth_maps and tooth_maps[i] is not None else heatmap
+            attention = roi_attention(own_map, det["bbox"], roi)
             lm_source = "demo" if not live else lm["landmark_source"]
         else:
             # No model landmarks for this tooth: report it as found but NOT measured, never as a number.
@@ -271,6 +308,7 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
         teeth.append({
             "tooth_id": det["tooth_id"],
             "tooth_id_source": det["tooth_id_source"],
+            "class_index": det.get("class_index"),
             "bbox": det["bbox"],
             "confidence": det["confidence"],
             "cej": lm.get("cej"),
@@ -319,11 +357,12 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
         "grade": grade_suggestion(max_bl, clinical.get("age"), clinical, max(reliable_v) if reliable_v else None),
         "max_velocity_pct_per_year": max(reliable_v) if reliable_v else None,
     }
-    from app.ml.fusion.multimodal_risk import predict_patient_risk
-    risk = predict_patient_risk(clinical, patient_summary)
+    from app.ml.fusion.multimodal_risk import fuse_with_radiograph, predict_patient_risk
+    risk = fuse_with_radiograph(predict_patient_risk(clinical), patient_summary, panoramic_assessment)
     cal_info = calibration.load() or {}
     review = route(teeth, quality, ood, demo_mode=not live, image_type=image_type,
-                   validated_image_type=cal_info.get("image_type"))
+                   validated_image_type=cal_info.get("image_type"),
+                   panoramic_assessment=panoramic_assessment, extra_reasons=extra_review)
 
     blobs = {"radiograph": storage_service.put(png_bytes, "radiograph"),
              "annotated": storage_service.put(overlay.encode_png(overlay.annotated_image(enhanced, teeth)), "annotated")}
@@ -348,7 +387,9 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
         "ood": ood,
         "explainability": {"gradcam_available": heatmap is not None,
                            "model": found["explain_model_name"] if heatmap is not None else None,
-                           "method": "Grad-CAM over the YOLO neck layers feeding the detection head (P3-P5)" if heatmap is not None else None},
+                           "method": "Grad-CAM family, LayerCAM weighting, over the YOLO neck layers feeding the detection head (P3-P5)" if heatmap is not None else None,
+                           "attention_check": "per-tooth Grad-CAM (each tooth's own detection score)" if tooth_maps
+                           else ("all-teeth Grad-CAM" if heatmap is not None else None)},
         "teeth": teeth,
         "summary": patient_summary,
         "risk": risk,
@@ -367,3 +408,36 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
                    details={"analysis_id": record["analysis_id"], "mode": record["mode"], "teeth": len(teeth),
                             "review": review["status"]})
     return record
+
+
+def explain_tooth(analysis: dict, tooth_id: str) -> dict | None:
+    """Grad-CAM for ONE tooth: back-propagate only that tooth's detection score.
+
+    The analysis-time heatmap explains all teeth at once (one backward pass of their summed scores), so its
+    attention inside a tooth's box partly comes from neighbouring detections (per-tooth maps of neighbouring
+    teeth correlate only about 0.1 on a panoramic film). This recomputes the map for the selected tooth on
+    demand, with the model that made the detection, from the stored (decrypted) radiograph: about 1-2 s on a
+    CPU. Returns {png, roi_attention, model} or None when no verified model is loaded (demo mode).
+    """
+    tooth = next((t for t in analysis.get("teeth", []) if t["tooth_id"] == tooth_id), None)
+    blob = (analysis.get("blobs") or {}).get("radiograph")
+    if tooth is None or not blob or analysis.get("mode") != "live":
+        return None
+    periapical = analysis.get("image_type") == "periapical"
+    model = container.landmark_detector() if periapical else container.tooth_detector()
+    if not model.available:
+        return None
+    class_index = tooth.get("class_index")
+    if class_index is None:            # records made before class_index was stored
+        names = {str(v): int(k) for k, v in (model.model.names or {}).items()}
+        class_index = 0 if periapical else names.get(str(tooth_id), 0)
+    gray = _decode(storage_service.get(blob, "radiograph"))
+    gray = gray.reshape(gray.shape[:2])
+    bgr = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+    heatmap = model.gradcam_heatmap(bgr, [{"bbox": tooth["bbox"], "class_index": class_index}])
+    if heatmap is None:
+        return None
+    attention = roi_attention(heatmap, tooth["bbox"], tooth["roi"]) if tooth.get("roi") else None
+    return {"png": overlay.encode_png(overlay.heatmap_layer(heatmap)),
+            "roi_attention": None if attention is None else round(float(attention), 3),
+            "model": "landmark (pose) model" if periapical else "tooth detector"}

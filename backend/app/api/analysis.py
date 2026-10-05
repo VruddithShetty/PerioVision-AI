@@ -15,7 +15,7 @@ from app.schemas import AnalyzeIn
 from app.security.audit_log import audit
 from app.security.zero_trust import secured
 from app.services import container, storage_service
-from app.services.analysis_service import QualityRejected, run_analysis
+from app.services.analysis_service import QualityRejected, explain_tooth, run_analysis
 
 bp = Blueprint("analysis", __name__)
 logger = logging.getLogger(__name__)
@@ -103,6 +103,34 @@ def analysis_image(analysis_id, layer):
         return fail(409, "Stored image failed its integrity check.")
     resp = send_file(io.BytesIO(data), mimetype="image/png", max_age=0)
     resp.headers["Cache-Control"] = "no-store"
+    return resp
+
+
+@bp.get("/api/analyses/<analysis_id>/teeth/<tooth_id>/gradcam")
+@secured("analysis:read")
+@limiter.limit("30 per minute")
+def tooth_gradcam(analysis_id, tooth_id):
+    """Grad-CAM of one tooth's detection only (computed on demand from the stored radiograph)."""
+    a, patient, err = load_analysis_or_404(analysis_id)
+    if err:
+        return err
+    if not any(t["tooth_id"] == tooth_id for t in a.get("teeth", [])):
+        return fail(404, "Tooth not found in this analysis.")
+    try:
+        out = explain_tooth(a, tooth_id)
+    except Exception:
+        logger.exception("Per-tooth Grad-CAM failed")
+        audit().record("STORAGE_INTEGRITY_FAILURE", outcome="error", actor=g.user["id"],
+                       details={"analysis_id": analysis_id, "layer": "radiograph"})
+        return fail(409, "The stored radiograph could not be read for this explanation.")
+    if out is None:
+        return fail(404, "Per-tooth Grad-CAM needs a verified model (not available in demo mode).")
+    audit().record("GRADCAM_TOOTH_VIEWED", actor=g.user["id"], resource=patient["pseudo_id"],
+                   details={"analysis_id": analysis_id, "tooth_id": tooth_id})
+    resp = send_file(io.BytesIO(out["png"]), mimetype="image/png", max_age=0)
+    resp.headers["Cache-Control"] = "no-store"
+    resp.headers["X-ROI-Attention"] = "" if out["roi_attention"] is None else str(out["roi_attention"])
+    resp.headers["X-Explained-Model"] = out["model"]
     return resp
 
 

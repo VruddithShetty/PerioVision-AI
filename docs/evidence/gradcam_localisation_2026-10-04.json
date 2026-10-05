@@ -1,0 +1,9 @@
+{
+  "question": "For one tooth's detection, what share of its explanation map falls inside that tooth's own box?",
+  "films": "8 DenPAR periapical test films (1, 100, 1000, 1007, 1027, 103, 1036, 1042) + 1 BRAR panoramic film (patient_image_000012); up to 6 teeth each",
+  "method": "single-detection backward pass on the deployed signed models, P3-P5 neck layers, maps normalised per layer",
+  "share_inside_own_box": {"gradcam_global_average_weights": 0.16, "layercam_elementwise_positive_gradients": 0.82, "chance_box_area_share": 0.14},
+  "panoramic_film_only": {"gradcam": 0.07, "layercam": 0.64, "chance": 0.01},
+  "decision": "Deployed explanation maps use LayerCAM weighting (Jiang et al., LayerCAM: Exploring Hierarchical Class Activation Maps for Localization, IEEE TIP 2021).",
+  "script": "per-film loop over analysis_service.locate_teeth + YOLOGradCAM._forward with both weightings"
+}

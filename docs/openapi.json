@@ -1739,6 +1739,28 @@
         "security": []
       }
     },
+    "/api/models/metrics": {
+      "get": {
+        "summary": "Held-out test metrics of the installed models, read from their metric files",
+        "operationId": "security_model_metrics_get",
+        "tags": [
+          "security"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
     "/api/models/status": {
       "get": {
         "summary": "Model files and signature status",

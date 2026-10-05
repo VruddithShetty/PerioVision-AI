@@ -13,6 +13,8 @@ import { fmtDate, fmtPct, PROGRESSION_TONE, REASON_LABEL, REVIEW_LABEL, REVIEW_T
 import { useCan } from "@/store/auth";
 import { SceneGate } from "@/three/SceneGate";
 
+const LEVEL_TONE: Record<string, string> = { low: "text-teal-400", moderate: "text-review-400", high: "text-critical-400" };
+
 const DentalArch3D = lazy(() => import("@/three/DentalArch3D"));
 
 export default function AnalysisViewerPage() {
@@ -21,6 +23,8 @@ export default function AnalysisViewerPage() {
   const { data: a, isLoading, error, refetch } = useAnalysis(analysisId);
   const [selected, setSelected] = useState<string | null>(null);
   const [view, setView] = useState<"2d" | "chart" | "3d">("2d");
+  // Grad-CAM of all teeth (computed at analysis time) or of the selected tooth only (on demand, ~1-2 s)
+  const [toothCam, setToothCam] = useState(false);
   const canReview = useCan("review:signoff");
   const canReport = useCan("report:generate");
   const createReport = useCreateReport();
@@ -124,10 +128,26 @@ export default function AnalysisViewerPage() {
             >
               Findings
             </CardTitle>
+            {view === "2d" && a.mode === "live" && a.images.gradcam && (
+              <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
+                <span className="text-mist-500">Grad-CAM shows</span>
+                <button type="button" onClick={() => setToothCam(false)}
+                  className={`rounded-full border px-3 py-1 ${!toothCam ? "border-brand-400 text-brand-300" : "border-white/10 text-mist-400 hover:text-mist-100"}`}>
+                  all teeth
+                </button>
+                <button type="button" onClick={() => setToothCam(true)} disabled={!selected}
+                  className={`rounded-full border px-3 py-1 ${toothCam ? "border-brand-400 text-brand-300" : "border-white/10 text-mist-400 hover:text-mist-100"}`}>
+                  only tooth {selected ?? "–"}
+                </button>
+                {toothCam && <span className="text-mist-500">computed for this tooth's detection alone; switch teeth to compare</span>}
+              </div>
+            )}
             {view === "2d" && (
               <RadiographViewer
                 radiographUrl={a.images.radiograph}
-                gradcamUrl={a.images.gradcam}
+                gradcamUrl={toothCam && selected && a.mode === "live" && a.images.gradcam
+                  ? `/api/analyses/${a.analysis_id}/teeth/${encodeURIComponent(selected)}/gradcam`
+                  : a.images.gradcam}
                 width={a.image_size[0]}
                 height={a.image_size[1]}
                 teeth={a.teeth}
@@ -239,7 +259,30 @@ export default function AnalysisViewerPage() {
             </Card>
           )}
           <Card>
-            <CardTitle icon={<Box className="h-4 w-4" />}>Clinical risk profile</CardTitle>
+            <CardTitle icon={<Box className="h-4 w-4" />}>Risk profile: clinical + radiograph</CardTitle>
+            {a.risk.fusion && (
+              <div className="mb-3">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-[11px] uppercase tracking-wider text-mist-500">Combined level</span>
+                  <span className={`text-lg font-semibold uppercase ${LEVEL_TONE[a.risk.fusion.level ?? ""] ?? "text-mist-400"}`}>
+                    {a.risk.fusion.level ?? "not available"}
+                  </span>
+                </div>
+                <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
+                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-2">
+                    <p className="text-mist-500">Clinical model</p>
+                    <p className={`font-medium uppercase ${LEVEL_TONE[a.risk.fusion.clinical_level ?? ""] ?? "text-mist-400"}`}>{a.risk.fusion.clinical_level ?? "not scored"}</p>
+                  </div>
+                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-2">
+                    <p className="text-mist-500">Radiograph</p>
+                    <p className={`font-medium uppercase ${LEVEL_TONE[a.risk.fusion.radiographic_level ?? ""] ?? "text-mist-400"}`}>{a.risk.fusion.radiographic_level ?? "no measurement"}</p>
+                  </div>
+                </div>
+                {a.risk.fusion.radiographic_basis && <p className="mt-2 text-[11px] text-mist-400">Radiograph evidence: {a.risk.fusion.radiographic_basis}.</p>}
+                <p className="mt-1 text-[11px] text-mist-500">{a.risk.fusion.rule}</p>
+              </div>
+            )}
+            <p className="text-[11px] uppercase tracking-wider text-mist-500">Clinical model (NHANES)</p>
             <div className="flex justify-center">
               {a.risk.probability !== null && a.risk.category ? (
                 <RiskGauge value={a.risk.probability} category={a.risk.category} />

@@ -263,3 +263,14 @@ def test_openapi_lists_permissions(client):
     assert spec["paths"]["/api/review/{analysis_id}"]["post"]["x-permission"] == "review:signoff"
     assert spec["paths"]["/api/auth/login"]["post"]["security"] == []
     assert PASSWORDS  # fixtures loaded
+
+
+def test_per_tooth_gradcam_needs_a_verified_model_and_rbac(client, dentist, auditor):
+    pid = data(client.post("/api/patients", headers=dentist, json={"name": "CAM Patient", "age": 40}))["patient_id"]
+    up = client.post("/api/radiographs", headers=dentist, content_type="multipart/form-data",
+                     data={"image": (io.BytesIO(synthetic_radiograph(seed=7)), "scan.png")})
+    a = data(client.post("/api/analyses", headers=dentist, json={"upload_id": data(up)["upload_id"], "patient_id": pid}))
+    url = f"/api/analyses/{a['analysis_id']}/teeth/{a['teeth'][0]['tooth_id']}/gradcam"
+    assert client.get(url, headers=dentist).status_code == 404        # demo mode: no verified model, no fake map
+    assert client.get(url, headers=auditor).status_code == 403        # auditors never see clinical images
+    assert client.get(url.replace(a["teeth"][0]["tooth_id"], "99"), headers=dentist).status_code == 404

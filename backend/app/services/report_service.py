@@ -142,8 +142,11 @@ def build_pdf(analysis: dict, patient: dict, progression: dict, reviewer: dict |
     risk_text = (f"Category: <b>{risk['category']}</b> (probability {risk['probability']:.2f}, {risk['model_type']}). "
                  f"Main factors: {reasons}. " if risk.get("probability") is not None
                  else "<b>Not available</b>: " if risk.get("status") in ("insufficient_data", "unavailable") else "")
+    fusion = risk.get("fusion") or {}
+    fusion_text = (f"Combined (clinical + radiograph): <b>{fusion['level']}</b>. " + " ".join(fusion["reasons"]) + " "
+                   if fusion.get("level") else "")
     story += [Paragraph("<b>Risk</b>", styles["Heading3"]),
-              Paragraph(f"{risk_text}<i>{risk['disclaimer']}</i>", small)]
+              Paragraph(f"{fusion_text}{risk_text}<i>{risk['disclaimer']}</i>", small)]
 
     pa = analysis.get("panoramic_assessment")
     if pa:

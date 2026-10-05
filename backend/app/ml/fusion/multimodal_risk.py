@@ -1,4 +1,5 @@
-"""Clinical periodontitis risk: a logistic model TRAINED on NHANES (US CDC, public domain).
+"""Periodontitis risk: a clinical logistic model TRAINED on NHANES (US CDC, public domain), fused with the
+radiograph's own measured evidence by a documented rule (fuse_with_radiograph, at the end of this file).
 
 Model file: app/ml/fusion/risk_model_nhanes.json, produced by scripts/train_risk_model_nhanes.py.
 Outcome: moderate or severe periodontitis by the CDC/AAP case definition (Eke et al. 2012), from
@@ -7,9 +8,10 @@ full-mouth probing of adults aged 30+. Fitted on NHANES 2009-2012, validated on 
 prevalence fell between cycles (both recorded in the file and returned with every result).
 
 What the number means: among people with the same age, sex, smoking and diabetes / HbA1c profile,
-the share who have moderate or severe periodontitis. It does NOT use the radiograph (no dataset
-links radiographs to outcomes, so no image weight could be learned) and does NOT predict future
-progression. The radiograph's own evidence is the stage and grade.
+the share who have moderate or severe periodontitis. The logistic model itself does not use the
+radiograph (no dataset links radiographs to outcomes, so no image weight could be learned) and does
+NOT predict future progression. The radiograph's evidence (stage, panoramic whole-film estimate,
+measurable progression) is combined with it afterwards by fuse_with_radiograph.
 
 Missing inputs are never replaced by a typical value: without age, sex (male / female), smoking
 status and, for current smokers, cigarettes per day, the result is status "insufficient_data" with
@@ -114,5 +116,64 @@ def predict_patient_risk(clinical: dict, image: dict | None = None) -> dict:
                        "roc_auc": test["roc_auc"], "brier": test["brier"]},
         "disclaimer": (f"Share of US adults with this age, sex, smoking and diabetes profile who have moderate or "
                        f"severe periodontitis (CDC/AAP), from NHANES; validated AUC {test['roc_auc']:.2f}. "
-                       "It does not use the radiograph and does not predict future progression."),
+                       "The clinical model does not read the radiograph; the radiograph's evidence is combined with it in the fused level. It does not predict future progression."),
     }
+
+
+# ---------------------------------------------------------------- image + clinical fusion
+LEVELS = ("low", "moderate", "high")
+STAGE_LEVEL = {"I": "low", "II": "moderate", "III": "high", "IV": "high"}
+FUSION_RULE = ("Combined level = the higher of the clinical level (NHANES model) and the radiographic level "
+               "(stage I = low, II = moderate, III / IV = high; rapid, measurable progression = high). "
+               "A documented decision rule, as in Lang & Tonetti's periodontal risk assessment, not a trained "
+               "weight: no public dataset links radiographs to periodontitis outcomes.")
+
+
+def _radiographic_evidence(summary: dict | None, panoramic: dict | None) -> dict | None:
+    """The radiograph's own measured evidence, or None when the film gave no bone-loss evidence."""
+    summary = summary or {}
+    rapid = config.THRESHOLDS["progression"]["rapid_pct_per_year"]
+    velocity = summary.get("max_velocity_pct_per_year")
+    if summary.get("stage"):
+        level, basis = STAGE_LEVEL[summary["stage"]], (
+            f"per-tooth measurement: worst tooth stage {summary['stage']} "
+            f"({summary.get('max_bone_loss_pct')} % bone loss), validated on periapical films")
+    elif (panoramic or {}).get("worst_tooth"):
+        wt = panoramic["worst_tooth"]
+        level, basis = STAGE_LEVEL[wt["stage"]], (
+            f"whole-film panoramic estimate: worst tooth about {wt['bone_loss_pct']:.0f} % "
+            f"(90 % interval {wt['interval_90'][0]:.0f}-{wt['interval_90'][1]:.0f} %, "
+            f"possible stages {' / '.join(wt['stage_set'])})")
+    else:
+        return None
+    if velocity is not None and velocity >= rapid:
+        level, basis = "high", basis + f"; measurable progression {velocity:.1f} %/year"
+    return {"level": level, "basis": basis}
+
+
+def fuse_with_radiograph(risk: dict, summary: dict | None, panoramic: dict | None = None) -> dict:
+    """Add a `fusion` block that combines the clinical risk with the radiograph's own evidence.
+
+    The clinical part keeps its trained, validated probability unchanged (`category`, `probability`).
+    The radiographic part is the measured stage (periapical per-tooth, or the whole-film panoramic estimate)
+    and measurable progression. The combined level takes the higher of the two, so neither source can
+    hide a warning from the other. Each part says where it came from, and a missing part is named.
+    """
+    image = _radiographic_evidence(summary, panoramic)
+    clinical = risk.get("category")
+    parts = [lvl for lvl in (clinical, image and image["level"]) if lvl]
+    level = max(parts, key=LEVELS.index) if parts else None
+    reasons = []
+    if clinical:
+        reasons.append(f"Clinical factors (age, sex, smoking, diabetes): {clinical}, "
+                       f"probability {risk['probability']:.2f}.")
+    else:
+        reasons.append("Clinical risk not scored: " + (", ".join(risk.get("missing_inputs") or []) or "model unavailable") + ".")
+    if image:
+        reasons.append(f"Radiograph: {image['level']} ({image['basis']}).")
+    else:
+        reasons.append("Radiograph: no bone-loss measurement on this film, so it adds no evidence to the level.")
+    return {**risk, "fusion": {"level": level, "clinical_level": clinical,
+                               "radiographic_level": image and image["level"],
+                               "radiographic_basis": image and image["basis"],
+                               "rule": FUSION_RULE, "reasons": reasons}}

@@ -68,7 +68,7 @@ export default function DashboardPage() {
               <Card>
                 <CardTitle>Risk mix</CardTitle>
                 <RiskDonut data={data?.risk_distribution ?? {}} />
-                <p className="mt-1 text-center text-[11px] text-mist-500">Rule-assisted demo score, not a calibrated clinical risk.</p>
+                <p className="mt-1 text-center text-[11px] text-mist-500">Combined level: NHANES clinical model (AUC 0.65) and the radiograph's measured stage, higher of the two.</p>
               </Card>
             </div>
           )}

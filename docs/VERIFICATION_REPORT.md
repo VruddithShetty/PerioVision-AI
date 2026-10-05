@@ -213,3 +213,31 @@ npm run lint
 ```bash
 npm run build
 ```
+
+---
+
+## Addendum 2026-10-04: final fix pass
+
+Re-run after the changes below on the deployed, signed weights: `tests/` 125 passed · `tests_live/` 29 passed (real
+DenPAR periapical and panoramic films) · frontend `tsc`, `eslint` and `vite build` clean · 37/37 independent attack
+checks (AES nonce uniqueness over 20,000 encryptions, one-bit weight tampering, forged and re-signed manifests, JWT
+forgery / `alg:none` / expiry / device binding, lockout, MFA, RBAC and patient isolation, audit-entry edit with and
+without a recomputed hash, signed-report tampering) · every page loaded as dentist, auditor and admin.
+
+| Area | Before | Now | Evidence |
+|---|---|---|---|
+| Panoramic speed | ~44 s per film; ~20 s of it ran the landmark model on every tooth and threw the result away | 7.7 s warm (the first film after start-up loads the models: ~24 s) | `tests_live::test_panoramic_films_skip_the_unused_landmark_model` |
+| Panoramic per-tooth numbers | Withheld, but a missing calibration file would have switched them back on | Withheld whatever the calibration state; one status for every panoramic tooth | `tests_live::test_missing_calibration_never_brings_back_panoramic_numbers` |
+| Panoramic review | Only a film-type rule sent panoramic cases to review | The whole-film estimate's own conformal interval flags `panoramic_stage_ambiguous` | `test_ml_logic.py::test_review_router_uses_the_panoramic_conformal_interval`, live whole-film test |
+| Whole-film estimate on the wrong film shape | Applied to any film on the panoramic path (1 % of periapical films; panoramics squashed to a square) | Only on films with panoramic proportions (long/short side ≥ 1.6, as every training film); otherwise `film_shape_not_panoramic` | `tests_live::test_periapical_film_shapes_never_get_the_panoramic_estimate`, `::test_squashed_panoramic_uploads_get_no_whole_film_estimate` |
+| Explanation maps | Classic Grad-CAM: a tooth's map was no more concentrated on that tooth than chance (16 % inside its box vs 14 %) | LayerCAM weighting: 82 % inside the tooth's box (64 % on panoramic, box ≈ 1 % of the image) | `docs/evidence/gradcam_localisation_2026-10-04.json` |
+| Attention check | Computed from the all-teeth map (a tooth's box also collected its neighbours' gradients) | Each periapical tooth judged by its own map, all teeth in one batched backward pass (identical to one pass per tooth, ~2 s); flags 3.1 % of 129 DenPAR teeth | `docs/evidence/gradcam_attention_per_tooth_denpar40_2026-10-04.json`, `tests_live::test_batched_per_tooth_maps_equal_one_backward_per_tooth` |
+| Per-tooth explanation in the viewer | One map for all teeth | "Grad-CAM shows: all teeth / only tooth X" (on demand, ~2 s) | `test_api.py::test_per_tooth_gradcam_needs_a_verified_model_and_rbac`, `tests_live::test_per_tooth_gradcam_explains_only_the_selected_tooth` |
+| Risk (O5) | Clinical NHANES model only; the UI said both "clinical + image fusion" and "rule-assisted demo" | Clinical model unchanged, fused with the radiograph's measured stage (or panoramic estimate, or measurable rapid progression) by a documented rule; viewer, dashboard and signed report show both parts | `test_ml_logic.py::test_risk_fuses_clinical_and_radiograph_evidence` |
+| Demo progression | Planted synthetic trends shown as "reliable, rapidly progressing" with no label on the page | "Synthetic demo data" banner on Progression, Care plan and Patient explainer | manual check in the browser |
+| Wording | Four stale or contradictory claims (About ×2, Dashboard, New analysis) and a panoramic per-tooth illustration on the landing page | Corrected | manual check in the browser |
+
+Still open (needs data this laptop does not have): an external periapical test set (bone-loss numbers are tested on
+held-out DenPAR films from the same source as training); bootstrap CIs for the MM-OPG screen AUCs (the local
+`MM-OPG/images.zip` is an incomplete download) and for the DENTEX 63-film split (needs `notebooks/priority1_eval_colab.ipynb`);
+progression on real follow-up films of the same patient.

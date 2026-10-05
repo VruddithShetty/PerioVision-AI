@@ -10,6 +10,6 @@
 | [DATASETS.md](DATASETS.md) | Datasets used, licences, where to get them |
 | [VERIFICATION_REPORT.md](VERIFICATION_REPORT.md) | Independent verification and accuracy audit, with re-run commands |
 | [INSTRUCTIONS_FOR_USE.md](INSTRUCTIONS_FOR_USE.md) | How clinicians should read every result, and its limits |
-| [PROJECT_REPORT.md](PROJECT_REPORT.md) · [TRACEABILITY.md](TRACEABILITY.md) · [TALPA.md](TALPA.md) | Academic report, synopsis-objective traceability, TALPA notes |
+| [PROJECT_REPORT.md](PROJECT_REPORT.md) · [TRACEABILITY.md](TRACEABILITY.md) | Academic report, synopsis-objective traceability |
 | [evidence/](evidence/) | Raw outputs of every evaluation quoted in these documents |
 | [reference/screenshots/](reference/screenshots/) | Screenshots used by the main README |

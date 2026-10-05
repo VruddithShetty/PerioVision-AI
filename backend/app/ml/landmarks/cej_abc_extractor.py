@@ -1,7 +1,7 @@
 """CEJ, root-apex and alveolar-bone-crest (ABC) keypoints per detected tooth.
 
 The YOLO-pose model predicts, for each tooth, three keypoints in this order:
-CEJ, root apex, bone crest (see scripts/convert_to_yolopose.py). It runs on
+CEJ, root apex, bone crest (see scripts/convert_denpar.py). It runs on
 the same full-resolution image as the detector, so keypoints and detection
 boxes share one coordinate system and are matched by box overlap (IoU).
 
@@ -66,6 +66,11 @@ class LandmarkDetectionModel:
         from app.ml.detection.yolo_detector import ToothDetectionModel
 
         return ToothDetectionModel.gradcam_heatmap(self, image_bgr, detections)
+
+    def gradcam_per_tooth(self, image_bgr: np.ndarray, detections: list[dict]):
+        from app.ml.detection.yolo_detector import ToothDetectionModel
+
+        return ToothDetectionModel.gradcam_per_tooth(self, image_bgr, detections)
 
     def _raw(self, image_bgr: np.ndarray):
         results = self.model(image_bgr, conf=0.05, verbose=False)

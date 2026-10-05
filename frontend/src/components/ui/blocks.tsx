@@ -208,3 +208,16 @@ export function Modal({ open, onClose, title, children }: { open: boolean; onClo
     </AnimatePresence>
   );
 }
+
+
+/** Shown wherever a trend, grade or forecast is built from synthetic demo visits (planted values, not measurements). */
+export function DemoDataBanner({ what }: { what: string }) {
+  return (
+    <div role="note" className="mb-6 rounded-xl border border-review-400/40 bg-review-500/10 px-4 py-3 text-sm text-review-400">
+      <strong>Synthetic demo data.</strong> {what} comes from generated demo visits with planted bone levels, so it shows how
+      the feature works, not a measurement. On real radiographs a change counts only when it is larger than both readings'
+      calibrated error ranges together (often about ±35-40 points with today's landmark accuracy); smaller changes are labelled
+      "no change beyond measurement error".
+    </div>
+  );
+}

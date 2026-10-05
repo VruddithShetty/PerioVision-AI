@@ -29,7 +29,9 @@ The main limitations are honest ones:
 
 - both models are trained and measured on held-out test sets (detector 95.8 % mAP@0.5; landmarks bone-loss error 7.6 points, 73 % stage agreement), but landmarks are validated on periapical X-rays only;
 - uncertainty is calibrated (91.5 % coverage at 90 %) but wide, so most teeth still go to dentist review;
-- the risk score is a transparent rule-assisted demo rather than a trained model.
+- the clinical risk model is trained on NHANES but modest (AUC 0.65), and it is fused with the radiograph by a documented rule, not a learned weight.
+
+_Update 2026-10-04: the numbers above are from the first measured release. Current figures with 95 % confidence intervals are in `RESULTS_WITH_CI.md` and `MODEL_CARD.md`._
 
 Section 10 explains each of these.
 
@@ -113,9 +115,9 @@ More detail: `docs/ARCHITECTURE.md`.
 - Calibration is written to `weights/conformal_calibration.json` by `scripts/calibrate_conformal.py`, which reserves half the scores to measure the coverage actually achieved.
 
 ### O5 Multimodal risk fusion (`ml/fusion/multimodal_risk.py`)
-- **Inputs:** age, smoking status and cigarettes per day, diabetes, HbA1c; mean and max bone loss, number of affected teeth, and progression velocity.
-- **Output:** low, moderate or high, a score, and the top contributing factors in plain language (exact linear contributions, the SHAP idea for a linear model).
-- **Honesty:** no outcome dataset exists, so this is a documented **rule-assisted demo** with hand-set weights that follow the direction of the literature. Every response, page and report says so.
+- **Clinical part (trained):** logistic regression on age, sex, smoking status and cigarettes per day, diabetes and HbA1c, trained on NHANES 2009-2012 (7,417 adults) and validated on NHANES 2013-2014 (3,855): ROC AUC 0.650 (95 % CI 0.633-0.668), Brier 0.226. Outcome: moderate or severe periodontitis (CDC/AAP). Missing required inputs give "insufficient data", never a default value.
+- **Radiographic part (measured):** the worst-tooth stage from periapical measurement, or the panoramic whole-film estimate with its 90 % interval, plus any measurable rapid progression.
+- **Fusion:** the combined level is the higher of the two parts, a documented decision rule in the spirit of Lang & Tonetti's periodontal risk assessment. No public dataset links radiographs to outcomes, so no image weight is learned. Every response, page and the signed report show both parts and the rule.
 
 ---
 
@@ -223,7 +225,7 @@ This was verified end to end both in the browser and in `tests/test_api.py::test
 
 1. **Landmarks validated on periapical X-rays only.** The landmark model (YOLO11m-pose on DenPAR) reached 99.0 % tooth recall, bone-loss MAE 7.64 points and 73.1 % stage agreement on 200 held-out periapical X-rays; on panoramic images it is applied to zoomed crops and those teeth are always reviewed. Earlier state: The tooth detector was retrained (YOLO11m on public DENTEX data, free Colab GPU). It scores 94.1 % precision, 94.5 % recall, 95.8 % mAP@0.5 and 94.8 % tooth-level F1 on 63 held-out test X-rays, and it found 26 teeth on a real image where the old model found 2. The keypoint model still predicts one box spanning many teeth, so landmarks fall back to labelled estimates; its training labels were generated geometrically, not drawn by clinicians.
 2. **Uncertainty is calibrated but wide.** Conformal calibration on DenPAR validation teeth gives 91.5 % coverage on the test split at the 90 % target, with a radius of 18.6 points, so only about 10 % of teeth get a single-stage answer and the rest are reviewed.
-3. **Risk model is a rule-assisted demo**, because there is no outcome data.
+3. **Risk fusion is rule-based.** The clinical model is trained and validated (AUC 0.65); its combination with the radiograph is a documented rule because no dataset links radiographs to outcomes.
 4. **Accuracy is claimed only where it was measured.** Detector metrics come from the DENTEX test split, landmark and bone-loss metrics from the DenPAR test split; nothing is claimed for panoramic landmark accuracy.
 5. **Demo mode is in-memory**, so its data resets on restart. The development server is HTTP unless the local certificate is used.
 6. **Decoy records** are hidden from normal lists by a system owner ID that someone with direct database access could notice. They are designed against API-level probing.
@@ -250,6 +252,6 @@ Sign in with a `DEMO_*` account from `.env`; these accounts are for demos only. 
 1. **Make the GitHub repository private** (or rewrite its history), then push branch `restructure/phase-1`.
 2. **Retrain the detector and keypoint models on clinician-annotated radiographs** (for example DENTEX plus per-tooth CEJ, crest and apex annotations) on a GPU, then sign the new weights with `scripts/sign_model.py`.
 3. **Calibrate uncertainty** on a held-out annotated split with `scripts/calibrate_conformal.py`. Only then report real metrics in the model card.
-4. **Collect longitudinal outcome data** to replace the rule-assisted risk score with a validated model.
+4. **Collect longitudinal outcome data** linking radiographs to periodontitis outcomes, so the image part of the risk fusion can be learned and validated instead of rule-based.
 5. **Replace the demo secrets** (new encryption key ring plus `rotate_keys.py`, a new signing key pair and password), remove the demo accounts, and deploy behind a TLS reverse proxy with MongoDB authentication.
 6. Add the synopsis and slides to `docs/reference/`, add screenshots to the README.

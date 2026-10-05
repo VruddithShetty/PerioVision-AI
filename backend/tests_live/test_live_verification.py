@@ -138,10 +138,39 @@ def test_teeth_without_model_landmarks_get_no_number(services, panoramic_images)
     for t in r["teeth"]:
         assert t["bone_loss_pct"] is None and t["stage"] is None and t["cej"] is None
         assert t["roi_attention"] is None and t["uncertainty"]["interval"] is None
-        assert t["landmark_source"] in ("not_measured", "not_validated_on_panoramic")
+        assert t["landmark_source"] == "not_validated_on_panoramic"          # one consistent status per film type
     reasons = {x["code"]: x for x in r["review"]["reasons"]}
-    assert "not_validated_image_type" in reasons
+    assert "not_validated_image_type" in reasons and "not_measured" not in reasons
     assert r["summary"]["teeth_measured"] == 0 and r["summary"]["stage"] is None
+    assert "No per-tooth bone-loss measurement" in r["summary"]["grade"]["reasons"][0]
+
+
+def test_panoramic_films_skip_the_unused_landmark_model(services, panoramic_images, monkeypatch):
+    """Panoramic per-tooth landmarks are never reported, so the ~20 s of per-tooth crops is not run at all."""
+    lm = services["container"].landmark_detector()
+
+    def must_not_run(*_a, **_k):
+        raise AssertionError("landmark model ran on a panoramic film")
+
+    monkeypatch.setattr(lm, "detect_landmarks", must_not_run)
+    r = services["analyse"](_gray(panoramic_images[0]), services["new_patient"](), "2026-01-01")
+    assert r["image_type"] == "panoramic" and r["teeth"]
+
+
+def test_missing_calibration_never_brings_back_panoramic_numbers(services, panoramic_images):
+    from app import config
+    from app.ml.uncertainty import calibration
+
+    path = config.CALIBRATION_FILE
+    original = path.read_bytes()
+    try:
+        path.unlink()
+        calibration.reset_cache()
+        r = services["analyse"](_gray(panoramic_images[0]), services["new_patient"](), "2026-01-01")
+        assert r["image_type"] == "panoramic" and all(t["bone_loss_pct"] is None for t in r["teeth"])
+    finally:
+        path.write_bytes(original)
+        calibration.reset_cache()
 
 
 def test_stage_follows_the_documented_bands(services, denpar_images):
@@ -329,13 +358,13 @@ def test_live_api_response_is_live_and_not_synthetic(client, dentist, denpar_ima
 
 
 # ---------- whole-film panoramic estimate ----------
-def test_panoramic_films_get_a_validated_whole_film_estimate(services, panoramic_images):
+def test_panoramic_films_get_a_validated_whole_film_estimate(services, wide_panoramic_images):
     from app import config
 
     if not (config.WEIGHTS_DIR / "panoramic_severity.pt").exists():
         pytest.skip("panoramic whole-film models not installed")
-    a = services["analyse"](_gray(panoramic_images[0]), services["new_patient"](), "2026-01-01")
-    b = services["analyse"](_gray(panoramic_images[1]), services["new_patient"](), "2026-01-01")
+    a = services["analyse"](_gray(wide_panoramic_images[0]), services["new_patient"](), "2026-01-01")
+    b = services["analyse"](_gray(wide_panoramic_images[1]), services["new_patient"](), "2026-01-01")
     pa = a["panoramic_assessment"]
     assert pa and pa["level"].startswith("patient")
     metrics = json.loads((config.WEIGHTS_DIR / "panoramic_severity_metrics.json").read_text())
@@ -351,6 +380,40 @@ def test_panoramic_films_get_a_validated_whole_film_estimate(services, panoramic
     assert (pa["worst_tooth"]["bone_loss_pct"], pa["screen"]["maxilla"]["probability"]) !=         (pb["worst_tooth"]["bone_loss_pct"], pb["screen"]["maxilla"]["probability"]), "output does not depend on the film"
     # per-tooth numbers stay withheld on panoramic films
     assert all(t["bone_loss_pct"] is None for t in a["teeth"])
+    # the uncertainty system itself flags the case: the 90 % interval spans more than one stage
+    if len(wt["stage_set"]) > 1:
+        assert "panoramic_stage_ambiguous" in {x["code"] for x in a["review"]["reasons"]}
+    # the whole-film estimate is the radiograph's evidence in the fused risk
+    fusion = a["risk"]["fusion"]
+    assert fusion["radiographic_level"] == {"I": "low", "II": "moderate", "III": "high", "IV": "high"}[wt["stage"]]
+    assert "whole-film" in fusion["radiographic_basis"]
+
+
+def test_periapical_film_shapes_never_get_the_panoramic_estimate(services, denpar_images, monkeypatch):
+    """A periapical film that the detector routes to the panoramic path (1 % of DenPAR test films) is
+    shaped unlike any panoramic training film, so the whole-film models are not applied to it."""
+    from app.services import analysis_service
+
+    real_locate = analysis_service.locate_teeth
+
+    def routed_as_panoramic(*args, **kwargs):                              # what the detector does on 1 % of films
+        return {**real_locate(*args, **kwargs), "image_type": "panoramic"}
+
+    monkeypatch.setattr(analysis_service, "locate_teeth", routed_as_panoramic)
+    r = services["analyse"](_gray(denpar_images[0]), services["new_patient"](), "2026-01-01")
+    assert r["image_type"] == "panoramic" and r["panoramic_assessment"] is None
+    assert "film_shape_not_panoramic" in {x["code"] for x in r["review"]["reasons"]}
+
+
+def test_squashed_panoramic_uploads_get_no_whole_film_estimate(services, panoramic_images):
+    """A panoramic film resized to a square (some exported or phone images) is unlike every training film."""
+    import cv2
+
+    square = [f for f in panoramic_images if (lambda s: max(s) / min(s))(cv2.imread(str(f), 0).shape[:2]) < 1.6]
+    if not square:
+        pytest.skip("no square panoramic image in the test folder")
+    r = services["analyse"](_gray(square[0]), services["new_patient"](), "2026-01-01")
+    assert r["panoramic_assessment"] is None and all(t["bone_loss_pct"] is None for t in r["teeth"])
 
 
 def test_periapical_films_get_no_panoramic_estimate(services, denpar_images):
@@ -376,3 +439,49 @@ def test_tampered_panoramic_model_is_refused(services, panoramic_images):
     finally:
         path.write_bytes(original)
         services["container"].reset_models()
+
+
+# ---------- per-tooth Grad-CAM (on demand) ----------
+def test_per_tooth_gradcam_explains_only_the_selected_tooth(client, dentist, wide_panoramic_images, denpar_images):
+    """The 'only this tooth' heatmap back-propagates one detection: it differs from the all-teeth map and
+    between teeth, and it is computed by the model that made the detection (detector or pose model)."""
+    pid = client.post("/api/patients", headers=dentist, json={"name": "Per-tooth CAM", "age": 55, "sex": "male",
+                                                              "smoking_status": "never"}).get_json()["data"]["patient_id"]
+    for path, date, model in ((wide_panoramic_images[0], "2026-03-01", "tooth detector"),
+                              (denpar_images[2], "2026-04-01", "landmark (pose) model")):
+        up = client.post("/api/radiographs", headers=dentist, content_type="multipart/form-data",
+                         data={"image": (io.BytesIO(_png(_gray(path))), "film.png")}).get_json()["data"]["upload_id"]
+        a = client.post("/api/analyses", headers=dentist,
+                        json={"upload_id": up, "patient_id": pid, "visit_date": date}).get_json()["data"]
+        ids = [t["tooth_id"] for t in a["teeth"]][:2]
+        maps = []
+        for tid in ids:
+            r = client.get(f"/api/analyses/{a['analysis_id']}/teeth/{tid}/gradcam", headers=dentist)
+            assert r.status_code == 200 and r.data[1:4] == b"PNG" and r.headers["X-Explained-Model"] == model
+            maps.append(cv2.imdecode(np.frombuffer(r.data, np.uint8), cv2.IMREAD_UNCHANGED))
+        combined = cv2.imdecode(np.frombuffer(client.get(a["images"]["gradcam"], headers=dentist).data, np.uint8),
+                                cv2.IMREAD_UNCHANGED)
+        assert maps[0].shape == combined.shape
+        assert not np.array_equal(maps[0], combined) and not np.array_equal(maps[0], maps[1])
+    assert client.get(f"/api/analyses/{a['analysis_id']}/teeth/NOPE/gradcam", headers=dentist).status_code == 404
+
+
+def test_periapical_attention_check_uses_each_tooths_own_map(services, denpar_images):
+    r = services["analyse"](_gray(denpar_images[3]), services["new_patient"](), "2026-01-01")
+    assert r["image_type"] == "periapical"
+    assert r["explainability"]["attention_check"].startswith("per-tooth")
+    assert "LayerCAM" in r["explainability"]["method"]
+    measured_teeth = [t for t in r["teeth"] if t["bone_loss_pct"] is not None]
+    assert measured_teeth and all(t["roi_attention"] is not None for t in measured_teeth)
+    assert all(t["flags"]["low_attention_validity"] == (t["roi_attention"] < 0.25) for t in measured_teeth)
+
+
+def test_batched_per_tooth_maps_equal_one_backward_per_tooth(services, denpar_images):
+    """The batched backward pass used at analysis time gives exactly the maps of explaining each tooth alone."""
+    r = services["locate"](_gray(denpar_images[4]))
+    model, dets = r["explain_model"], r["detections"]
+    batched = model.gradcam_per_tooth(r["bgr"], dets)
+    for k, det in enumerate(dets):
+        alone = model.gradcam_heatmap(r["bgr"], [det])
+        assert batched[k] is not None and alone is not None
+        assert float(np.abs(batched[k] - alone).max()) < 1e-4

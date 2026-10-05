@@ -216,6 +216,7 @@ def care_plan(patient: dict, analysis: dict | None, chart: dict | None, progress
         c["status"] != "agree" for c in concordance(summary, analysis)) if summary else stage in ("III", "IV")
 
     return {
+        "demo_data": (analysis or {}).get("mode") == "demo",
         "stage": stage, "radiographic_stage": radio_stage, "clinical_stage": clin_stage,
         "grade": grade, "risk": risk.get("category"), "recall": recall, "last_visit": last_visit,
         "next_recall_due": next_due, "steps": steps, "prognosis": prognosis,

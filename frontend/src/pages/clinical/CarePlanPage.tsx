@@ -6,7 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import { useCarePlan } from "@/api/hooks";
 import type { CarePlan } from "@/api/types";
 import { Odontogram } from "@/components/dental/Odontogram";
-import { ErrorState, LoadingRows, PageHeader, Stat } from "@/components/ui/blocks";
+import { DemoDataBanner, ErrorState, LoadingRows, PageHeader, Stat } from "@/components/ui/blocks";
 import { Badge, Button, Card, CardTitle } from "@/components/ui/primitives";
 import { fmtDate, stageColor } from "@/lib/format";
 import { useAuth } from "@/store/auth";
@@ -88,6 +88,7 @@ export default function CarePlanPage() {
           </>
         }
       />
+      {plan.demo_data && <DemoDataBanner what="The radiographic stage, grade and progression behind this care plan" />}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Stat label="Diagnosis suggestion" value={<span style={{ color: stageColor(plan.stage) }}>Stage {plan.stage ?? "–"}</span>} hint={`X-ray ${plan.radiographic_stage ?? "–"} · clinical ${plan.clinical_stage ?? "–"}`} />
         <Stat label="Grade" value={plan.grade.grade ?? "–"} hint={plan.grade.basis ?? "insufficient data"} tone={plan.grade.grade === "C" ? "critical" : plan.grade.grade === "B" ? "review" : "ok"} />

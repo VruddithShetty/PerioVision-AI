@@ -203,8 +203,11 @@ def patient_progression(analyses: list[dict]) -> dict:
     latest = [c for c in comparisons if ordered and c["to_date"] == str(ordered[-1]["visit_date"])[:10]]
     reliable_v = usable_velocities(latest)
     return {
+        # Synthetic demo visits carry planted bone levels and skip the measurement-error check, so any
+        # trend built from them is labelled as demo data on every page that shows it.
+        "demo_data": any(a.get("mode") == "demo" for a in ordered),
         "visits": [{"analysis_id": a["analysis_id"], "visit_date": str(a["visit_date"])[:10],
-                    "review_status": a.get("review", {}).get("status")} for a in ordered],
+                    "mode": a.get("mode"), "review_status": a.get("review", {}).get("status")} for a in ordered],
         "series": series,
         "comparisons": comparisons,
         "latest": latest,

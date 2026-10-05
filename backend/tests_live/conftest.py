@@ -109,6 +109,22 @@ def panoramic_images():
 
 
 @pytest.fixture(scope="session")
+def wide_panoramic_images(panoramic_images):
+    """Panoramic films with real panoramic proportions (long/short side >= 1.6). Some team images are
+    panoramics squashed to 640 x 640, which the whole-film models deliberately refuse."""
+    import cv2
+
+    def ratio(path):
+        h, w = cv2.imread(str(path), cv2.IMREAD_GRAYSCALE).shape[:2]
+        return max(h, w) / min(h, w)
+
+    wide = [f for f in images_in(PANORAMIC_DIR, 400) if ratio(f) >= 1.6][:2]
+    if len(wide) < 2:
+        pytest.skip(f"needs >= 2 correctly proportioned panoramic radiographs in {PANORAMIC_DIR}")
+    return wide
+
+
+@pytest.fixture(scope="session")
 def denpar_images():
     files = images_in(DENPAR_DIR / "images" / "test", 400)
     if len(files) < 2:
