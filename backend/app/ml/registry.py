@@ -21,6 +21,11 @@ MODEL_SPECS = {
                        "purpose": "YOLO11m tooth detection with FDI tooth numbers (DENTEX, fine-tuned on Aga Khan folders 1+3)"},
     "landmarks": {"file": "dental_landmark_yolov8n-pose.pt", "task": "pose",
                   "purpose": "YOLO-pose CEJ / root apex / bone crest keypoints"},
+    # Optional extra members of a landmark ensemble (same keypoint layout as "landmarks"; app/ml/landmarks/fusion.py)
+    "landmarks_2": {"file": "dental_landmark_ens2-pose.pt", "task": "pose", "optional": True,
+                    "purpose": "Landmark ensemble member 2"},
+    "landmarks_3": {"file": "dental_landmark_ens3-pose.pt", "task": "pose", "optional": True,
+                    "purpose": "Landmark ensemble member 3"},
     # Optional whole-film panoramic models (torch state dicts; see app/ml/panoramic/whole_film.py)
     "panoramic_screen": {"file": "panoramic_screen.pt", "task": "torch_state_dict", "optional": True,
                          "purpose": "Panoramic generalised bone loss per jaw (ConvNeXt-T, ToothXpert MM-OPG)"},

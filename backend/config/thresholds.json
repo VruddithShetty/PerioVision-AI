@@ -22,7 +22,8 @@
     "min_keypoint_confidence": 0.3,
     "match_iou": 0.3,
     "tta_mirror": true,
-    "measure_unvalidated_image_types": false
+    "measure_unvalidated_image_types": false,
+    "twosite_min_site_confidence": 0.6
   },
   "explainability": {
     "min_roi_attention": 0.25,

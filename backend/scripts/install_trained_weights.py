@@ -25,6 +25,7 @@ from app import config  # noqa: E402
 from app.security.model_signing import Signer, SigningError  # noqa: E402
 
 FILES = {"dental_yolov8n.pt": "detect", "dental_landmark_yolov8n-pose.pt": "pose",
+         "dental_landmark_ens2-pose.pt": "pose", "dental_landmark_ens3-pose.pt": "pose",   # optional ensemble members
          "panoramic_screen.pt": "whole_film", "panoramic_severity.pt": "whole_film"}
 METRIC_FILES = ("detector_test_metrics.json", "landmark_test_metrics.json", "conformal_calibration.json",
                 "panoramic_screen_metrics.json", "panoramic_severity_metrics.json", "pipeline_test_metrics.json")
@@ -54,8 +55,8 @@ def check(path: str, task: str) -> str | None:
         return f"expected a {task} model, got {model.task}"
     if task == "detect" and set(map(str, model.names.values())) != FDI:
         return "class names are not the 32 FDI tooth numbers"
-    if task == "pose" and list(model.model.yaml.get("kpt_shape", [])) != [3, 3]:
-        return "keypoint shape is not [3, 3] (CEJ, apex, crest)"
+    if task == "pose" and list(model.model.yaml.get("kpt_shape", [])) not in ([3, 3], [5, 3]):
+        return "keypoint shape is not [3, 3] (CEJ, apex, crest) or [5, 3] (two-site: CEJ + crest per side, apex)"
     return None
 
 
@@ -68,6 +69,10 @@ def main() -> int:
     if not found:
         print(f"ERROR: no {' or '.join(FILES)} in {args.src}")
         return 2
+    if any(f.startswith("dental_landmark_ens") for f in found) and "dental_landmark_yolov8n-pose.pt" not in found:
+        print("ERROR: ensemble members must be installed together with their main landmark model "
+              "(dental_landmark_yolov8n-pose.pt), so all members come from the same evaluated ensemble.")
+        return 2
     for f in found:
         problem = check(os.path.join(args.src, f), FILES[f])
         if problem:
@@ -75,6 +80,11 @@ def main() -> int:
             return 2
     backup = os.path.join(os.path.dirname(weights), "weights_backup", time.strftime("%Y%m%d-%H%M%S"))
     os.makedirs(backup, exist_ok=True)
+    if "dental_landmark_yolov8n-pose.pt" in found:            # a new landmark set replaces any previous members
+        for f in ("dental_landmark_ens2-pose.pt", "dental_landmark_ens3-pose.pt"):
+            if f not in found and os.path.exists(os.path.join(weights, f)):
+                shutil.move(os.path.join(weights, f), os.path.join(backup, f))
+                print(f"removed old ensemble member {f} (kept in weights_backup/{os.path.basename(backup)}/)")
     for f in found:
         if os.path.exists(os.path.join(weights, f)):
             shutil.move(os.path.join(weights, f), os.path.join(backup, f))

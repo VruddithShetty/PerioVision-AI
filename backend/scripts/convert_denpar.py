@@ -56,7 +56,7 @@ def convert_image(kp, bone, masks):
     dms = [dist_map(m) for m in masks]
     for m in masks:
         ys, xs = np.nonzero(m)
-        teeth.append({"box": [xs.min(), ys.min(), xs.max(), ys.max()], "cej": [], "apex": []})
+        teeth.append({"box": [xs.min(), ys.min(), xs.max(), ys.max()], "cx": float(xs.mean()), "cej": [], "apex": []})
 
     def nearest(p):
         d = [at(dm, p) for dm in dms]
@@ -82,9 +82,14 @@ def convert_image(kp, bone, masks):
             L2 = float(axis @ axis)
             if L2 < 1:
                 continue
-            side = np.sign(cej[0] - cx_mid) if len(t["cej"]) > 1 else 0
+            # The crest must come from the SAME side of the tooth as the CEJ. With several CEJ points the side is
+            # judged against their midpoint; with a single CEJ, against the tooth's own centre. (Before 2026-10-06 a
+            # single CEJ allowed a crest from either side, which paired the CEJ of one side with the crest of the
+            # other on 10-14 % of DenPAR teeth.)
+            mid = cx_mid if len(t["cej"]) > 1 else t["cx"]
+            side = np.sign(cej[0] - mid)
             cands = [v for v in vertices if at(dms[i], v) <= MAX_DIST
-                     and (side == 0 or np.sign(v[0] - cx_mid) == side)]
+                     and (side == 0 or np.sign(v[0] - mid) == side)]
             crest = max(cands, key=lambda v: float((v - cej) @ axis)) if cands else None
             ratio = float((crest - cej) @ axis) / L2 if crest is not None else -1
             if best is None or ratio > best[0]:

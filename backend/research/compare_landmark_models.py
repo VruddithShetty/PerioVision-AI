@@ -67,35 +67,28 @@ def read_ref(path, w, h):
     return teeth
 
 
-def run_model(model, img, imgsz, kpts: int, tta: bool):
-    """[(box, keypoints[k, 3], disagreement or None)] with mirrored TTA as in the app."""
-    def raw(im):
+def run_model(models, img, kpts: int, tta: bool):
+    """[(box, keypoints[k, 3], disagreement or None)]: the app's fusion (app/ml/landmarks/fusion.py) of every model's
+    normal and (with tta) mirrored reading. `models` = [(YOLO model, imgsz)]; the first model's normal pass anchors."""
+    from app.ml.landmarks import fusion
+
+    def raw(model, imgsz, im):
         r = model.predict(im, imgsz=imgsz, conf=0.05, verbose=False)[0]
         if r.boxes is None or r.keypoints is None or not len(r.boxes):
-            return np.zeros((0, 4)), np.zeros((0, kpts, 3))
-        return r.boxes.xyxy.cpu().numpy().copy(), r.keypoints.data.cpu().numpy().copy()
+            return np.zeros((0, 4)), np.zeros((0, kpts, 3)), np.zeros(0)
+        return (r.boxes.xyxy.cpu().numpy().copy(), r.keypoints.data.cpu().numpy().copy(),
+                r.boxes.conf.cpu().numpy().copy())
 
-    boxes, kp = raw(img)
-    dis = [None] * len(boxes)
-    if tta and len(boxes):
-        w = img.shape[1]
-        mb, mk = raw(np.ascontiguousarray(img[:, ::-1]))
-        if len(mb):
-            mb = np.stack([w - mb[:, 2], mb[:, 1], w - mb[:, 0], mb[:, 3]], 1)
-            mk[:, :, 0] = w - mk[:, :, 0]
-            if kpts == 5:
-                mk = mk[:, SWAP5]
-            used = set()
-            for i in range(len(boxes)):
-                j, best = max(((j, iou(boxes[i], mb[j])) for j in range(len(mb)) if j not in used),
-                              key=lambda t: t[1], default=(None, 0.0))
-                if j is None or best < 0.5:
-                    continue
-                used.add(j)
-                a, b = tooth_pct(kp[i], kpts, 0.0), tooth_pct(mk[j], kpts, 0.0)
-                kp[i] = (kp[i] + mk[j]) / 2.0
-                dis[i] = abs(a - b) if a is not None and b is not None else None
-    return list(zip(boxes, kp, dis))
+    w = img.shape[1]
+    readings = []
+    for model, imgsz in models:
+        readings.append(raw(model, imgsz, img))
+        if tta and len(readings[0][0]):
+            mb, mk, mc = raw(model, imgsz, np.ascontiguousarray(img[:, ::-1]))
+            readings.append((*fusion.unmirror(mb, mk, w), mc))
+    if not len(readings[0][0]):
+        return []
+    return [(box, k, dis) for box, k, _conf, dis in fusion.fuse(readings)]
 
 
 def tooth_pct(k, kpts: int, site_conf: float) -> float | None:
@@ -116,8 +109,11 @@ def predict(args) -> int:
     import cv2
     from ultralytics import YOLO
 
-    model = YOLO(args.model)
-    imgsz = args.imgsz or int(model.overrides.get("imgsz", 1024))
+    models = []
+    for spec in args.model:                       # path or path@imgsz; several = an ensemble
+        path, _, size = spec.partition("@")
+        m = YOLO(path)
+        models.append((m, int(size) if size else (args.imgsz or int(m.overrides.get("imgsz", 1024)))))
     files = sorted(glob.glob(os.path.join(args.images, "*.jpg")) + glob.glob(os.path.join(args.images, "*.png")))
     files = files[: args.limit] if args.limit else files
     rows = []
@@ -128,7 +124,7 @@ def predict(args) -> int:
         if img is None or not os.path.exists(lab):
             continue
         h, w = img.shape[:2]
-        preds, used = run_model(model, img, imgsz, args.kpts, not args.no_tta), set()
+        preds, used = run_model(models, img, args.kpts, not args.no_tta), set()
         for t_idx, ref in enumerate(read_ref(lab, w, h)):
             j, best = max(((j, iou(ref["bbox"], p[0])) for j, p in enumerate(preds) if j not in used),
                           key=lambda t: t[1], default=(None, 0.0))
@@ -202,8 +198,13 @@ def summary(args) -> int:
     report = {"kpts": args.kpts, "site_conf_chosen_on_val": chosen, "val": score(val, args.kpts, cut, args.boot),
               "test": score(test, args.kpts, cut, args.boot)}
     if args.baseline_test:
-        base = _load(args.baseline_test, 3)
-        report["baseline_3kpt_test"] = score(base, 3, MIN_KPT_CONF, args.boot)
+        bk = args.baseline_kpts
+        bcut = MIN_KPT_CONF if bk == 3 else args.baseline_site_conf
+        base = _load(args.baseline_test, bk)
+        report["baseline_test"] = score(base, bk, bcut, args.boot)
+        report["baseline_kpts"] = bk
+        if bk == 3:
+            report["baseline_3kpt_test"] = report["baseline_test"]          # name used by earlier reports
         # paired comparison on teeth both models measured
         nb = {(r["image"], i): r for i, r in enumerate(base)}
         nt = {(r["image"], i): r for i, r in enumerate(test)}
@@ -212,7 +213,7 @@ def summary(args) -> int:
             a, b = nb[key], nt[key]
             if a["k"] is None or b["k"] is None:
                 continue
-            pa, pb = tooth_pct(a["k"], 3, MIN_KPT_CONF), tooth_pct(b["k"], args.kpts, cut)
+            pa, pb = tooth_pct(a["k"], bk, bcut), tooth_pct(b["k"], args.kpts, cut)
             if pa is not None and pb is not None:
                 pairs.append((key[0], abs(pa - a["ref"]), abs(pb - b["ref"])))
         if pairs:
@@ -238,7 +239,8 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("predict")
-    p.add_argument("--model", required=True)
+    p.add_argument("--model", required=True, action="append",
+                   help="model file, optionally path@imgsz; repeat for an ensemble (the first one anchors)")
     p.add_argument("--kpts", type=int, choices=(3, 5), required=True)
     p.add_argument("--images", required=True)
     p.add_argument("--labels", required=True, help="3-keypoint REFERENCE labels (convert_denpar.py)")
@@ -251,6 +253,8 @@ def main(argv=None) -> int:
     s.add_argument("--test", required=True)
     s.add_argument("--kpts", type=int, choices=(3, 5), required=True)
     s.add_argument("--baseline-test")
+    s.add_argument("--baseline-kpts", type=int, choices=(3, 5), default=3)
+    s.add_argument("--baseline-site-conf", type=float, default=0.6, help="site cut-off of a 5-keypoint baseline")
     s.add_argument("--min-share", type=float, default=0.95, help="5-kpt: keep at least this share of teeth measured (val)")
     s.add_argument("--boot", type=int, default=2000)
     s.add_argument("--out", required=True)

@@ -73,16 +73,17 @@ def convert_image(kp, bone, masks):
         for cej in t["cej"]:
             if float((apex - cej) @ (apex - cej)) < 1:
                 continue
-            side = np.sign(cej[0] - cx_mid) if len(t["cej"]) > 1 else 0      # same rule as convert_denpar.py
+            mid = cx_mid if len(t["cej"]) > 1 else t["cx"]                  # same rule as convert_denpar.py
+            side = np.sign(cej[0] - mid)
             cands = [v for v in vertices if at(dms[i], v) <= MAX_DIST
-                     and (side == 0 or np.sign(v[0] - cx_mid) == side)]
+                     and (side == 0 or np.sign(v[0] - mid) == side)]
             axis = apex - cej
             crest = max(cands, key=lambda v: float((v - cej) @ axis)) if cands else None
             r = ratio(cej, crest, apex)
             if worst is None or r > worst[0]:
                 worst = (r, cej, crest)
             # which side of the tooth: by the CEJ's own x when there are several, else by the tooth centre
-            name = ("left" if side < 0 else "right") if side != 0 else ("left" if cej[0] < t["cx"] else "right")
+            name = "left" if side < 0 else "right"
             if sites[name] is None or r > sites[name]["ratio"]:
                 sites[name] = {"cej": cej, "crest": crest, "ratio": r}
         if worst is None:

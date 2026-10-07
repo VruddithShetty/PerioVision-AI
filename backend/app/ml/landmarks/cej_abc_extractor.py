@@ -24,6 +24,11 @@ from app import config
 from app.ml.registry import registry
 
 KEYPOINT_ORDER = ("cej", "root_apex", "bone_crest")
+# Two-site model (scripts/convert_denpar_twosite.py): CEJ and crest on the image-left and image-right side of the
+# tooth, then the apex. A mirror flip swaps the two sides.
+TWOSITE_ORDER = ("cej_left", "crest_left", "cej_right", "crest_right", "root_apex")
+TWOSITE_SITES = {"left": (0, 1), "right": (2, 3)}
+SWAP5 = [2, 3, 0, 1, 4]
 
 
 def _iou(a, b) -> float:
@@ -35,9 +40,37 @@ def _iou(a, b) -> float:
 
 
 def _pct(k) -> float | None:
+    """Bone loss of one predicted tooth. Two-site keypoints: the worse of the two sites (no confidence cut-off;
+    used for the mirrored-reading disagreement, exactly as in research/compare_landmark_models.py)."""
     from app.ml.measurement.bone_loss import bone_loss_for_tooth
 
+    if len(k) == 5:
+        vals = [bone_loss_for_tooth({"cej": k[c, :2], "root_apex": k[4, :2], "bone_crest": k[r, :2]})["bone_loss_pct"]
+                for c, r in TWOSITE_SITES.values()]
+        vals = [v for v in vals if v is not None]
+        return max(vals) if vals else None
     return bone_loss_for_tooth({"cej": k[0, :2], "root_apex": k[1, :2], "bone_crest": k[2, :2]})["bone_loss_pct"]
+
+
+def worst_confident_site(k, site_conf: float, min_apex_conf: float):
+    """Two-site keypoints -> (site name, 3-keypoint array [cej, apex, crest], bone loss %, both sites' %), or None.
+
+    A site counts only when its CEJ and crest confidences are both >= site_conf (the model learned low confidence
+    for sides the annotators did not mark); the worse counting site is reported, as staging is defined."""
+    from app.ml.measurement.bone_loss import bone_loss_for_tooth
+
+    if k[4, 2] < min_apex_conf:
+        return None
+    sites = {}
+    for name, (c, r) in TWOSITE_SITES.items():
+        pct = bone_loss_for_tooth({"cej": k[c, :2], "root_apex": k[4, :2], "bone_crest": k[r, :2]})["bone_loss_pct"]
+        if pct is not None and min(k[c, 2], k[r, 2]) >= site_conf:
+            sites[name] = pct
+    if not sites:
+        return None
+    name = max(sites, key=sites.get)
+    c, r = TWOSITE_SITES[name]
+    return name, np.stack([k[c], k[4], k[r]]), sites[name], sites
 
 
 def heuristic_landmarks(bbox) -> dict:
@@ -55,7 +88,17 @@ def heuristic_landmarks(bbox) -> dict:
 class LandmarkDetectionModel:
     def __init__(self):
         self.model = registry().get("landmarks")
+        # optional ensemble members; used only when their keypoint layout matches the main model's
+        self.members = [self.model] if self.model is not None else []
         self._gradcam = None
+        shape = list(getattr(getattr(self.model, "model", None), "yaml", {}).get("kpt_shape", [3, 3])) \
+            if self.model is not None else [3, 3]
+        self.n_kpts = int(shape[0])
+        if self.model is not None:
+            for name in ("landmarks_2", "landmarks_3"):
+                extra = registry().get(name)
+                if extra is not None and int(list(extra.model.yaml.get("kpt_shape", [0, 0]))[0]) == self.n_kpts:
+                    self.members.append(extra)
 
     @property
     def available(self) -> bool:
@@ -72,10 +115,10 @@ class LandmarkDetectionModel:
 
         return ToothDetectionModel.gradcam_per_tooth(self, image_bgr, detections)
 
-    def _raw(self, image_bgr: np.ndarray):
-        results = self.model(image_bgr, conf=0.05, verbose=False)
+    def _raw(self, image_bgr: np.ndarray, model=None):
+        results = (model or self.model)(image_bgr, conf=0.05, verbose=False)
         if not results or results[0].keypoints is None or results[0].boxes is None:
-            return np.zeros((0, 4)), np.zeros((0, 3, 3)), np.zeros(0)
+            return np.zeros((0, 4)), np.zeros((0, self.n_kpts, 3)), np.zeros(0)
         return (results[0].boxes.xyxy.cpu().numpy().copy(), results[0].keypoints.data.cpu().numpy().copy(),
                 results[0].boxes.conf.cpu().numpy().copy())
 
@@ -89,24 +132,27 @@ class LandmarkDetectionModel:
         the validation (8.39 -> 8.23) and test (7.57 -> 7.28) splits. A tooth seen in only one pass keeps
         that pass's keypoints and a disagreement of None (treated as the hardest case).
         """
+        from app.ml.landmarks import fusion
+
         boxes, kpts, confs = self._raw(image_bgr)
-        dis = [None] * len(boxes)
-        if tta and config.THRESHOLDS["landmarks"].get("tta_mirror", True) and len(boxes):
-            w = image_bgr.shape[1]
-            mb, mk, _mc = self._raw(np.ascontiguousarray(image_bgr[:, ::-1]))
-            if len(mb):
-                mb = np.stack([w - mb[:, 2], mb[:, 1], w - mb[:, 0], mb[:, 3]], 1)   # back to original x
-                mk[:, :, 0] = w - mk[:, :, 0]
-                used = set()
-                for i in range(len(boxes)):
-                    j, best = max(((j, _iou(boxes[i], mb[j])) for j in range(len(mb)) if j not in used),
-                                  key=lambda t: t[1], default=(None, 0.0))
-                    if j is None or best < 0.5:
-                        continue
-                    used.add(j)
-                    a, b = _pct(kpts[i]), _pct(mk[j])
-                    kpts[i] = (kpts[i] + mk[j]) / 2.0
-                    dis[i] = abs(a - b) if a is not None and b is not None else None
+        readings = [(boxes, kpts, confs)]
+        mirror = tta and config.THRESHOLDS["landmarks"].get("tta_mirror", True) and len(boxes)
+        w = image_bgr.shape[1]
+        if mirror:
+            mb, mk, mc = self._raw(np.ascontiguousarray(image_bgr[:, ::-1]))
+            readings.append((*fusion.unmirror(mb, mk, w), mc))
+        if tta:                                     # ensemble members (none unless extra signed models are installed)
+            for member in self.members[1:]:
+                b, k, c = self._raw(image_bgr, member)
+                readings.append((b, k, c))
+                if mirror:
+                    mb, mk, mc = self._raw(np.ascontiguousarray(image_bgr[:, ::-1]), member)
+                    readings.append((*fusion.unmirror(mb, mk, w), mc))
+        fused = fusion.fuse(readings) if len(boxes) else []
+        boxes = np.array([f[0] for f in fused]).reshape(-1, 4)
+        kpts = np.array([f[1] for f in fused]).reshape(-1, self.n_kpts, 3)
+        confs = np.array([f[2] for f in fused])
+        dis = [f[3] for f in fused]
         ox, oy = offset
         boxes[:, [0, 2]] += ox
         boxes[:, [1, 3]] += oy
@@ -116,8 +162,15 @@ class LandmarkDetectionModel:
 
     @staticmethod
     def _landmarks_from(k, source: str, match_iou: float | None = None, disagreement: float | None = None) -> dict | None:
+        t = config.THRESHOLDS["landmarks"]
+        site = None
+        if len(k) == 5:
+            picked = worst_confident_site(k, t.get("twosite_min_site_confidence", 0.6), t["min_keypoint_confidence"])
+            if picked is None:
+                return None
+            site, k, _pct_site, sites = picked
         confs = [float(k[j, 2]) if k.shape[1] > 2 else 0.0 for j in range(3)]
-        if min(confs) < config.THRESHOLDS["landmarks"]["min_keypoint_confidence"]:
+        if min(confs) < t["min_keypoint_confidence"]:
             return None
         out = {
             **{name: [round(float(k[j, 0]), 1), round(float(k[j, 1]), 1)] for j, name in enumerate(KEYPOINT_ORDER)},
@@ -126,6 +179,9 @@ class LandmarkDetectionModel:
             "keypoint_confidences": dict(zip(KEYPOINT_ORDER, [round(c, 3) for c in confs])),
             "tta_disagreement_pct": None if disagreement is None else round(float(disagreement), 3),
         }
+        if site is not None:
+            out["measured_site"] = site
+            out["site_bone_loss_pct"] = {name: round(v, 2) for name, v in sites.items()}
         if match_iou is not None:
             out["match_iou"] = round(match_iou, 3)
         return out

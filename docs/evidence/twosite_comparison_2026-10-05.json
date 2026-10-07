@@ -1,0 +1,241 @@
+{
+  "kpts": 5,
+  "site_conf_chosen_on_val": {
+    "site_conf": 0.6,
+    "val_mae": 6.541820783971934,
+    "val_share": 0.9532293986636972
+  },
+  "val": {
+    "reference_teeth": 449,
+    "matched": 444,
+    "measured": 428,
+    "measured_share_of_reference": 0.9532293986636972,
+    "n": 428,
+    "mae": 6.541820783971934,
+    "mae_ci95": [
+      5.709960078900842,
+      7.4270649607280355
+    ],
+    "median_abs_error": 4.042854786627837,
+    "median_abs_error_ci95": [
+      3.416158034519704,
+      4.576260349050859
+    ],
+    "within_10_points": 0.8014018691588785,
+    "within_10_points_ci95": [
+      0.7552831239291833,
+      0.8429212481350529
+    ],
+    "staging": {
+      "n": 428,
+      "n_clusters": 147,
+      "labels": [
+        "I",
+        "II",
+        "III"
+      ],
+      "confusion_rows_reference_cols_predicted": [
+        [
+          165,
+          16,
+          1
+        ],
+        [
+          44,
+          82,
+          15
+        ],
+        [
+          3,
+          27,
+          75
+        ]
+      ],
+      "exact_stage_accuracy": 0.7523364485981309,
+      "exact_stage_accuracy_ci95": [
+        0.7064401588864596,
+        0.7930272198731501
+      ],
+      "within_one_stage_accuracy": 0.9906542056074766,
+      "within_one_stage_accuracy_ci95": [
+        0.9806295399515739,
+        0.9977682283417801
+      ],
+      "kappa_linear": 0.6986725720356881,
+      "kappa_linear_ci95": [
+        0.6370700945443425,
+        0.7519212749484507
+      ],
+      "kappa_quadratic": 0.7840657414295854,
+      "kappa_quadratic_ci95": [
+        0.730438005185455,
+        0.8285731062480253
+      ],
+      "per_reference_stage_n": {
+        "I": 182,
+        "II": 141,
+        "III": 105
+      }
+    },
+    "bias_pred_minus_ref": -2.401051291463727
+  },
+  "test": {
+    "reference_teeth": 593,
+    "matched": 585,
+    "measured": 560,
+    "measured_share_of_reference": 0.9443507588532883,
+    "n": 560,
+    "mae": 6.373099224469187,
+    "mae_ci95": [
+      5.619567375107736,
+      7.1860923519735165
+    ],
+    "median_abs_error": 4.03701809392591,
+    "median_abs_error_ci95": [
+      3.5142107996951566,
+      4.539550876915221
+    ],
+    "within_10_points": 0.8267857142857142,
+    "within_10_points_ci95": [
+      0.7893757474288448,
+      0.8611611805690198
+    ],
+    "staging": {
+      "n": 560,
+      "n_clusters": 197,
+      "labels": [
+        "I",
+        "II",
+        "III"
+      ],
+      "confusion_rows_reference_cols_predicted": [
+        [
+          241,
+          20,
+          1
+        ],
+        [
+          63,
+          84,
+          9
+        ],
+        [
+          5,
+          30,
+          107
+        ]
+      ],
+      "exact_stage_accuracy": 0.7714285714285715,
+      "exact_stage_accuracy_ci95": [
+        0.7343972111284099,
+        0.8087806721194878
+      ],
+      "within_one_stage_accuracy": 0.9892857142857143,
+      "within_one_stage_accuracy_ci95": [
+        0.9803571428571428,
+        0.9964976786691241
+      ],
+      "kappa_linear": 0.7217195241344527,
+      "kappa_linear_ci95": [
+        0.6667824327865423,
+        0.7700389654198799
+      ],
+      "kappa_quadratic": 0.8047382499044707,
+      "kappa_quadratic_ci95": [
+        0.7589729760816115,
+        0.8431730892632667
+      ],
+      "per_reference_stage_n": {
+        "I": 262,
+        "II": 156,
+        "III": 142
+      }
+    },
+    "bias_pred_minus_ref": -3.270043444577164
+  },
+  "baseline_3kpt_test": {
+    "reference_teeth": 593,
+    "matched": 588,
+    "measured": 587,
+    "measured_share_of_reference": 0.9898819561551433,
+    "n": 587,
+    "mae": 7.339930700501358,
+    "mae_ci95": [
+      6.642413777947987,
+      8.092310098660137
+    ],
+    "median_abs_error": 4.897295094062874,
+    "median_abs_error_ci95": [
+      4.319832540279906,
+      5.285320460776035
+    ],
+    "within_10_points": 0.7955706984667802,
+    "within_10_points_ci95": [
+      0.7597955706984668,
+      0.8285749242600793
+    ],
+    "staging": {
+      "n": 587,
+      "n_clusters": 198,
+      "labels": [
+        "I",
+        "II",
+        "III"
+      ],
+      "confusion_rows_reference_cols_predicted": [
+        [
+          236,
+          43,
+          0
+        ],
+        [
+          57,
+          88,
+          18
+        ],
+        [
+          11,
+          26,
+          108
+        ]
+      ],
+      "exact_stage_accuracy": 0.7359454855195912,
+      "exact_stage_accuracy_ci95": [
+        0.6959424021924022,
+        0.7733356047700171
+      ],
+      "within_one_stage_accuracy": 0.9812606473594548,
+      "within_one_stage_accuracy_ci95": [
+        0.9697478991596639,
+        0.9913941480206541
+      ],
+      "kappa_linear": 0.6698291577156875,
+      "kappa_linear_ci95": [
+        0.6072726109430716,
+        0.7222057970398075
+      ],
+      "kappa_quadratic": 0.7567075402231952,
+      "kappa_quadratic_ci95": [
+        0.6989924555850084,
+        0.8039203027580402
+      ],
+      "per_reference_stage_n": {
+        "I": 279,
+        "II": 163,
+        "III": 145
+      }
+    },
+    "bias_pred_minus_ref": -1.176582532543187
+  },
+  "paired_test": {
+    "teeth": 559,
+    "mae_old": 7.31318890230221,
+    "mae_new": 6.37787075392838,
+    "mae_new_minus_old": -0.9353181483738306,
+    "mae_new_minus_old_ci95": [
+      -1.5077983928279584,
+      -0.3920241059855528
+    ],
+    "note": "negative = the new model's error is lower; CI excluding 0 = a real difference"
+  }
+}
