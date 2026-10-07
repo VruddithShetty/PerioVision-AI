@@ -82,8 +82,11 @@ def fingerprints() -> dict[str, list[float] | None]:
 
 def record() -> dict:
     """Write the current fingerprints as the expected ones (called by scripts/sign_model.py before signing)."""
-    data = {"note": "Expected outputs of every model on fixed synthetic inputs; see app/ml/canary.py.",
-            "fingerprints": fingerprints()}
+    from app.ml.inference_lock import MODEL_LOCK
+
+    with MODEL_LOCK:
+        data = {"note": "Expected outputs of every model on fixed synthetic inputs; see app/ml/canary.py.",
+                "fingerprints": fingerprints()}
     (config.WEIGHTS_DIR / EXPECTED_FILE).write_text(json.dumps(data, indent=2), encoding="utf-8")
     return data
 
@@ -101,7 +104,10 @@ def run() -> dict:
         result = {"status": "fail", "checks": [], "message": "canary_expected.json fails the signed manifest."}
     else:
         expected = json.loads(path.read_text(encoding="utf-8"))["fingerprints"]
-        current = fingerprints()
+        from app.ml.inference_lock import MODEL_LOCK
+
+        with MODEL_LOCK:                     # never run a model at the same time as an analysis request
+            current = fingerprints()
         checks = []
         for name, exp in expected.items():
             cur = current.get(name)

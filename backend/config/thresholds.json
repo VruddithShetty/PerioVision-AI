@@ -7,12 +7,12 @@
   "quality": {
     "min_side_reject": 256,
     "min_side_warn": 600,
-    "blur_reject": 10.0,
+    "blur_reject": 3.0,
     "blur_warn": 25.0,
     "contrast_reject": 12.0,
     "contrast_warn": 25.0,
     "clipped_warn": 0.35,
-    "_note": "sharpness = variance of the Laplacian measured at 1024 px width; real panoramic radiographs in DP_datasets measured 38-110"
+    "_note": "sharpness = variance of the Laplacian measured at 1024 px width; real panoramic radiographs in DP_datasets measured 38-110. blur_reject lowered from 10 to 3 on 2026-10-07: 4.5 % of real DenPAR periapical test films measured 3-10 (minimum over 1,000 films 2.9) and the model's bone-loss error on them was lower than average (3.9 vs 6.8 points); films blurred with sigma >= 6 measure <= 3.4. Films between 3 and 25 still get the blur warning, which sends the case to review."
   },
   "detection": {
     "min_confidence": 0.25,

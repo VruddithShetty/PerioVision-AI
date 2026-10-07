@@ -24,6 +24,7 @@ import numpy as np
 from app import config
 from app.ml.explainability import overlay
 from app.ml.explainability.gradcam import periodontal_roi, roi_attention
+from app.ml.inference_lock import with_model_lock
 from app.ml.landmarks.cej_abc_extractor import heuristic_landmarks
 from app.ml.measurement.bone_loss import bone_loss_for_tooth
 from app.ml.measurement.staging import grade_suggestion, stage_for_pct
@@ -272,6 +273,7 @@ def measured(lm: dict | None) -> bool:
     return bool(lm) and lm.get("landmark_source") not in ("heuristic_fallback", "demo_unmeasured")
 
 
+@with_model_lock
 def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: str | None = None,
                  pixel_spacing_mm: float | None = None, upload_meta: dict | None = None,
                  force_demo: bool = False, source: str = "uploaded_radiograph") -> dict:
@@ -463,6 +465,7 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
     return record
 
 
+@with_model_lock
 def explain_tooth(analysis: dict, tooth_id: str) -> dict | None:
     """Grad-CAM for ONE tooth: back-propagate only that tooth's detection score.
 

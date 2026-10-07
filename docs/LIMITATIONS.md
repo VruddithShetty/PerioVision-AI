@@ -22,6 +22,7 @@ has one of three statuses:
 | 7 | Clinical risk model is weak (AUC 0.65) | MEASURED (role limited by design) |
 | 8 | Some numbers could be read as better than they are | FIXED (wording, labels per test type) |
 | 9 | Patient overlap unverifiable; no human-agreement baseline | MEASURED + NEEDS DATA (tooling ready) |
+| 10 | App refusing good films or failing under load | FIXED (quality gate re-calibrated; model calls serialised) |
 
 ## 1. External test of periapical bone loss (NEEDS DATA)
 
@@ -132,6 +133,20 @@ cycles) are verified patient-level.
 **Human baseline.** `python -m research.make_review_set --mode blind` builds a 60-tooth blind pack. Two dentists grade
 it independently, then `python -m research.agreement --csv ratings.csv` reports dentist-vs-dentist and model-vs-dentist
 agreement with CIs and says whether the model falls inside the human range. About 30 minutes per dentist.
+
+## 10. Robustness of the running app (FIXED, 2026-10-07)
+
+Found while pushing 300 real films through the app's API to build demonstration sets:
+
+- **The quality gate refused good periapical films.** Its blur limit (sharpness < 10) had been set on panoramic films.
+  It refused 4.5 % of real DenPAR test films (5.8 % of training films), although the model's bone-loss error on
+  exactly those films was lower than average (3.9 vs 6.8 points). The reject limit is now 3: every one of the 1,000
+  real DenPAR films passes, films blurred with sigma >= 6 (sharpness <= 3.4) are still refused, and anything between
+  3 and 25 still gets the blur warning and goes to review. Test: `tests/test_quality_gate_periapical.py`.
+- **Two model calls at once could crash.** The start-up self-check ran a model in a background thread while the first
+  analysis used the same model; YOLO models are not thread-safe, and the self-check failed with a tensor-size
+  mismatch (the same could happen with two simultaneous analyses on the threaded development server). All model
+  calls now hold one lock (`app/ml/inference_lock.py`). Test: `tests/test_model_lock.py`.
 
 ## What is fully in place
 
