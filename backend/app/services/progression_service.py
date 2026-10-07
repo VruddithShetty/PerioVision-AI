@@ -12,10 +12,18 @@ of different types, the measurement error is unknown, or the visits are too clos
 together to measure a rate. Positional matches after a good registration are accepted.
 Teeth without a measurement never enter a comparison.
 
-A reliable comparison still only counts as change when |delta| exceeds the two readings'
-error bounds added together (each tooth's conformal half-width; 2q for fixed-width calibration);
-smaller deltas are labelled "no change beyond measurement error"
-and never drive the grade, risk or recall interval (see usable_velocities).
+How a change is told apart from noise (two rules, the first one wins when it applies):
+  1. Paired, same-site rule (`paired_site_repeatability`): when both visits were measured by the two-site landmark
+     model and share at least one side of the tooth, the change is measured side by side (left with left, right with
+     right). Any constant offset the model has for that tooth appears in both readings and cancels, so the relevant
+     noise is REPEATABILITY: how much the same tooth's reading moves between two exposures. A change counts when the
+     largest same-side increase (or decrease) exceeds `change_threshold_points` from the signed
+     weights/progression_calibration.json, set on no-change re-take pairs of validation films
+     (research/progression_bench.py; false-alarm rate and sensitivity measured on separate test films).
+  2. Otherwise (older records, no calibration file, no common side), the conservative rule: |delta| must exceed the
+     two readings' accuracy bounds added together (each tooth's conformal half-width; 2q for fixed-width calibration).
+Smaller changes are labelled "no change beyond measurement error" and never drive the grade, risk or recall interval
+(see usable_velocities).
 
 Labels, from velocity in % of root length per year (thresholds in config):
   improved             velocity <= -stable band
@@ -112,6 +120,50 @@ def measurement_error_pct(prev: dict, curr: dict) -> float | None:
     return calibration.current_q()
 
 
+_change_cache: dict = {}
+
+
+def change_calibration() -> dict | None:
+    """The signed same-site change threshold, or None (missing, unsigned or unreadable -> conservative rule)."""
+    path = config.WEIGHTS_DIR / "progression_calibration.json"
+    key = (str(path), path.stat().st_mtime if path.exists() else None)
+    if key in _change_cache:
+        return _change_cache[key]
+    data = None
+    if path.exists():
+        from app.security.model_signing import Signer
+
+        if Signer().verify_weight_file(path).get("verified"):
+            try:
+                import json
+
+                loaded = json.loads(path.read_text(encoding="utf-8"))
+                if float(loaded.get("change_threshold_points", 0)) > 0:
+                    data = loaded
+            except (ValueError, OSError):
+                data = None
+    _change_cache.clear()
+    _change_cache[key] = data
+    return data
+
+
+def change_threshold(cal: dict, p: dict, c: dict) -> float:
+    """The calibrated change threshold for this tooth: the lower band when both visits' mirrored readings agreed
+    closely (more repeatable), else the higher one. Unknown disagreement -> the higher, conservative band."""
+    ad = cal.get("adaptive")
+    dis = [t.get("tta_disagreement_pct") for t in (p, c)]
+    if ad and None not in dis and max(dis) <= float(ad["split_disagreement_points"]):
+        return float(ad["threshold_low"])
+    return float(ad["threshold_high"]) if ad else float(cal["change_threshold_points"])
+
+
+def same_site_deltas(p: dict, c: dict) -> dict[str, float]:
+    """Change at each side measured in both visits (current - previous), in percentage points."""
+    a, b = p.get("site_bone_loss_pct") or {}, c.get("site_bone_loss_pct") or {}
+    return {side: round(float(b[side]) - float(a[side]), 2) for side in ("left", "right")
+            if a.get(side) is not None and b.get(side) is not None}
+
+
 def _half_width(tooth: dict, q: float | None) -> float | None:
     """A tooth's error bound in percentage points: its stored interval half-width, else the global q."""
     if q == 0.0:                      # two synthetic demo records: planted values, no measurement error
@@ -128,9 +180,11 @@ def compare_visits(prev: dict, curr: dict) -> list[dict]:
     registered = alignment.get("status") == "success" and align_score is not None \
         and align_score >= t["min_alignment_score"]
     q = measurement_error_pct(prev, curr)
+    paired_cal = None if (prev.get("mode") == "demo" and curr.get("mode") == "demo") else change_calibration()
     results = []
     for p, c, method in match_teeth(prev, curr):
         delta = round(c["bone_loss_pct"] - p["bone_loss_pct"], 2)
+        sites = same_site_deltas(p, c) if paired_cal else {}
         reasons = []
         if days < t["min_interval_days"]:
             reasons.append(f"Visits only {days} days apart; too short to measure a rate.")
@@ -149,11 +203,23 @@ def compare_visits(prev: dict, curr: dict) -> list[dict]:
         bounds = [_half_width(t, q) for t in (p, c)]
         if q is not None and None in bounds:
             reasons.append("Measurement error is unknown for at least one of the two readings.")
+        if sites:
+            # Same-site rule: repeatability, not accuracy, is the noise of a change; no accuracy bound is needed.
+            reasons = [r for r in reasons if not r.startswith("Measurement error is unknown")]
         reliable = not reasons
-        # Both measurements lie within their bounds with probability >= 1 - 2*alpha (union bound),
-        # so only a change larger than the two bounds together is evidence of real change.
-        error_bound = None if q is None or None in bounds else round(bounds[0] + bounds[1], 3)
-        detectable = error_bound is not None and abs(delta) > error_bound
+        if sites:
+            thr = change_threshold(paired_cal, p, c)
+            worst = max(sites.values(), key=abs)
+            rise, fall = max(sites.values()), min(sites.values())
+            detectable = rise > thr or fall < -thr
+            delta = rise if rise > thr else (fall if fall < -thr else worst)
+            error_bound, rule = round(thr, 3), "paired_site_repeatability"
+        else:
+            # Both measurements lie within their bounds with probability >= 1 - 2*alpha (union bound),
+            # so only a change larger than the two bounds together is evidence of real change.
+            error_bound = None if q is None or None in bounds else round(bounds[0] + bounds[1], 3)
+            detectable = error_bound is not None and abs(delta) > error_bound
+            rule = "accuracy_interval_sum"
         velocity_year = round(delta / (days / 365.25), 2) if days >= t["min_interval_days"] else None
         label = "unreliable comparison" if not reliable else (
             label_for_velocity(velocity_year) if detectable else "no change beyond measurement error")
@@ -174,6 +240,8 @@ def compare_visits(prev: dict, curr: dict) -> list[dict]:
             "reliable": reliable,
             "change_detectable": detectable,
             "measurement_error_pct": error_bound,
+            "change_rule": rule,
+            "site_deltas_pct": sites or None,
             "reliability_reasons": reasons,
         })
     return results

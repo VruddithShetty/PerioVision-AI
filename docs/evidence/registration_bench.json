@@ -1,0 +1,32 @@
+{
+  "similarity_only": {
+    "retake_pairs": 200,
+    "retakes_accepted": 159,
+    "retake_acceptance": 0.795,
+    "retake_acceptance_ci95": [
+      0.7337430194757748,
+      0.8451382379616379
+    ],
+    "different_patient_pairs": 300,
+    "false_acceptances": 0,
+    "false_acceptance_ci95": [
+      8.673617379884035e-19,
+      0.012642971224546034
+    ]
+  },
+  "with_affine_fallback": {
+    "retake_pairs": 200,
+    "retakes_accepted": 198,
+    "retake_acceptance": 0.99,
+    "retake_acceptance_ci95": [
+      0.9642782382838231,
+      0.9972533418664555
+    ],
+    "different_patient_pairs": 300,
+    "false_acceptances": 0,
+    "false_acceptance_ci95": [
+      8.673617379884035e-19,
+      0.012642971224546034
+    ]
+  }
+}

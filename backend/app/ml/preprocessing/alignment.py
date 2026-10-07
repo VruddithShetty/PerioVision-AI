@@ -19,6 +19,8 @@ class RadiographAligner:
     SCALE_RANGE = (0.8, 1.25)
     MAX_ROTATION_DEG = 20.0
     MIN_NCC = 0.5
+    AFFINE_FALLBACK = True
+    MAX_ANISOTROPY = 1.15     # affine fallback: largest / smallest stretch of a plausible re-take
 
     def __init__(self, method="affine"):
         self.method = method
@@ -89,12 +91,20 @@ class RadiographAligner:
             else:
                 src = np.float32([kp2[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
                 dst = np.float32([kp1[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
-                matrix, inliers = cv2.estimateAffinePartial2D(src, dst, method=cv2.RANSAC, ransacReprojThreshold=5.0)
-                if matrix is None:
-                    info["reason"] = "no consistent transform"
-                else:
+                # 1. similarity (rotation + scale + shift); 2. if that fails ONLY because too few matches agree,
+                # a full affine (adds the slight shear / anisotropic scale of a different beam angle), which must
+                # pass every other check plus a shear limit. Different-patient pairs: see research/registration_bench.py.
+                for model in (("similarity", "affine") if self.AFFINE_FALLBACK else ("similarity",)):
+                    est = cv2.estimateAffinePartial2D if model == "similarity" else cv2.estimateAffine2D
+                    matrix, inliers = est(src, dst, method=cv2.RANSAC, ransacReprojThreshold=5.0)
+                    if matrix is None:
+                        info["reason"] = "no consistent transform"
+                        break
                     n_in = int(inliers.sum())
-                    scale = float(np.hypot(matrix[0, 0], matrix[1, 0]))
+                    lin = np.asarray(matrix, float)[:, :2]
+                    sv = np.linalg.svd(lin, compute_uv=False)
+                    scale = float(np.sqrt(abs(np.linalg.det(lin))))
+                    anisotropy = float(sv[0] / max(sv[1], 1e-9))
                     angle = float(np.degrees(np.arctan2(matrix[1, 0], matrix[0, 0])))
                     h, w = ref_gray.shape
                     aligned = cv2.warpAffine(mov_gray, matrix, (w, h), flags=cv2.INTER_LINEAR)
@@ -106,24 +116,28 @@ class RadiographAligner:
                             ncc = float(np.corrcoef(a, b)[0, 1])
                     info.update({"ransac_inliers": n_in, "inlier_ratio": round(n_in / len(good), 3),
                                  "scale": round(scale, 3), "rotation_deg": round(angle, 1),
+                                 "anisotropy": round(anisotropy, 3), "transform": model,
                                  "ncc_after_warp": round(ncc, 3) if ncc is not None else None})
+                    ratio_bad = n_in / len(good) < self.MIN_INLIER_RATIO
                     problems = [msg for bad, msg in (
                         (n_in < self.MIN_INLIERS, f"only {n_in} geometrically consistent matches"),
-                        (n_in / len(good) < self.MIN_INLIER_RATIO, "most matches are inconsistent"),
+                        (ratio_bad, "most matches are inconsistent"),
                         (not self.SCALE_RANGE[0] <= scale <= self.SCALE_RANGE[1], f"implausible scale {scale:.2f}"),
                         (abs(angle) > self.MAX_ROTATION_DEG, f"implausible rotation {angle:.0f} degrees"),
+                        (anisotropy > self.MAX_ANISOTROPY, f"implausible shear / stretch {anisotropy:.2f}"),
                         (ncc is None or ncc < self.MIN_NCC, "registered images do not look alike"),
                     ) if bad]
-                    if problems:
-                        info["reason"] = "; ".join(problems)
-                    else:
+                    if not problems:
                         # Confidence = how alike the registered images are (normalised cross-correlation).
                         info.update({"alignment_status": "success", "alignment_confidence": round(ncc, 3),
-                                     "low_alignment_confidence": False})
+                                     "low_alignment_confidence": False, "reason": None})
                         self.alignment_status = "success"
                         self.last_alignment_confidence = ncc
                         self.last_alignment_info = info
                         return aligned, matrix
+                    info["reason"] = "; ".join(problems)
+                    if problems != ["most matches are inconsistent"]:
+                        break                         # only a pure consistency failure may try the affine model
         self.alignment_status = "failed"
         self.last_alignment_confidence = 0.0
         self.last_alignment_info = info

@@ -1,0 +1,96 @@
+{
+  "threshold_points": 5.517,
+  "threshold_rule": "95th percentile of the largest per-site increase on no-change validation teeth",
+  "validation_no_change_teeth": 354,
+  "adaptive": {
+    "split_disagreement_points": 3.52,
+    "threshold_low": 4.61,
+    "threshold_high": 6.152
+  },
+  "deployed_rule": "adaptive (declared before test results)",
+  "both_rules_on_test": {
+    "fixed": {
+      "specificity": 0.8838782412626832,
+      "sensitivity": {
+        "5": 0.10810810810810811,
+        "10": 0.37333333333333335,
+        "15": 0.6216216216216216,
+        "20": 0.8
+      }
+    },
+    "adaptive": {
+      "specificity": 0.8771138669673055,
+      "sensitivity": {
+        "5": 0.12162162162162163,
+        "10": 0.38666666666666666,
+        "15": 0.6621621621621622,
+        "20": 0.8375
+      }
+    }
+  },
+  "specificity_no_change": {
+    "value": 0.8771138669673055,
+    "teeth": 887,
+    "ci95": [
+      0.8540450078792615,
+      0.9015007231184906
+    ]
+  },
+  "specificity_pure_no_change_retakes": {
+    "value": 0.9493670886075949,
+    "teeth": 237,
+    "ci95": [
+      0.9135974413817974,
+      0.9708017855742971
+    ],
+    "note": "teeth in films with no simulated change. The overall specificity above also counts the other teeth of films with a simulated defect; their neighbours share the edited interdental bone, so some of those 'false alarms' are real changes"
+  },
+  "sensitivity_by_true_change": {
+    "5": {
+      "value": 0.12162162162162163,
+      "teeth": 74,
+      "ci95": [
+        0.06532315657822622,
+        0.21526586566768757
+      ]
+    },
+    "10": {
+      "value": 0.38666666666666666,
+      "teeth": 75,
+      "ci95": [
+        0.284552171134325,
+        0.4998252331617777
+      ]
+    },
+    "15": {
+      "value": 0.6621621621621622,
+      "teeth": 74,
+      "ci95": [
+        0.5487851256985736,
+        0.7595338647674634
+      ]
+    },
+    "20": {
+      "value": 0.8375,
+      "teeth": 80,
+      "ci95": [
+        0.7415709565930229,
+        0.9025018059704963
+      ]
+    }
+  },
+  "repeatability": {
+    "sites": 368,
+    "sd_points": 2.6797969254909284,
+    "mean_points": 0.5661141304347826,
+    "mdc95_points": 5.252401973962219,
+    "note": "SD of the change measured on no-change pairs already includes both readings, so MDC95 = 1.96 x SD (no extra sqrt 2)"
+  },
+  "registration_success_share_of_site_rows": 0.8425141242937854,
+  "balanced_accuracy_vs_no_change": {
+    "5": 0.49936774429446357,
+    "10": 0.6318902668169861,
+    "15": 0.7696380145647339,
+    "20": 0.8573069334836527
+  }
+}

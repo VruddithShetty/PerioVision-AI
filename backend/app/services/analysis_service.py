@@ -365,6 +365,9 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
             "landmark_source": lm_source,
             "landmark_confidence": lm.get("landmark_confidence"),
             "tta_disagreement_pct": lm.get("tta_disagreement_pct"),
+            # two-site model: bone loss at each confident side, so the next visit can compare side with side
+            "site_bone_loss_pct": lm.get("site_bone_loss_pct") if pct is not None else None,
+            "measured_site": lm.get("measured_site") if pct is not None else None,
             "measurement_status": bl.get("status"),
             "bone_loss_pct": pct,
             "cej_to_crest_mm": bl.get("cej_to_crest_mm"),

@@ -1,24 +1,16 @@
 {
   "files": {
     "canary_expected.json": {
-      "sha256": "627ac296ae9b02fc1ae9cc5558512ff4fd90c16eaf01ddd4e5c5b3bb6b447e53",
+      "sha256": "e28db377f9364911ddfa859601ecd052db1a9064d73f6b77474f3b7d57888085",
       "size": 458
     },
-    "conformal_calibration.backup-20261002-153536.json": {
-      "sha256": "ac667a69e0e88332135fb80353bf706e8a4193ed0b96673448745bfbbad78b93",
-      "size": 7015
-    },
-    "conformal_calibration.backup-20261005-224228.json": {
-      "sha256": "4a26d8196cb2b757be6d2388b484cdb0525c441203d8d85550e76089077135f3",
-      "size": 5072
-    },
     "conformal_calibration.json": {
-      "sha256": "9733ef8c0551bc95e663c1bd0589e0b74944460b792e0fc94ba81cd4e5c62db0",
-      "size": 9515
+      "sha256": "5d3988b8f44c3e198db766789a1dbc56e2d3b9ac2df45b575f9a7d8936743125",
+      "size": 9211
     },
     "dental_landmark_yolov8n-pose.pt": {
-      "sha256": "473fe80ad5976610d91cf23357f5fb3b240183755ba2bab711007ddb2c550a7d",
-      "size": 42299546
+      "sha256": "bdc689c1e47f9ad343918a465bfc175e168517137cb19a394ad7777e110a634d",
+      "size": 42313882
     },
     "dental_yolov8n.pt": {
       "sha256": "a5f49d21f24716eb41def967fd5fa93ad12ca6d936628c085ee3e7135499d66e",
@@ -33,16 +25,16 @@
       "size": 1023
     },
     "evidence_summary.json": {
-      "sha256": "235efd97cbed56495da50dd2aef48e1625cf04c0cecdd82304f26c0806af6ccd",
-      "size": 29652
+      "sha256": "89345f5e03c2697f834a7d20a6c0e6df0fa4011a6993d5fb1f774f0364489c5c",
+      "size": 29636
     },
     "external/risk_model_nhanes.json": {
       "sha256": "1b6c93b0b23013ebf8f92b283c006aa5a6be6fe5084130f0231328afaa8d810e",
       "size": 4118
     },
     "landmark_test_metrics.json": {
-      "sha256": "83c43ddebca00ca889382bebb4240238139f03d1aadde75a751e213cb2d137ab",
-      "size": 1646
+      "sha256": "5617e6e8b837123aca10858897ba4de56c5cf93ef7c5a508f2e686b4a1ccf17f",
+      "size": 1660
     },
     "panoramic_screen.pt": {
       "sha256": "7826e5df1b4c57c7d867e0ba65aeb6607ab035ee87265f05fe4a8e9d4dc24887",
@@ -61,8 +53,12 @@
       "size": 1159
     },
     "pipeline_test_metrics.json": {
-      "sha256": "6bc94352914c0c8e6788201791ce4c5074b82feb8c98f94d905855dff97c732d",
-      "size": 1030
+      "sha256": "b1e18e00216e35367318e2be019682ef2cf25afa31bd55b40277c4199598b349",
+      "size": 1196
+    },
+    "progression_calibration.json": {
+      "sha256": "1a246959820d358d164857c111904608321d735fd9233820c9b5532830524b2f",
+      "size": 1791
     },
     "yolov8n.pt": {
       "sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",
