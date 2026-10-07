@@ -19,6 +19,7 @@ from __future__ import annotations
 import json
 import logging
 import threading
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
@@ -26,6 +27,9 @@ import numpy as np
 from app import config
 from app.ml.measurement.staging import stage_for_pct, stages_overlapping
 from app.ml.registry import registry
+
+if TYPE_CHECKING:          # type hints only; torch is imported lazily at run time
+    import torch
 
 logger = logging.getLogger(__name__)
 MEAN, STD = 0.449, 0.226          # same normalisation as training

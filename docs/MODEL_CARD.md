@@ -9,7 +9,7 @@ Decision support for dental professionals reviewing panoramic or periapical radi
 | Component | File | What it is | Status |
 |---|---|---|---|
 | Tooth detector | `weights/dental_yolov8n.pt` (file name kept for compatibility) | YOLO11m at 1280 px, 32 classes named by FDI number (11-48) | **Deployed since 2026-10-04: trained on DENTEX, then fine-tuned on Aga Khan University folders 1 and 3** (`notebooks/train_panoramic_D_colab.ipynb`). Held-out results: Aga Khan folder 2 (96 unseen films, same hospital) tooth-level F1 with the right number **94.5 %**; DENTEX official disease test, diseased teeth found with the right number **89.1 %**. The previous DENTEX-only detector (63-film DENTEX test: precision 94.1 %, recall 94.5 %, mAP50 95.8 %, F1 94.8 %) is kept as `weights_backup/20261004-095323/`. CIs: `docs/RESULTS_WITH_CI.md` |
-| Landmark model | `weights/dental_landmark_yolov8n-pose.pt` (file name kept for compatibility) | YOLO11m-pose at 1024 px, 3 keypoints per tooth (CEJ, root apex, bone crest) | Trained on DenPAR (1000 periapical X-rays, specialist-verified labels) with `notebooks/train_landmarks_colab.ipynb`. on 200 held-out DenPAR periapical test X-rays (615 teeth): 99.0 % tooth recall, pose mAP@0.5 96.9 %, bone-loss mean absolute error 7.64 percentage points (median 5.11), 73.1 % stage agreement; 90 % conformal intervals reached 91.5 % coverage |
+| Landmark model | `weights/dental_landmark_yolov8n-pose.pt` (file name kept for compatibility) | **Two-site** YOLO11m-pose at 1024 px, 5 keypoints per tooth: CEJ and bone crest on each side of the tooth, and the root apex; the worse confident site is measured (site confidence ≥ 0.6, chosen on validation) | Deployed 2026-10-06 (`notebooks/train_landmarks_twosite_colab.ipynb`). App pipeline, 200 DenPAR test films, **corrected same-side reference**: bone-loss error **6.64 points** (95 % CI 5.9–7.5), stage agreement **75.9 %** (72.3–79.4), 90 % intervals cover 92.8 %. Paired against the previous 3-keypoint model on the same teeth: −0.94 points (95 % CI −1.51 to −0.39). A retrain on the corrected labels is prepared (`notebooks/train_landmarks_v3_colab.ipynb`) |
 | Grad-CAM (LayerCAM weighting) | `ml/explainability/gradcam.py` | Class-activation maps over the P3-P5 neck layers of the model that made the detection (detector on panoramic films, pose model on periapical films). Each location is weighted by its own positive gradient (LayerCAM, Jiang et al., IEEE TIP 2021) | **Why LayerCAM:** with classic Grad-CAM (layer-averaged gradients) a single tooth's map put only 16 % of its mass inside that tooth's box, the same as chance (14 %); LayerCAM puts 82 % there (64 % on a panoramic film, where a box covers about 1 % of the image) (`docs/evidence/gradcam_localisation_2026-10-04.json`). **Views:** all teeth (stored with every analysis) and only the selected tooth (on demand, `GET /api/analyses/{id}/teeth/{tooth}/gradcam`, about 1-2 s on a CPU). **Attention check:** on films where bone loss is reported (periapical) each tooth is judged by its own map; on 129 DenPAR test teeth this flags 3.1 % (4.7 % with the all-teeth map; 6.2 % of teeth change flag; median attention 0.63) for about 2 s extra per film (all teeth in one batched backward pass, identical to one pass per tooth) (`docs/evidence/gradcam_attention_per_tooth_denpar40_2026-10-04.json`). The 0.25 threshold is an engineering default, not a validated cut-off |
 | Staging/grading | `ml/measurement/staging.py` | 2017 AAP/EFP bands applied to radiographic bone loss | Rule-based |
 | Conformal uncertainty | `ml/uncertainty/`, `weights/conformal_calibration.json` | **Normalised (adaptive)** split-conformal intervals on bone-loss %: half-width = q × σ(x), σ grows with the disagreement between the normal and mirrored readings | **Recalibrated 2026-10-05, asymmetric**: σ fitted on half of DenPAR validation, and each side of the interval gets its own quantile (α/2) from the other half's signed errors, because the model underestimates severe bone loss. On the 578 DenPAR test teeth: coverage **93.4 %** at the 90 % target; by reference stage I 98.5 %, II 96.2 %, **III 81.2 %** (symmetric intervals gave 76.9 % on stage III). The guarantee is on average over teeth, not per stage: severe teeth are still under-covered. Periapical only. Earlier files are kept as timestamped backups |
@@ -75,6 +75,47 @@ app are read from the metrics files. Raw outputs: `docs/evidence/panoramic_*_met
 
 ### Landmarks and bone loss (measured)
 
+**Deployed two-site model (2026-10-06).** The previous model learned each tooth's *worst* site, which is sometimes the
+left and sometimes the right side, so it placed CEJ and crest between the two. The two-site model learns both sides
+(5 keypoints) and measures the worse confident site after prediction. Everything else (YOLO11m-pose, 1024 px, 200
+epochs, augmentation) is unchanged.
+
+**Reference correction (2026-10-06).** A visual check of label-review images (`research/make_review_set.py`)
+showed that, when a tooth had only one annotated CEJ, `convert_denpar.py` could take the bone crest from the *other*
+side of the tooth. That happened on 11.1 % / 13.9 % / 10.2 % of train / val / test teeth. The converter now takes the
+crest from the CEJ's own side (3 / 5 / 4 borderline teeth left; regression test `tests/test_convert_denpar.py`).
+The headline numbers below use the **corrected** reference. With the correction, 27 test teeth that were "severe" only
+because of the side mix-up are no longer severe.
+
+| DenPAR test, app pipeline (`scripts/evaluate_landmarks.py`) | Previous 3-kpt model, old reference | Two-site model, old reference | **Two-site model, corrected reference (official)** |
+|---|---|---|---|
+| Bone-loss MAE (points, 95 % CI) | 7.31 (6.6–8.1) | 6.39 (5.6–7.2) | **6.64 (5.9–7.5)** |
+| Median absolute error | 4.92 | 4.03 | **4.02** |
+| Within 10 points | 79.8 % | 82.3 % | **81.6 %** |
+| Stage agreement I / II / III | 73.4 % | 77.2 % | **75.9 % (72.3–79.4)** |
+| Stage recall I / II / III | – | 92.0 / 53.6 / 75.4 % | **85.4 / 52.1 / 81.7 %** |
+| Severe (stage III) called stage I | 7.6 % (11 of 144) | 3.5 % (5 of 142) | **0.9 % (1 of 115)** |
+| Teeth measured | 575 of 596 | 558 of 596 | 553 of 588 |
+
+Paired on the 559 test teeth both models measured, against the same (old) reference
+(`docs/evidence/twosite_comparison_2026-10-05.json`): MAE 7.31 → 6.38, difference **−0.94 points (95 % CI −1.51 to
+−0.39)**, a real improvement. Stage agreement 73.5 % → 77.1 % (+3.6 points, 95 % CI −0.4 to +7.4): likely better, not
+proven. Trade-offs: about 3 % more teeth are left unmeasured and go to the dentist (the model is not confident about
+either site); the model underestimates severe teeth (−7.4 points on stage III against the corrected reference), which
+the interval below accounts for. The deployed model was trained on the uncorrected labels; the v3 notebook (larger models, higher resolution, ensemble) retrains it
+on corrected ones.
+
+**Landmark accuracy, measured fairly.** Compared with the annotated point on the *same side* of the tooth, the two-site
+model's errors are CEJ 6.2 %, bone crest 10.3 % and apex 4.5 % of root length (means; medians 4.3 / 5.6 / 3.5 %).
+The 18-21 % figures quoted for earlier models compared against the worst site, which is often on the other side.
+
+**Stage II is the weak point (52 % recall).** The stage II band is 18 points wide and the typical error is about 6
+points, so many stage II teeth sit near a boundary. A bias correction fitted on validation was tried and rejected: on
+split halves of validation it made the error worse, and its stage gains only traded stage I recall for stage II / III
+recall. Only a more accurate model (more or better-labelled data) will move this.
+
+#### Previous 3-keypoint model (kept for reference; backup in `weights_backup/20261006-061210/`)
+
 Trained on [DenPAR](https://zenodo.org/records/16645076) (CC BY 4.0), official split 649 / 150 / 200 radiographs; per-tooth keypoints were derived with `backend/scripts/convert_denpar.py` (each tooth's worst site). Results on the 200 test radiographs (615 teeth):
 
 | Metric (DenPAR test set) | Value |
@@ -94,20 +135,28 @@ Validation split: MAE 8.33, stage agreement 66.4 %. The CEJ and crest are often 
 
 ### Uncertainty (measured)
 
-Recalibrated 2026-10-05 (`scripts/calibrate_conformal.py`, asymmetric, normalised). Held-out DenPAR test teeth:
+Recalibrated 2026-10-06 for the two-site model on the **corrected** reference (`scripts/calibrate_conformal.py`,
+asymmetric, normalised; validation split without the duplicated films). Held-out DenPAR test teeth:
 
 | Target | Coverage, all teeth | Stage I | Stage II | Stage III (severe) | Mean width (points) |
 |---|---|---|---|---|---|
-| 80 % | 81.9 % | 91.2 % | 83.7 % | 62.2 % | 24.0 |
-| **90 % (deployed)** | **93.7 %** | 98.5 % | 96.2 % | **81.8 %** | 41.5 |
-| 95 % | 97.6 % | 99.6 % | 98.7 % | 92.3 % | 58.6 |
+| 80 % | 84.7 % | 91.8 % | 81.8 % | 70.4 % | 24.4 |
+| **90 % (deployed)** | **92.7 %** | 96.6 % | 90.2 % | **86.1 %** | 38.9 |
+| 95 % | 96.4 % | 97.3 % | 96.5 % | 93.9 % | 51.3 |
 
-(Calibration-script test pass, 575 teeth; the app-path evaluation on 578 teeth gives 93.4 % overall and 81.2 % on
-stage III, `docs/RESULTS_WITH_CI.md`.) Conformal coverage holds **on average**, not for every subgroup: severe
-teeth, which the model underestimates by about 7 points on average, stay below 90 %. At 90 % only 61 of 578 test
-teeth (10.6 %) get a single-stage set, so nearly every case goes to a dentist, by design. **Severe (stage III)
-teeth called stage I: 7.6 % (11 of 144)**, the most dangerous error; the panoramic whole-film estimate does this
-for 3.7 % (2 of 54) of stage III films.
+(Calibration-script test pass; the app-path evaluation on 553 teeth gives 92.8 % overall and 86.1 % on stage III,
+`docs/RESULTS_WITH_CI.md`.) With the previous model the 90 % interval covered 81.8 % of severe teeth. Coverage holds
+**on average**, not for every subgroup: severe teeth stay below 90 %. At 90 % only 42 of 553 test teeth (7.6 %) get a
+single-stage set, so nearly every case goes to a dentist, by design. **Severe (stage III) teeth called stage I: 0.9 %
+(1 of 115)**, the most dangerous error; the panoramic whole-film estimate does this for 3.7 % (2 of 54) of stage III
+films.
+
+**Change between two visits (2026-10-07, `docs/PROGRESSION.md`).** What limits change detection is repeatability, not
+accuracy: a tooth's constant offset from the reference cancels between visits. Measured on unchanged re-takes, the same
+side of a tooth moves by SD 2.7 points. Changes are compared side with side and must exceed 4.6 / 6.2 points (two
+bands by mirrored-reading consistency, calibrated on validation re-takes). Bench result on test films: 94.9 %
+specificity; sensitivity 12 / 39 / 66 / 84 % for simulated losses of 5 / 10 / 15 / 20 points (the previous accuracy-based
+rule detected 0 of 303). Bench validation only; real follow-up pairs are still needed.
 
 **Panoramic X-rays: bone loss is not reported.** External test on 240 BRAR panoramic films (expert worst-tooth bone loss, 80 per severity level): worst-tooth error 18.6 points, patient stage agreement 46 %, correlation 0.54 (13.5 points / 56 % even after recalibration on half the data). Panoramic films therefore get tooth detection and FDI numbering plus the whole-film patient estimate above, never per-tooth numbers. Every tooth is "not validated on panoramic", and the case asks for a periapical film. The landmark model is not run at all on panoramic films (it took about 20 of the 28 s per film on a laptop CPU and its output was discarded), and a missing calibration file can no longer switch panoramic per-tooth numbers back on. `landmarks.measure_unvalidated_image_types` in `config/thresholds.json` turns measurement back on for research only.
 
@@ -118,7 +167,7 @@ for 3.7 % (2 of 54) of stage III films.
 - Panoramic films: the whole-film worst-tooth estimate carries its own split-conformal 90 % interval (asymmetric: 14.9 points down, 35.8 up). When that interval allows more than one stage (all 149 BRAR test films), the review router flags `panoramic_stage_ambiguous`, so the uncertainty system itself, not only the film-type rule, sends panoramic cases to review. A film routed to the panoramic path but shaped like a periapical film (long/short side ratio below 1.6; every panoramic training film is 1.66 or more) gets no whole-film estimate and is flagged `film_shape_not_panoramic`.
 - Other triggers for mandatory review: borderline image quality, out-of-distribution or perturbed images, Grad-CAM attention outside the periodontal band, teeth that could not be measured, low detection confidence, demo mode.
 - Images in which no tooth is found are rejected outright (not a dental radiograph).
-- Progression: a change between two visits only counts when the radiographs register to each other (RANSAC inliers, plausible scale/rotation, image correlation after warping), are the same film type, and the change exceeds 2 × q (with q = 18.6 points, about 37 points). Smaller changes are labelled "no change beyond measurement error" and never drive the grade, risk score or recall interval. With today's landmark accuracy, per-tooth progression over a year or two is therefore usually **not** detectable. The seeded demo patients use planted synthetic bone levels that skip this check, and the Progression, Care plan and Patient explainer pages show a "Synthetic demo data" banner whenever they are built from them.
+- Progression: a change between two visits only counts when the radiographs register to each other (RANSAC inliers, plausible scale / rotation / shear, image correlation after warping, teeth overlapping after the warp), are the same film type, are at least 30 days apart, and the same side of the tooth moved by more than the calibrated repeatability threshold (4.6 or 6.2 points; `weights/progression_calibration.json`, signed). Without that file the older rule (change larger than both accuracy intervals, about 39 points) applies. Smaller changes are labelled "no change beyond measurement error" and never drive the grade, risk score or recall interval. The seeded demo patients use planted synthetic bone levels that skip this check, and the Progression, Care plan and Patient explainer pages show a "Synthetic demo data" banner whenever they are built from them.
 - Risk score: trained on NHANES (see Components). Without age (30+), sex (male / female), smoking status and cigarettes/day (smokers) it returns "insufficient data" instead of a number. Without HbA1c it uses the validated model that omits HbA1c.
 
 ## Preprocessing contract (do not "fix" without retraining)

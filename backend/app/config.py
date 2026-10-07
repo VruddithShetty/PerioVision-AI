@@ -36,7 +36,6 @@ APP_MODE = "demo" if IS_DEMO else "live"
 TOOTH_DETECTOR_WEIGHTS = WEIGHTS_DIR / "dental_yolov8n.pt"
 TOOTH_DETECTOR_FALLBACK_WEIGHTS = WEIGHTS_DIR / "yolov8n.pt"
 LANDMARK_WEIGHTS = WEIGHTS_DIR / "dental_landmark_yolov8n-pose.pt"
-RISK_MODEL_DIR = STORAGE_DIR / "models" / "risk_model"
 
 MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "16"))
 

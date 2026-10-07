@@ -11,7 +11,6 @@
 
 Usage (from the repository root):  python backend/scripts/setup_local.py
 """
-import os
 import re
 import secrets
 import shutil

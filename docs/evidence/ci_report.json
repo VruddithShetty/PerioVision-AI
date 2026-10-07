@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-05T17:59:43.108121+00:00",
+  "generated": "2026-10-06T15:13:27.439494+00:00",
   "bootstrap_resamples": 2000,
   "rows": [
     {
@@ -254,12 +254,12 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "tooth recall (IoU >= 0.5)",
-      "value": 0.9697986577181208,
+      "value": 0.9404761904761905,
       "ci95": [
-        0.9564515453612147,
-        0.9830220713073005
+        0.9174857934737136,
+        0.9620705976615823
       ],
-      "n": 596,
+      "n": 588,
       "unit_of_n": "labelled teeth in 200 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
@@ -271,13 +271,13 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "bone-loss MAE (percentage points)",
-      "value": 7.365726643598615,
+      "value": 6.635895117540687,
       "ci95": [
-        6.6238979071887645,
-        8.157726143933852
+        5.860137157782145,
+        7.4868002221078305
       ],
-      "n": 578,
-      "unit_of_n": "measured teeth in 200 films",
+      "n": 553,
+      "unit_of_n": "measured teeth in 199 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": false,
@@ -288,13 +288,13 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "median absolute error (points)",
-      "value": 4.955,
+      "value": 4.02,
       "ci95": [
-        4.32,
-        5.439999999999998
+        3.5,
+        4.635
       ],
-      "n": 578,
-      "unit_of_n": "measured teeth in 200 films",
+      "n": 553,
+      "unit_of_n": "measured teeth in 199 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": false,
@@ -305,13 +305,13 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "within 10 points",
-      "value": 0.7958477508650519,
+      "value": 0.8155515370705244,
       "ci95": [
-        0.7591613482630795,
-        0.8316339159426146
+        0.7805254968709168,
+        0.8498190833556687
       ],
-      "n": 578,
-      "unit_of_n": "measured teeth in 200 films",
+      "n": 553,
+      "unit_of_n": "measured teeth in 199 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
@@ -322,13 +322,13 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "exact stage agreement (I/II/III)",
-      "value": 0.7335640138408305,
+      "value": 0.759493670886076,
       "ci95": [
-        0.6906822636941267,
-        0.7728027247583084
+        0.7230455134545207,
+        0.7937390484215364
       ],
-      "n": 578,
-      "unit_of_n": "measured teeth in 200 films",
+      "n": 553,
+      "unit_of_n": "measured teeth in 199 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
@@ -339,13 +339,13 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "90 % interval coverage",
-      "value": 0.9342560553633218,
+      "value": 0.9276672694394213,
       "ci95": [
-        0.911230838288671,
-        0.9541595925297114
+        0.903283199905816,
+        0.9506184552674116
       ],
-      "n": 578,
-      "unit_of_n": "measured teeth in 200 films",
+      "n": 553,
+      "unit_of_n": "measured teeth in 199 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
@@ -356,12 +356,12 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "90 % interval coverage, reference stage I",
-      "value": 0.9853479853479854,
+      "value": 0.9659863945578231,
       "ci95": [
-        0.9691119691119691,
-        0.9965870307167235
+        0.944827026421854,
+        0.9832228793966465
       ],
-      "n": 273,
+      "n": 294,
       "unit_of_n": "teeth with reference stage I",
       "ci_method": "cluster bootstrap",
       "status": "VERIFIED",
@@ -373,12 +373,12 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "stage recall, reference stage I",
-      "value": 0.8424908424908425,
+      "value": 0.8537414965986394,
       "ci95": [
-        0.7923855469789727,
-        0.8888888888888888
+        0.8090606459007552,
+        0.895425975268156
       ],
-      "n": 273,
+      "n": 294,
       "unit_of_n": "teeth with reference stage I",
       "ci_method": "cluster bootstrap",
       "status": "VERIFIED",
@@ -390,12 +390,12 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "90 % interval coverage, reference stage II",
-      "value": 0.9565217391304348,
+      "value": 0.9027777777777778,
       "ci95": [
-        0.9199938271604938,
-        0.9831530510894531
+        0.8523365647526722,
+        0.9496414189403194
       ],
-      "n": 161,
+      "n": 144,
       "unit_of_n": "teeth with reference stage II",
       "ci_method": "cluster bootstrap",
       "status": "VERIFIED",
@@ -407,12 +407,12 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "stage recall, reference stage II",
-      "value": 0.5403726708074534,
+      "value": 0.5208333333333334,
       "ci95": [
-        0.4505793967620315,
-        0.6217948717948718
+        0.43379354401335,
+        0.6075949367088608
       ],
-      "n": 161,
+      "n": 144,
       "unit_of_n": "teeth with reference stage II",
       "ci_method": "cluster bootstrap",
       "status": "VERIFIED",
@@ -424,12 +424,12 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "90 % interval coverage, reference stage III",
-      "value": 0.8125,
+      "value": 0.8608695652173913,
       "ci95": [
-        0.7398197242841994,
-        0.8775510204081632
+        0.7837837837837838,
+        0.9279580761864225
       ],
-      "n": 144,
+      "n": 115,
       "unit_of_n": "teeth with reference stage III",
       "ci_method": "cluster bootstrap",
       "status": "VERIFIED",
@@ -441,12 +441,12 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "stage recall, reference stage III",
-      "value": 0.7430555555555556,
+      "value": 0.8173913043478261,
       "ci95": [
-        0.6524745605920445,
-        0.8200128205128204
+        0.7264937106918239,
+        0.9016430035128805
       ],
-      "n": 144,
+      "n": 115,
       "unit_of_n": "teeth with reference stage III",
       "ci_method": "cluster bootstrap",
       "status": "VERIFIED",
@@ -458,12 +458,12 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "severe (stage III) called stage I",
-      "value": 0.0763888888888889,
+      "value": 0.008695652173913044,
       "ci95": [
-        0.04318732966175298,
-        0.13160436291776428
+        0.0015366489058808025,
+        0.047616726344313784
       ],
-      "n": 144,
+      "n": 115,
       "unit_of_n": "teeth with reference stage III",
       "ci_method": "Wilson",
       "status": "VERIFIED",
@@ -475,12 +475,12 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "tooth recall (IoU >= 0.5)",
-      "value": 0.96964586846543,
+      "value": 0.9401709401709402,
       "ci95": [
-        0.9551993103448276,
-        0.9826094504830918
+        0.9162357305936073,
+        0.961335676625659
       ],
-      "n": 593,
+      "n": 585,
       "unit_of_n": "labelled teeth in 198 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
@@ -492,13 +492,13 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "bone-loss MAE (percentage points)",
-      "value": 7.37953043478261,
+      "value": 6.630472727272727,
       "ci95": [
-        6.675373787581316,
-        8.174261958660093
+        5.846946442687747,
+        7.46276409426987
       ],
-      "n": 575,
-      "unit_of_n": "measured teeth in 198 films",
+      "n": 550,
+      "unit_of_n": "measured teeth in 197 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": false,
@@ -509,13 +509,13 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "median absolute error (points)",
-      "value": 4.95,
+      "value": 4.01,
       "ci95": [
-        4.34,
-        5.380000000000003
+        3.5,
+        4.590000000000002
       ],
-      "n": 575,
-      "unit_of_n": "measured teeth in 198 films",
+      "n": 550,
+      "unit_of_n": "measured teeth in 197 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": false,
@@ -526,13 +526,13 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "within 10 points",
-      "value": 0.7947826086956522,
+      "value": 0.8163636363636364,
       "ci95": [
-        0.7593842328460089,
-        0.8279413730436588
+        0.7804382520082184,
+        0.8512248648320272
       ],
-      "n": 575,
-      "unit_of_n": "measured teeth in 198 films",
+      "n": 550,
+      "unit_of_n": "measured teeth in 197 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
@@ -543,13 +543,13 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "exact stage agreement (I/II/III)",
-      "value": 0.7339130434782609,
+      "value": 0.76,
       "ci95": [
-        0.6936282065640251,
-        0.7726535480023852
+        0.7224136909598093,
+        0.7966132455627672
       ],
-      "n": 575,
-      "unit_of_n": "measured teeth in 198 films",
+      "n": 550,
+      "unit_of_n": "measured teeth in 197 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
@@ -560,13 +560,13 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "90 % interval coverage",
-      "value": 0.9339130434782609,
+      "value": 0.9272727272727272,
       "ci95": [
-        0.9128098951491557,
-        0.9541446208112875
+        0.9016697588126159,
+        0.9503717067657451
       ],
-      "n": 575,
-      "unit_of_n": "measured teeth in 198 films",
+      "n": 550,
+      "unit_of_n": "measured teeth in 197 films",
       "ci_method": "film-cluster bootstrap",
       "status": "VERIFIED",
       "pct": true,
@@ -1139,8 +1139,8 @@
   "staging": {
     "periapical_denpar": {
       "all 200 films": {
-        "n": 578,
-        "n_clusters": 200,
+        "n": 553,
+        "n_clusters": 199,
         "labels": [
           "I",
           "II",
@@ -1148,50 +1148,50 @@
         ],
         "confusion_rows_reference_cols_predicted": [
           [
-            230,
-            43,
-            0
+            251,
+            36,
+            7
           ],
           [
-            57,
-            87,
-            17
+            55,
+            75,
+            14
           ],
           [
-            11,
-            26,
-            107
+            1,
+            20,
+            94
           ]
         ],
-        "exact_stage_accuracy": 0.7335640138408305,
+        "exact_stage_accuracy": 0.759493670886076,
         "exact_stage_accuracy_ci95": [
-          0.6906822636941267,
-          0.7728027247583084
+          0.7230455134545207,
+          0.7937390484215364
         ],
-        "within_one_stage_accuracy": 0.9809688581314879,
+        "within_one_stage_accuracy": 0.9855334538878843,
         "within_one_stage_accuracy_ci95": [
-          0.9690189328743546,
-          0.9914089347079038
+          0.9750878578542383,
+          0.9945057456254897
         ],
-        "kappa_linear": 0.6671459783192913,
+        "kappa_linear": 0.6912901808161471,
         "kappa_linear_ci95": [
-          0.6003262008544052,
-          0.7239455049146042
+          0.6292655227276698,
+          0.7417075912588167
         ],
-        "kappa_quadratic": 0.7543779116009544,
+        "kappa_quadratic": 0.7778417479727846,
         "kappa_quadratic_ci95": [
-          0.6906135499070127,
-          0.8063830404535821
+          0.7197666205764861,
+          0.8216830399712547
         ],
         "per_reference_stage_n": {
-          "I": 273,
-          "II": 161,
-          "III": 144
+          "I": 294,
+          "II": 144,
+          "III": 115
         }
       },
       "excluding the 2 test films duplicated in train/val": {
-        "n": 575,
-        "n_clusters": 198,
+        "n": 550,
+        "n_clusters": 197,
         "labels": [
           "I",
           "II",
@@ -1199,45 +1199,45 @@
         ],
         "confusion_rows_reference_cols_predicted": [
           [
-            228,
-            43,
-            0
+            249,
+            36,
+            7
           ],
           [
-            56,
-            87,
-            17
+            54,
+            75,
+            14
           ],
           [
-            11,
-            26,
-            107
+            1,
+            20,
+            94
           ]
         ],
-        "exact_stage_accuracy": 0.7339130434782609,
+        "exact_stage_accuracy": 0.76,
         "exact_stage_accuracy_ci95": [
-          0.6936282065640251,
-          0.7726535480023852
+          0.7224136909598093,
+          0.7966132455627672
         ],
-        "within_one_stage_accuracy": 0.9808695652173913,
+        "within_one_stage_accuracy": 0.9854545454545455,
         "within_one_stage_accuracy_ci95": [
-          0.9690175974835302,
-          0.9911971830985915
+          0.9747280994379198,
+          0.9945553539019963
         ],
-        "kappa_linear": 0.6678969388761322,
+        "kappa_linear": 0.6923863627284131,
         "kappa_linear_ci95": [
-          0.6033019294067102,
-          0.7212751861104808
+          0.6310653871182146,
+          0.7473367168029558
         ],
-        "kappa_quadratic": 0.7547670803180805,
+        "kappa_quadratic": 0.7785200596808417,
         "kappa_quadratic_ci95": [
-          0.6943117778652815,
-          0.8024567406525147
+          0.7241770500646055,
+          0.8239587295113886
         ],
         "per_reference_stage_n": {
-          "I": 271,
-          "II": 160,
-          "III": 144
+          "I": 292,
+          "II": 143,
+          "III": 115
         }
       }
     },

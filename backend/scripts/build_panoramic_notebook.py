@@ -230,10 +230,8 @@ def write(path, cell_list):
 
 write(OUT, cells)
 
-# Single-model notebooks, so two Google accounts can train C and D at the same time.
+# Single-model notebook for D (model C was evaluated and not adopted, see docs/TRAINING_INVENTORY.md).
 SINGLE = {
-    "C": ("train_panoramic_C_colab.ipynb", "the per-tooth bone-loss detector (model C, PDCNN)",
-          "About 1-1.5 hours on a free T4."),
     "D": ("train_panoramic_D_colab.ipynb", "the tooth-detector fine-tune on Aga Khan films (model D)",
           "About 30-45 minutes on a free T4. **First** upload `backend/weights/dental_yolov8n.pt` to "
           "`MyDrive/PerioVision/current/` in THIS Google account."),
