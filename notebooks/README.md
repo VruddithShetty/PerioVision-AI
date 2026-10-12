@@ -35,5 +35,4 @@ Trains the panoramic models on open data it downloads itself: a per-jaw bone-los
 ~9,200 films), worst-tooth bone loss and stage (BRAR, 988 films), a per-tooth bone-loss detector (PDCNN,
 1,747 films; evaluated and not adopted) and a fine-tune of the tooth detector (Aga Khan OPG;
 deployed, also as `train_panoramic_D_colab.ipynb`). Every model is tested on held-out
-films; results go to `MyDrive/PerioVision/export_panoramic/`. After editing the scripts it embeds, regenerate it
-with `python backend/scripts/build_panoramic_notebook.py`.
+films; results go to `MyDrive/PerioVision/export_panoramic/`.

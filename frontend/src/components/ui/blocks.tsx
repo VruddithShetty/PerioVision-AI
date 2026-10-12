@@ -215,9 +215,9 @@ export function DemoDataBanner({ what }: { what: string }) {
   return (
     <div role="note" className="mb-6 rounded-xl border border-review-400/40 bg-review-500/10 px-4 py-3 text-sm text-review-400">
       <strong>Synthetic demo data.</strong> {what} comes from generated demo visits with planted bone levels, so it shows how
-      the feature works, not a measurement. On real radiographs a change counts only when it is larger than both readings'
-      calibrated error ranges together (often about ±35-40 points with today's landmark accuracy); smaller changes are labelled
-      "no change beyond measurement error".
+      the feature works, not a measurement. On real radiographs a change counts only when the films register to each other
+      and the same side of the tooth moved by more than the model's measured repeatability (about 5-6 points of root
+      length); smaller changes are labelled "no change beyond measurement error".
     </div>
   );
 }

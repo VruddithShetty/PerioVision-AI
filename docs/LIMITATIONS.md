@@ -150,7 +150,7 @@ Found while pushing 300 real films through the app's API to build demonstration 
 
 ## What is fully in place
 
-- 139 unit tests and 34 live tests on the real models pass; every weight, calibration and metrics file is signed and
+- 143 unit tests and 34 live tests on the real models pass; every weight, calibration and metrics file is signed and
   checked at start-up.
 - A retrain on the corrected labels is ready: `notebooks/train_landmarks_v3_colab.ipynb`. It compares itself
   against the deployed model on the same films and installs nothing unless the difference is real.

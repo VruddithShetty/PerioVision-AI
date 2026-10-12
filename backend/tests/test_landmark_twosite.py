@@ -2,7 +2,17 @@
 import numpy as np
 import pytest
 
-from research.compare_landmark_models import SWAP5, pct, tooth_pct
+from app.ml.landmarks.cej_abc_extractor import SWAP5, _pct, worst_confident_site
+from app.ml.measurement.bone_loss import bone_loss_for_tooth
+
+
+def pct(cej, apex, crest):
+    return bone_loss_for_tooth({"cej": cej, "root_apex": apex, "bone_crest": crest})["bone_loss_pct"]
+
+
+def tooth_pct(k, _n, site_conf):
+    picked = worst_confident_site(k, site_conf, 0.0)
+    return picked[2] if picked else None
 
 
 def _tooth():
@@ -32,14 +42,6 @@ def test_mirror_then_swap_gives_the_same_bone_loss():
     assert tooth_pct(m, 5, 0.5) == pytest.approx(tooth_pct(k, 5, 0.5))
 
 
-def test_pct_matches_the_app_formula():
-    from app.ml.measurement.bone_loss import bone_loss_for_tooth
-
-    k = _tooth()
-    app = bone_loss_for_tooth({"cej": k[2, :2], "root_apex": k[4, :2], "bone_crest": k[3, :2]})["bone_loss_pct"]
-    assert pct(k[2, :2], k[4, :2], k[3, :2]) == pytest.approx(app, abs=0.01)
-
-
 def test_app_reports_the_worst_confident_site_as_three_landmarks():
     """The app turns a two-site prediction into the usual CEJ / apex / crest triple of the worse confident site."""
     from app.ml.landmarks.cej_abc_extractor import LandmarkDetectionModel, _pct
@@ -49,7 +51,7 @@ def test_app_reports_the_worst_confident_site_as_three_landmarks():
     assert lm["measured_site"] == "right"
     assert lm["cej"] == [30.0, 0.0] and lm["bone_crest"] == [30.0, 40.0] and lm["root_apex"] == [20.0, 100.0]
     assert set(lm["site_bone_loss_pct"]) == {"left", "right"}
-    assert _pct(k) == pytest.approx(tooth_pct(k, 5, 0.0), abs=0.01)   # disagreement signal = research evaluator
+    assert _pct(k) == pytest.approx(tooth_pct(k, 5, 0.0), abs=0.01)   # disagreement signal = worst site
     k[:, 2] = [0.9, 0.9, 0.9, 0.2, 0.9]                       # right crest unsure -> left site is measured
     assert LandmarkDetectionModel._landmarks_from(k, "keypoint_model")["measured_site"] == "left"
     k[:, 2] = 0.2

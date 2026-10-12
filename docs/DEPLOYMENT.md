@@ -29,3 +29,18 @@ Losing `.env.production` or `keys-production` means encrypted data can no longer
 - Choose a host and domain, and put an HTTPS reverse proxy (Caddy or nginx) in front. It serves `frontend/dist` and proxies `/api` to the backend.
 - Set `PUBLIC_BASE_URL`, `CORS_ORIGINS` and `PUBLIC_VERIFY_URL` in `.env.production` to that domain.
 - Schedule MongoDB backups (`mongodump`) and back up `backend/storage-production`.
+
+## Online demo (Vercel + Hugging Face)
+
+Vercel cannot run the backend (PyTorch and the models are far over its 250 MB function limit), so the public demo
+splits in two: the web app on Vercel, the backend in demo mode in a free Hugging Face Docker Space. `frontend/vercel.json`
+forwards `/api/*` to the Space, so the browser sees one origin and the login cookie and security headers work
+unchanged. Step by step: `deploy/README.md`. In short:
+
+```powershell
+.\deploy\make_hf_space.ps1 -Space <hf-username>/<space-name>          # backend (committed files only)
+.\deploy\deploy_vercel.ps1 -BackendUrl https://<hf-username>-<space-name>.hf.space
+```
+
+The Space keeps data in memory and the free tier sleeps after about 48 hours without visits. Never upload real
+patient radiographs to it.

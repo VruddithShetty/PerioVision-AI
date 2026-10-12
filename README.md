@@ -89,6 +89,15 @@ On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 - Live deployment (fresh secrets, real MongoDB, production server): see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 - Local HTTPS: `python scripts/make_dev_cert.py`, then set `TLS_CERT=keys/dev-tls.crt` and `TLS_KEY=keys/dev-tls.key` in `.env`.
 
+### Optional: put it online
+
+Web app on Vercel, backend in a free Hugging Face Docker Space (demo mode); see [deploy/README.md](deploy/README.md):
+
+```powershell
+.\deploy\make_hf_space.ps1 -Space <hf-username>/<space-name>
+.\deploy\deploy_vercel.ps1 -BackendUrl https://<hf-username>-<space-name>.hf.space
+```
+
 ## Troubleshooting
 
 | Problem | Fix |
@@ -142,12 +151,13 @@ All numbers are on films the models never trained on, with 95 % confidence inter
 backend/        Flask API
   app/          api/ (routes) · services/ (workflow) · ml/ (models, uncertainty, risk) · security/ · models/ (DB) · schemas/
   config/       thresholds.json: every clinical / ML threshold in one place
-  scripts/      training, evaluation, calibration, signing and setup tools
+  scripts/      setup, model install / signing, evaluation and calibration tools
   tests/        fast test suite (no weights needed) · tests_live/: checks with the real trained models
   weights/      model files (not in git; see weights/README.md) · keys/: signing keys (not in git)
 frontend/       React 18 + Vite + TypeScript web app
 notebooks/      one-click Colab training notebooks
 docs/           documentation, evidence/ (raw evaluation outputs), reference/screenshots/
 data/           local data, gitignored (sample/ = synthetic demo images)
+deploy/         Hugging Face Space + Vercel scripts for the online demo
 run.ps1 · Makefile · docker-compose.yml   run / build / deploy entry points
 ```
