@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { AlertTriangle, ArrowLeft, KeyRound, Lock, Mail, ShieldCheck, Smartphone } from "lucide-react";
 import { lazy, useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -140,9 +141,12 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="mb-10 flex items-center justify-between">
             <Logo />
-            <Link to="/" className="flex items-center gap-1 text-xs text-mist-400 hover:text-mist-100">
-              <ArrowLeft className="h-3.5 w-3.5" /> Home
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link to="/" className="flex items-center gap-1 text-xs text-mist-400 hover:text-mist-100">
+                <ArrowLeft className="h-3.5 w-3.5" /> Home
+              </Link>
+              <ThemeToggle />
+            </div>
           </div>
           <AnimatePresence mode="wait">
             {step === "password" ? (

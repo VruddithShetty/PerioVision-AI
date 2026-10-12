@@ -110,7 +110,7 @@ export function PanoramicScanner() {
             const dir = t.upper ? -1 : 1;
             const cej = t.crownY;
             const crest = cej + dir * (6 + (t.rootLen - 6) * (t.loss / 100));
-            const color = stageColor(stageFor(t.loss));
+            const color = stageColor(stageFor(t.loss), "dark"); // drawn on the X-ray
             return (
               <g key={`ai-${t.id}`}>
                 {t.loss > 20 && <circle cx={t.x} cy={(cej + crest) / 2} r={28} fill="url(#heat)" />}

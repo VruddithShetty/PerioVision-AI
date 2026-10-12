@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
@@ -58,7 +59,7 @@ function NavItems({ onNavigate }: { onNavigate?: () => void }) {
             clsx(
               "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition",
               isActive
-                ? "bg-gradient-to-r from-brand-400/15 to-transparent text-brand-300 shadow-[inset_2px_0_0_0_#22d3ee]"
+                ? "bg-gradient-to-r from-brand-400/15 to-transparent text-brand-300 shadow-[inset_2px_0_0_0_rgb(var(--brand-400))]"
                 : "text-mist-400 hover:bg-white/[0.04] hover:text-mist-100",
             )
           }
@@ -102,8 +103,9 @@ export function AppLayout() {
 
   const sidebar = (
     <div className="flex h-full flex-col">
-      <div className="px-4 pb-6 pt-5">
+      <div className="flex items-center justify-between gap-2 px-4 pb-6 pt-5">
         <Logo />
+        <ThemeToggle />
       </div>
       <div className="flex-1 overflow-y-auto px-3">
         <NavItems onNavigate={() => setMobileOpen(false)} />
@@ -152,6 +154,7 @@ export function AppLayout() {
               <Menu className="h-5 w-5" />
             </button>
             <Logo compact />
+            <ThemeToggle className="ml-auto" />
           </div>
           <AnimatePresence mode="wait">
             <motion.div

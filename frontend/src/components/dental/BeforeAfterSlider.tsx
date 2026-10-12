@@ -39,7 +39,7 @@ export function BeforeAfterSlider({ beforeUrl, afterUrl, beforeLabel, afterLabel
       <div className="absolute inset-0 overflow-hidden" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
         <img src={before.url} alt={`Radiograph ${beforeLabel}`} className="absolute inset-0 h-full w-full object-contain" draggable={false} />
       </div>
-      <div className="absolute inset-y-0 w-0.5 bg-brand-300 shadow-[0_0_16px_#22d3ee]" style={{ left: `${pos}%` }}>
+      <div className="absolute inset-y-0 w-0.5 bg-brand-300 shadow-[0_0_16px_rgb(var(--brand-400))]" style={{ left: `${pos}%` }}>
         <div className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-brand-300 bg-ink-950 text-brand-300">
           ⇆
         </div>

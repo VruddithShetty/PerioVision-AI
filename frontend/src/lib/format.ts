@@ -1,4 +1,5 @@
 import type { ReviewStatus } from "@/api/types";
+import type { Theme } from "@/store/theme";
 
 export const fmtPct = (v: number | null | undefined, digits = 1) =>
   v === null || v === undefined ? "–" : `${v.toFixed(digits)}%`;
@@ -40,14 +41,25 @@ export const REVIEW_TONE: Record<ReviewStatus, Tone> = {
   rejected: "critical",
 };
 
-export const STAGE_COLOR: Record<string, string> = {
-  I: "#2dd4bf",
-  II: "#fbbf24",
-  III: "#fb923c",
-  IV: "#ef4444",
+/** Stage colours. Dark: bright tones (also used for marks drawn on an X-ray, which is always dark). Light: deeper
+ *  tones that stay readable on white. */
+export const STAGE_COLOR_DARK: Record<string, string> = { I: "#2dd4bf", II: "#fbbf24", III: "#fb923c", IV: "#ef4444" };
+export const STAGE_COLOR_LIGHT: Record<string, string> = { I: "#0d9488", II: "#d97706", III: "#ea580c", IV: "#dc2626" };
+export const STAGE_COLOR = STAGE_COLOR_DARK;
+
+/** Colour of a stage. Without a theme: a CSS variable (`var(--stage-ii)`) that follows the light / dark toggle
+ *  instantly, for style props. With a theme: a fixed hex colour, for SVG attributes, charts and marks drawn on a
+ *  radiograph (pass "dark" there: an X-ray is always dark). Mix in transparency with `tint()`, not by appending hex. */
+export const stageColor = (stage?: string | null, theme?: Theme) => {
+  if (!theme) return `var(--stage-${stage && STAGE_COLOR_DARK[stage] ? stage.toLowerCase() : "none"})`;
+  const table = theme === "dark" ? STAGE_COLOR_DARK : STAGE_COLOR_LIGHT;
+  const muted = theme === "dark" ? "#7f93b0" : "#6b839e";
+  return stage ? table[stage] ?? muted : muted;
 };
 
-export const stageColor = (stage?: string | null) => (stage ? STAGE_COLOR[stage] ?? "#7f93b0" : "#7f93b0");
+/** A colour at a given opacity (0-1); works with CSS variables as well as hex colours. */
+export const tint = (color: string, opacity: number) =>
+  `color-mix(in srgb, ${color} ${Math.round(opacity * 100)}%, transparent)`;
 
 export const RISK_TONE: Record<string, Tone> = { low: "ok", moderate: "review", high: "critical" };
 

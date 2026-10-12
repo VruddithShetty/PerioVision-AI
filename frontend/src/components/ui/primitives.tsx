@@ -8,10 +8,10 @@ type ButtonVariant = "primary" | "ghost" | "outline" | "danger" | "subtle";
 
 const BUTTON: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-to-r from-brand-400 to-teal-400 text-ink-950 font-semibold hover:brightness-110 shadow-glow disabled:shadow-none",
+    "bg-gradient-to-r from-brand-400 to-teal-400 text-onaccent font-semibold hover:brightness-110 shadow-glow disabled:shadow-none",
   ghost: "text-mist-300 hover:text-mist-100 hover:bg-white/5",
   outline: "border border-white/12 text-mist-100 hover:border-brand-400/50 hover:bg-brand-400/5",
-  danger: "bg-critical-500/90 text-white hover:bg-critical-500",
+  danger: "bg-critical-500/90 text-[#ffffff] hover:bg-critical-500",
   subtle: "bg-white/5 text-mist-100 hover:bg-white/10",
 };
 

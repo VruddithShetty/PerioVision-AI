@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { stageColor } from "@/lib/format";
+import { stageColor, tint } from "@/lib/format";
 import { ToothCrossSection } from "./ToothCrossSection";
 
 const STAGES = [
@@ -52,7 +52,7 @@ export function StagingExplorer() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             className="mt-6 rounded-2xl border p-5"
-            style={{ borderColor: `${stageColor(stage)}55`, background: `${stageColor(stage)}10` }}
+            style={{ borderColor: tint(stageColor(stage), 0.33), background: tint(stageColor(stage), 0.06) }}
           >
             <p className="label" style={{ color: stageColor(stage) }}>
               Stage {info.stage} · {info.range}
@@ -67,8 +67,8 @@ export function StagingExplorer() {
               key={s.stage}
               className="rounded-lg border px-2 py-1.5 text-center text-xs transition"
               style={{
-                borderColor: s.stage === stage ? stageColor(s.stage) : "rgba(255,255,255,0.08)",
-                color: s.stage === stage ? stageColor(s.stage) : "#7f93b0",
+                borderColor: s.stage === stage ? stageColor(s.stage) : "rgb(var(--overlay) / 0.1)",
+                color: s.stage === stage ? stageColor(s.stage) : "rgb(var(--mist-400))",
               }}
             >
               Stage {s.stage}

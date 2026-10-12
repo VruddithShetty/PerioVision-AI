@@ -64,14 +64,14 @@ function PocketGraph({ t, tooth, face }: { t: ToothChart; tooth: string; face: "
   return (
     <svg viewBox="0 0 40 64" className="h-16 w-10" aria-hidden>
       {/* root silhouette */}
-      <path d={face === "b" ? "M10 4 h20 l-3 58 h-14 z" : "M10 60 h20 l-3 -58 h-14 z"} fill="#e6f1ff" opacity="0.08" />
+      <path d={face === "b" ? "M10 4 h20 l-3 58 h-14 z" : "M10 60 h20 l-3 -58 h-14 z"} style={{ fill: "rgb(var(--mist-100))" }} opacity="0.08" />
       {(() => {
         const pts = idx.map((i, k) => `${xs[k]},${gum + t.rec[i]! * scale}`).join(" ");
         const pocket = idx.map((i, k) => `${xs[k]},${gum + (t.rec[i]! + t.pd[i]!) * scale}`).join(" ");
         return (
           <>
-            <polyline points={pts} fill="none" stroke="#f472b6" strokeWidth="1.5" />
-            <polyline points={pocket} fill="none" stroke="#22d3ee" strokeWidth="1" strokeDasharray="2 1.5" />
+            <polyline points={pts} fill="none" style={{ stroke: "var(--accent-pink)" }} strokeWidth="1.5" />
+            <polyline points={pocket} fill="none" style={{ stroke: "rgb(var(--brand-400))" }} strokeWidth="1" strokeDasharray="2 1.5" />
             {idx.map((i, k) => (
               <line
                 key={i}
@@ -79,7 +79,7 @@ function PocketGraph({ t, tooth, face }: { t: ToothChart; tooth: string; face: "
                 x2={xs[k]}
                 y1={gum + t.rec[i]! * scale}
                 y2={gum + (t.rec[i]! + t.pd[i]!) * scale}
-                stroke={t.pd[i]! >= 6 ? "#ef4444" : t.pd[i]! >= 4 ? "#fbbf24" : "#2dd4bf"}
+                style={{ stroke: t.pd[i]! >= 6 ? "var(--stage-iv)" : t.pd[i]! >= 4 ? "var(--stage-ii)" : "var(--stage-i)" }}
                 strokeWidth="4"
                 strokeLinecap="round"
               />

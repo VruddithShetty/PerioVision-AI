@@ -3,6 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { useMemo, useState } from "react";
 import type { Tooth } from "@/api/types";
 import { stageColor } from "@/lib/format";
+import { useTheme } from "@/store/theme";
 import { archPositions, createToothGeometry } from "./geometry";
 
 /**
@@ -37,6 +38,7 @@ export default function DentalArch3D({ teeth, selected, onSelect }: {
   selected: string | null;
   onSelect: (id: string) => void;
 }) {
+  const theme = useTheme((st) => st.theme);
   const geometry = useMemo(() => createToothGeometry(), []);
   const [hover, setHover] = useState<string | null>(null);
   const { upper, lower } = useMemo(() => {
@@ -50,7 +52,7 @@ export default function DentalArch3D({ teeth, selected, onSelect }: {
     archPositions(list.length).map((p, i) => {
       const t = list[i]!;
       const active = selected === t.tooth_id;
-      const color = t.bone_loss_pct === null ? "#5b6f8c" : stageColor(t.stage);
+      const color = t.bone_loss_pct === null ? "#5b6f8c" : stageColor(t.stage, theme); // three.js needs a real colour
       return (
         <group key={t.tooth_id} position={[p.x, y, p.z]} rotation={[flip ? Math.PI : 0, -p.angle, 0]}>
           <mesh

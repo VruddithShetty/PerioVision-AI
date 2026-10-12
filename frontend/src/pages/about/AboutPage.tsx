@@ -70,7 +70,7 @@ export default function AboutPage({ embedded = false }: { embedded?: boolean }) 
           <svg viewBox="0 0 1060 320" className="min-w-[860px]" role="img" aria-label="Architecture diagram">
             <defs>
               <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M0 0 L10 5 L0 10 z" fill="#2dd4bf" />
+                <path d="M0 0 L10 5 L0 10 z" style={{ fill: "rgb(var(--teal-400))" }} />
               </marker>
             </defs>
             {EDGES.map(([a, b]) => {
@@ -78,14 +78,14 @@ export default function AboutPage({ embedded = false }: { embedded?: boolean }) 
               const B = pos(b);
               const hot = active === a || active === b;
               return (
-                <line key={`${a}-${b}`} x1={A.x + 150} y1={A.y + 28} x2={B.x} y2={B.y + 28} stroke={hot ? "#22d3ee" : "#1a3050"} strokeWidth={hot ? 2.5 : 1.5} markerEnd="url(#arrow)" />
+                <line key={`${a}-${b}`} x1={A.x + 150} y1={A.y + 28} x2={B.x} y2={B.y + 28} style={{ stroke: hot ? "rgb(var(--brand-400))" : "rgb(var(--ink-600))" }} strokeWidth={hot ? 2.5 : 1.5} markerEnd="url(#arrow)" />
               );
             })}
             {NODES.map((n) => (
               <g key={n.id} transform={`translate(${n.x},${n.y})`} className="cursor-pointer" onClick={() => setActive(n.id)} onMouseEnter={() => setActive(n.id)}>
-                <rect width="150" height="56" rx="14" fill={active === n.id ? "rgba(34,211,238,0.14)" : "rgba(10,22,40,0.9)"} stroke={active === n.id ? "#22d3ee" : "rgba(255,255,255,0.1)"} />
-                <text x="75" y="25" textAnchor="middle" fontSize="13" fontWeight="600" fill="#e6f1ff" fontFamily="Inter">{n.label}</text>
-                <text x="75" y="42" textAnchor="middle" fontSize="10" fill="#7f93b0" fontFamily="JetBrains Mono">{n.sub}</text>
+                <rect width="150" height="56" rx="14" style={{ fill: active === n.id ? "rgb(var(--brand-400) / 0.14)" : "rgb(var(--ink-800) / 0.9)", stroke: active === n.id ? "rgb(var(--brand-400))" : "rgb(var(--overlay) / 0.12)" }} />
+                <text x="75" y="25" textAnchor="middle" fontSize="13" fontWeight="600" style={{ fill: "rgb(var(--mist-100))" }} fontFamily="Inter">{n.label}</text>
+                <text x="75" y="42" textAnchor="middle" fontSize="10" style={{ fill: "rgb(var(--mist-400))" }} fontFamily="JetBrains Mono">{n.sub}</text>
               </g>
             ))}
           </svg>

@@ -178,7 +178,7 @@ export default function NewAnalysisPage() {
                   <img src={preview} alt="Selected radiograph preview" className="max-h-[300px] w-full object-contain opacity-90" />
                   {upload.isPending && (
                     <div className="absolute inset-0 flex items-center justify-center bg-ink-950/60">
-                      <div className="absolute inset-x-0 h-0.5 animate-[scan_1.6s_ease-in-out_infinite] bg-brand-400 shadow-[0_0_20px_#22d3ee]" />
+                      <div className="absolute inset-x-0 h-0.5 animate-[scan_1.6s_ease-in-out_infinite] bg-brand-400 shadow-[0_0_20px_rgb(var(--brand-400))]" />
                       <span className="flex items-center gap-2 text-sm"><Loader2 className="h-4 w-4 animate-spin" /> Checking file…</span>
                     </div>
                   )}

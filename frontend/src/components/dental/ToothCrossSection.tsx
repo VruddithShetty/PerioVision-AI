@@ -38,7 +38,7 @@ export function ToothCrossSection({ boneLossPct, className = "", showLabels = tr
       <g clipPath="url(#below-crest)">
         <rect x="20" y="0" width="280" height="330" rx="18" fill="url(#trabecular)" opacity="0.95" />
       </g>
-      <motion.line initial={false} x1="20" x2="300" animate={{ y1: crestY, y2: crestY }} stroke="#fbbf24" strokeWidth="2" strokeDasharray="6 5" />
+      <motion.line initial={false} x1="20" x2="300" animate={{ y1: crestY, y2: crestY }} style={{ stroke: "var(--stage-ii)" }} strokeWidth="2" strokeDasharray="6 5" />
 
       {/* gingiva */}
       <motion.path
@@ -63,19 +63,19 @@ export function ToothCrossSection({ boneLossPct, className = "", showLabels = tr
       {/* crown (enamel) */}
       <path d="M92 58 C92 20 120 12 140 24 C150 14 170 14 180 24 C200 12 228 20 228 58 C228 90 214 108 208 118 L112 118 C106 108 92 90 92 58 Z" fill="url(#enamel)" stroke="#a5f3fc" strokeWidth="1.5" />
       {/* CEJ line */}
-      <line x1="100" x2="220" y1={cejY} y2={cejY} stroke="#22d3ee" strokeWidth="2" />
+      <line x1="100" x2="220" y1={cejY} y2={cejY} style={{ stroke: "rgb(var(--brand-400))" }} strokeWidth="2" />
 
       {/* measurement bracket */}
-      <line x1="240" x2="240" y1={cejY} y2={apexY} stroke="#7f93b0" strokeWidth="1" />
-      <motion.line initial={false} x1="236" x2="244" animate={{ y1: crestY, y2: crestY }} stroke="#fbbf24" strokeWidth="2" />
-      <motion.line initial={false} x1="240" x2="240" y1={cejY} animate={{ y2: crestY }} stroke="#fbbf24" strokeWidth="3" />
+      <line x1="240" x2="240" y1={cejY} y2={apexY} style={{ stroke: "rgb(var(--mist-400))" }} strokeWidth="1" />
+      <motion.line initial={false} x1="236" x2="244" animate={{ y1: crestY, y2: crestY }} style={{ stroke: "var(--stage-ii)" }} strokeWidth="2" />
+      <motion.line initial={false} x1="240" x2="240" y1={cejY} animate={{ y2: crestY }} style={{ stroke: "var(--stage-ii)" }} strokeWidth="3" />
 
       {showLabels && (
-        <g fontFamily="Inter, sans-serif" fontSize="11" fill="#a9bcd6">
-          <text x="250" y={cejY + 4} fill="#67e8f9">CEJ</text>
-          <motion.text initial={false} x="250" animate={{ y: crestY + 4 }} fill="#fbbf24">Bone crest</motion.text>
+        <g fontFamily="Inter, sans-serif" fontSize="11" style={{ fill: "rgb(var(--mist-300))" }}>
+          <text x="250" y={cejY + 4} style={{ fill: "rgb(var(--brand-300))" }}>CEJ</text>
+          <motion.text initial={false} x="250" animate={{ y: crestY + 4 }} style={{ fill: "var(--stage-ii)" }}>Bone crest</motion.text>
           <text x="250" y={apexY + 4}>Root apex</text>
-          <text x="24" y="40" fill="#e6f1ff">Enamel</text>
+          <text x="24" y="40" style={{ fill: "rgb(var(--mist-100))" }}>Enamel</text>
           <text x="24" y="330">Alveolar bone</text>
         </g>
       )}

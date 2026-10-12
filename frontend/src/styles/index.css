@@ -3,8 +3,80 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  /* Theme palettes as RGB channels (used by tailwind.config.js). Light is the default; the toggle sets
+     data-theme="dark" on <html> (src/store/theme.ts). */
+  :root,
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --ink-950: 244 249 255; /* page background: white with a hint of sky */
+    --ink-900: 255 255 255; /* sidebar, inputs */
+    --ink-800: 255 255 255; /* cards */
+    --ink-700: 224 240 254; /* raised / selected surfaces (sky-100) */
+    --ink-600: 186 224 253; /* scrollbars, dividers (sky-200) */
+    --mist-100: 11 36 64; /* primary text: deep navy */
+    --mist-300: 44 74 107;
+    --mist-400: 74 102 132;
+    --mist-500: 95 119 146; /* >= 4.5:1 on white */
+    --brand-300: 3 105 161; /* sky-700: accent text on white */
+    --brand-400: 2 132 199; /* sky-600 */
+    --brand-500: 14 165 233; /* sky-500 */
+    --brand-600: 3 105 161;
+    --teal-400: 15 118 110; /* teal-700, >= 4.5:1 on white */
+    --teal-500: 17 94 89;
+    --review-400: 180 83 9; /* amber-700 text */
+    --review-500: 217 119 6;
+    --critical-400: 220 38 38;
+    --critical-500: 239 68 68;
+    --overlay: 14 66 120; /* "white/x" overlays become soft sky-navy tints */
+    --on-accent: 255 255 255;
+    --shadow-glass: 0 1px 2px rgba(14, 66, 120, 0.06), 0 10px 28px -14px rgba(14, 66, 120, 0.22);
+    --grid-line: rgba(2, 132, 199, 0.07);
+    --page-glow-1: rgba(56, 189, 248, 0.16);
+    --page-glow-2: rgba(45, 212, 191, 0.1);
+    --scrollbar: #bae0fd;
+    --selection: rgba(14, 165, 233, 0.25);
+    --stage-i: #0d9488;
+    --stage-ii: #d97706;
+    --stage-iii: #ea580c;
+    --stage-iv: #dc2626;
+    --stage-none: #6b839e;
+    --accent-pink: #db2777;
+  }
+  :root[data-theme="dark"] {
     color-scheme: dark;
+    --ink-950: 3 7 15;
+    --ink-900: 6 13 26;
+    --ink-800: 10 22 40;
+    --ink-700: 16 33 58;
+    --ink-600: 26 48 80;
+    --mist-100: 230 241 255;
+    --mist-300: 169 188 214;
+    --mist-400: 127 147 176;
+    --mist-500: 91 111 140;
+    --brand-300: 103 232 249;
+    --brand-400: 34 211 238;
+    --brand-500: 6 182 212;
+    --brand-600: 8 145 178;
+    --teal-400: 45 212 191;
+    --teal-500: 20 184 166;
+    --review-400: 251 191 36;
+    --review-500: 245 158 11;
+    --critical-400: 248 113 113;
+    --critical-500: 239 68 68;
+    --overlay: 255 255 255;
+    --on-accent: 3 7 15;
+    --shadow-glass: 0 1px 0 0 rgba(148, 210, 255, 0.06) inset, 0 20px 40px -24px rgba(0, 0, 0, 0.8);
+    --grid-line: rgba(125, 211, 252, 0.05);
+    --page-glow-1: rgba(34, 211, 238, 0.1);
+    --page-glow-2: rgba(20, 184, 166, 0.08);
+    --scrollbar: #1a3050;
+    --selection: rgba(34, 211, 238, 0.35);
+    --stage-i: #2dd4bf;
+    --stage-ii: #fbbf24;
+    --stage-iii: #fb923c;
+    --stage-iv: #ef4444;
+    --stage-none: #7f93b0;
+    --accent-pink: #f472b6;
   }
   html,
   body,
@@ -14,8 +86,9 @@
   body {
     @apply bg-ink-950 font-sans text-mist-100 antialiased;
     background-image:
-      radial-gradient(60rem 40rem at 85% -10%, rgba(34, 211, 238, 0.1), transparent 60%),
-      radial-gradient(50rem 30rem at -10% 110%, rgba(20, 184, 166, 0.08), transparent 60%);
+      radial-gradient(60rem 40rem at 85% -10%, var(--page-glow-1), transparent 60%),
+      radial-gradient(50rem 30rem at -10% 110%, var(--page-glow-2), transparent 60%);
+    transition: background-color 0.25s ease, color 0.25s ease;
     background-attachment: fixed;
   }
   h1,
@@ -27,11 +100,11 @@
     @apply outline-none ring-2 ring-brand-400 ring-offset-2 ring-offset-ink-950;
   }
   ::selection {
-    background: rgba(34, 211, 238, 0.35);
+    background: var(--selection);
   }
   * {
     scrollbar-width: thin;
-    scrollbar-color: #1a3050 transparent;
+    scrollbar-color: var(--scrollbar) transparent;
   }
 }
 

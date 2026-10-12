@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Eye, Ruler, Target } from "lucide-react";
 import type { Tooth } from "@/api/types";
 import { Badge } from "@/components/ui/primitives";
-import { FLAG_LABEL, fmtNum, fmtPct, stageColor } from "@/lib/format";
+import { FLAG_LABEL, fmtNum, fmtPct, stageColor, tint } from "@/lib/format";
 import { ToothCrossSection } from "./ToothCrossSection";
 
 /** Uncertainty band on a 0–100 % scale with stage cut-offs. */
@@ -48,7 +48,7 @@ export function ToothPanel({ tooth, coverage }: { tooth: Tooth | null; coverage:
               <p className="label">Tooth {tooth.tooth_id_source === "model_fdi_class" ? "(FDI)" : `(${tooth.tooth_id_source.replace(/_/g, " ")})`}</p>
               <p className="font-display text-4xl font-bold">{tooth.tooth_id}</p>
             </div>
-            <div className="rounded-2xl px-4 py-2 text-center" style={{ background: `${stageColor(tooth.stage)}18`, color: stageColor(tooth.stage) }}>
+            <div className="rounded-2xl px-4 py-2 text-center" style={{ background: tint(stageColor(tooth.stage), 0.09), color: stageColor(tooth.stage) }}>
               <p className="text-[10px] uppercase tracking-widest">Stage</p>
               <p className="font-display text-2xl font-bold">{tooth.stage ?? "–"}</p>
             </div>
@@ -84,7 +84,7 @@ export function ToothPanel({ tooth, coverage }: { tooth: Tooth | null; coverage:
             <div className="mt-3 flex flex-wrap items-center gap-1.5">
               <span className="text-xs text-mist-400">Stage set:</span>
               {tooth.uncertainty.stage_set.map((s) => (
-                <span key={s} className="rounded-md px-2 py-0.5 text-xs font-semibold" style={{ background: `${stageColor(s)}20`, color: stageColor(s) }}>
+                <span key={s} className="rounded-md px-2 py-0.5 text-xs font-semibold" style={{ background: tint(stageColor(s), 0.125), color: stageColor(s) }}>
                   {s}
                 </span>
               ))}

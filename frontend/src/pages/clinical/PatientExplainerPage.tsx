@@ -7,6 +7,7 @@ import { ToothCrossSection } from "@/components/dental/ToothCrossSection";
 import { DemoDataBanner, ErrorState, LoadingRows } from "@/components/ui/blocks";
 import { Button } from "@/components/ui/primitives";
 import { stageColor } from "@/lib/format";
+import { useChartColors } from "@/lib/themeColors";
 
 const PLAIN_STAGE: Record<string, { title: string; text: string }> = {
   I: { title: "Early gum disease", text: "A little of the bone that holds your teeth has been lost. With good cleaning this can stay stable for life." },
@@ -25,6 +26,7 @@ const NO_STAGE = { title: "Not assessed yet", text: "Your X-ray could not be mea
 export default function PatientExplainerPage() {
   const { patientId } = useParams();
   const { data: plan, isLoading, error, refetch } = useCarePlan(patientId);
+  const cc = useChartColors();
 
   if (isLoading) return <LoadingRows rows={8} />;
   if (error || !plan) return <ErrorState error={error} retry={refetch} />;
@@ -119,15 +121,15 @@ export default function PatientExplainerPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={data} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
                     <defs>
-                      <linearGradient id="now" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#ef4444" stopOpacity={0.35} /><stop offset="1" stopColor="#ef4444" stopOpacity={0} /></linearGradient>
+                      <linearGradient id="now" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor={cc.red} stopOpacity={0.35} /><stop offset="1" stopColor={cc.red} stopOpacity={0} /></linearGradient>
                     </defs>
-                    <CartesianGrid stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="year" stroke="#5b6f8c" fontSize={11} tickLine={false} axisLine={false} />
-                    <YAxis unit="%" domain={[0, 100]} stroke="#5b6f8c" fontSize={11} tickLine={false} axisLine={false} />
-                    <ReferenceLine y={50} stroke="#ef4444" strokeDasharray="4 4" label={{ value: "tooth at risk", fill: "#f87171", fontSize: 10, position: "insideTopRight" }} />
-                    <Tooltip contentStyle={{ background: "#0a1628", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12 }} />
+                    <CartesianGrid stroke={cc.grid} />
+                    <XAxis dataKey="year" stroke={cc.axis} fontSize={11} tickLine={false} axisLine={false} />
+                    <YAxis unit="%" domain={[0, 100]} stroke={cc.axis} fontSize={11} tickLine={false} axisLine={false} />
+                    <ReferenceLine y={50} stroke={cc.red} strokeDasharray="4 4" label={{ value: "tooth at risk", fill: cc.red, fontSize: 10, position: "insideTopRight" }} />
+                    <Tooltip contentStyle={{ background: cc.tooltip.background, border: `1px solid ${cc.tooltip.border}`, borderRadius: 12 }} labelStyle={{ color: cc.tooltip.label }} itemStyle={{ color: cc.tooltip.item }} />
                     <Legend wrapperStyle={{ fontSize: 12 }} />
-                    <Area type="monotone" dataKey="If nothing changes" stroke="#ef4444" fill="url(#now)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="If nothing changes" stroke={cc.red} fill="url(#now)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>

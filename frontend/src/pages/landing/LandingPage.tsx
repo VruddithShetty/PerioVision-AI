@@ -1,4 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import {
   ArrowRight,
   BadgeCheck,
@@ -105,12 +106,15 @@ export default function LandingPage() {
             <a href="#security" className="hover:text-mist-100">Security</a>
             <Link to="/verify" className="hover:text-mist-100">Verify a report</Link>
           </nav>
-          <Link
-            to="/login"
-            className="rounded-xl bg-gradient-to-r from-brand-400 to-teal-400 px-4 py-2 text-sm font-semibold text-ink-950 shadow-glow transition hover:brightness-110"
-          >
-            Sign in
-          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <Link
+              to="/login"
+              className="rounded-xl bg-gradient-to-r from-brand-400 to-teal-400 px-4 py-2 text-sm font-semibold text-onaccent shadow-glow transition hover:brightness-110"
+            >
+              Sign in
+            </Link>
+          </div>
         </div>
       </header>
 

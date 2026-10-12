@@ -10,7 +10,7 @@ export function Logo({ compact = false, to = "/" }: { compact?: boolean; to?: st
             <stop offset="1" stopColor="#14b8a6" />
           </linearGradient>
         </defs>
-        <path d="M32 4 8 13v17c0 15 10 26 24 30 14-4 24-15 24-30V13L32 4Z" fill="#060d1a" stroke="url(#pv-logo)" strokeWidth="3" />
+        <path d="M32 4 8 13v17c0 15 10 26 24 30 14-4 24-15 24-30V13L32 4Z" style={{ fill: "rgb(var(--ink-900))" }} stroke="url(#pv-logo)" strokeWidth="3" />
         <path
           d="M22 22c3-3 7-3 10-1 3-2 7-2 10 1 3 4 1 9-1 13l-2 9c-1 3-4 3-5 0l-2-7-2 7c-1 3-4 3-5 0l-2-9c-2-4-4-9-1-13Z"
           fill="url(#pv-logo)"

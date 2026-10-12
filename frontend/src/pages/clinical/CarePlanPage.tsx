@@ -11,12 +11,13 @@ import { Badge, Button, Card, CardTitle } from "@/components/ui/primitives";
 import { fmtDate, stageColor } from "@/lib/format";
 import { useAuth } from "@/store/auth";
 
+// CSS variables, so the colours follow the light / dark theme (src/styles/index.css)
 const PROGNOSIS_COLOR: Record<string, string> = {
-  favourable: "#2dd4bf",
-  questionable: "#fbbf24",
-  unfavourable: "#fb923c",
-  hopeless: "#ef4444",
-  "not assessable": "#7f93b0",
+  favourable: "var(--stage-i)",
+  questionable: "var(--stage-ii)",
+  unfavourable: "var(--stage-iii)",
+  hopeless: "var(--stage-iv)",
+  "not assessable": "var(--stage-none)",
 };
 
 function referralLetter(plan: CarePlan, clinician: string, clinic: string): string {

@@ -3,6 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { useTheme } from "@/store/theme";
 import { createToothGeometry } from "./geometry";
 
 function Tooth() {
@@ -36,6 +37,7 @@ function Tooth() {
 }
 
 function Shield() {
+  const light = useTheme((st) => st.theme) === "light";
   const ref = useRef<THREE.Group>(null);
   const hex = useMemo(() => {
     const shape = new THREE.Shape();
@@ -56,17 +58,18 @@ function Shield() {
   return (
     <group ref={ref}>
       <lineSegments geometry={hex}>
-        <lineBasicMaterial color="#22d3ee" transparent opacity={0.55} />
+        <lineBasicMaterial color={light ? "#0284c7" : "#22d3ee"} transparent opacity={0.55} />
       </lineSegments>
       <mesh>
         <torusGeometry args={[2.95, 0.006, 6, 160]} />
-        <meshBasicMaterial color="#2dd4bf" transparent opacity={0.4} />
+        <meshBasicMaterial color={light ? "#0d9488" : "#2dd4bf"} transparent opacity={0.4} />
       </mesh>
     </group>
   );
 }
 
 function Particles({ count = 900 }: { count?: number }) {
+  const light = useTheme((st) => st.theme) === "light";
   const ref = useRef<THREE.Points>(null);
   const positions = useMemo(() => {
     const arr = new Float32Array(count * 3);
@@ -86,7 +89,7 @@ function Particles({ count = 900 }: { count?: number }) {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial size={0.025} color="#67e8f9" transparent opacity={0.7} sizeAttenuation />
+      <pointsMaterial size={0.025} color={light ? "#0ea5e9" : "#67e8f9"} transparent opacity={0.7} sizeAttenuation />
     </points>
   );
 }

@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Logo } from "@/components/layout/Logo";
 import { VerifyPanel } from "@/components/VerifyPanel";
 
@@ -8,7 +9,7 @@ export default function VerifyPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-5 py-12">
       <div className="w-full max-w-xl">
-        <div className="mb-8 flex justify-center"><Logo /></div>
+        <div className="mb-8 flex items-center justify-center gap-3"><Logo /><ThemeToggle /></div>
         <div className="glass-strong p-6 md:p-8">
           <h1 className="text-2xl font-bold">Verify a PerioVision report</h1>
           <p className="mt-1 text-sm text-mist-400">Checks the report's RSA-PSS digital signature. Nothing about the patient is revealed.</p>

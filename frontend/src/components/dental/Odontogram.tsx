@@ -29,9 +29,8 @@ export function Odontogram({ teeth, selected, onSelect }: { teeth: Tooth[]; sele
           <g transform={upper ? "" : "rotate(180 12 17)"}>
             <path
               d={molar ? "M3 13c0-7 4-10 9-10s9 3 9 10c0 3-1 5-2 6l-1 12c0 2-3 2-3 0l-1-8h-4l-1 8c0 2-3 2-3 0l-1-12c-1-1-2-3-2-6Z" : "M5 12c0-6 3-9 7-9s7 3 7 9c0 3-1 5-2 6l-2 13c0 2-4 2-4 0l-2-13c-1-1-2-3-2-6Z"}
-              fill={t ? stageColor(t.stage) : "#1a3050"}
+              style={{ fill: t ? stageColor(t.stage) : "rgb(var(--ink-600))", stroke: active ? "rgb(var(--mist-100))" : "transparent" }}
               fillOpacity={t ? (active ? 1 : 0.75) : 1}
-              stroke={active ? "#e6f1ff" : "transparent"}
               strokeWidth="1.4"
             />
             {t?.bone_loss_pct != null && (

@@ -72,7 +72,7 @@ export function RadiographViewer({ radiographUrl, gradcamUrl, width, height, tee
               {teeth.map((t) => {
                 const [x1, y1, x2, y2] = t.bbox;
                 const active = t.tooth_id === selected;
-                const color = stageColor(t.stage);
+                const color = stageColor(t.stage, "dark"); // drawn on the X-ray, which is always dark
                 return (
                   <g key={t.tooth_id} onClick={(e) => { e.stopPropagation(); onSelect(t.tooth_id); }} className="cursor-pointer">
                     {layers.roi && t.roi && (
