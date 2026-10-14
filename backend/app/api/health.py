@@ -32,7 +32,7 @@ def system_status() -> dict:
         "mode": config.APP_MODE,
         "database": _db_ok(),
         "models": [{"name": m["name"], "present": m["present"], "signature_valid": m["signature_valid"],
-                    "loaded": m["loaded"], "reason": m["reason"]} for m in models],
+                    "loaded": m["loaded"], "reason": m["reason"], "optional": bool(m.get("optional"))} for m in models],
         # a missing OPTIONAL model is fine; a present-but-unsigned one never is
         "models_verified": all(m["signature_valid"] or (m.get("optional") and not m["present"]) for m in models),
         "audit_chain_intact": chain["chain_intact"],

@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-from app.ml.landmarks.cej_abc_extractor import SWAP5, _pct, worst_confident_site
+from app.ml.landmarks.cej_abc_extractor import SWAP5, worst_confident_site
 from app.ml.measurement.bone_loss import bone_loss_for_tooth
 
 

@@ -294,7 +294,7 @@ export interface ChainVerification {
 export interface SystemStatus {
   mode: Mode;
   database: boolean;
-  models: { name: string; present: boolean; signature_valid: boolean; loaded: boolean; reason: string | null }[];
+  models: { name: string; present: boolean; signature_valid: boolean; loaded: boolean; reason: string | null; optional?: boolean }[];
   models_verified: boolean;
   audit_chain_intact: boolean;
   audit_entries: number;

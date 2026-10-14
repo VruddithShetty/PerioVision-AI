@@ -58,11 +58,19 @@ export default function ModelTrustPage() {
             <div className="space-y-2">
               {data.models.map((m) => (
                 <div key={m.name} className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
-                  {m.signature_valid ? <BadgeCheck className="mt-0.5 h-5 w-5 text-teal-400" /> : <ShieldX className="mt-0.5 h-5 w-5 text-critical-400" />}
+                  {m.signature_valid ? (
+                    <BadgeCheck className="mt-0.5 h-5 w-5 text-teal-400" />
+                  ) : m.optional && !m.present ? (
+                    <FileLock2 className="mt-0.5 h-5 w-5 text-mist-500" />
+                  ) : (
+                    <ShieldX className="mt-0.5 h-5 w-5 text-critical-400" />
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium">{m.purpose}</p>
                     <p className="font-mono text-[11px] text-mist-500">{m.file} · sha256 {shortHash(m.sha256)}</p>
-                    {!m.signature_valid && <p className="text-xs text-critical-400">Refused: {m.reason}</p>}
+                    {!m.signature_valid && (m.optional && !m.present
+                      ? <p className="text-xs text-mist-500">Optional, not installed (added by a future training run)</p>
+                      : <p className="text-xs text-critical-400">Refused: {m.reason}</p>)}
                   </div>
                   <Badge tone={m.loaded ? "ok" : "neutral"}>{m.loaded ? "loaded" : "not loaded"}</Badge>
                 </div>

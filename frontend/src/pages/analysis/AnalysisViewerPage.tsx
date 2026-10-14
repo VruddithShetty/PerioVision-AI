@@ -200,7 +200,14 @@ export default function AnalysisViewerPage() {
                 <p className="label">Models</p>
                 {a.models.map((m) => (
                   <p key={m.name} className="text-xs">
-                    {m.signature_valid ? <span className="text-teal-400">✓ signed</span> : <span className="text-review-400">✗ {m.reason}</span>} · {m.name}
+                    {m.signature_valid ? (
+                      <span className="text-teal-400">✓ signed</span>
+                    ) : m.optional && !m.present ? (
+                      <span className="text-mist-500">– optional, not installed</span>
+                    ) : (
+                      <span className="text-review-400">✗ {m.reason}</span>
+                    )}{" "}
+                    · {m.name}
                   </p>
                 ))}
               </div>
