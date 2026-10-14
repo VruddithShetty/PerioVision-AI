@@ -119,8 +119,13 @@ def build_pdf(analysis: dict, patient: dict, progression: dict, reviewer: dict |
 
     cal = analysis.get("calibration", {})
     if cal.get("calibrated"):
-        unc_text = (f"Intervals are split-conformal prediction intervals at {cal['coverage']:.0%} target coverage "
-                    f"(half-width {cal['q']:.1f} percentage points). A stage set with more than one stage means "
+        # q is a multiplier of each tooth's own difficulty, not a width: report the widths actually printed above
+        widths = [iv[1] - iv[0] for iv in (t.get("uncertainty", {}).get("interval") for t in analysis["teeth"]) if iv]
+        span = (f" On this film they are {min(widths):.0f} to {max(widths):.0f} percentage points wide."
+                if widths else "")
+        unc_text = (f"Intervals are split-conformal prediction intervals at {cal['coverage']:.0%} target coverage, "
+                    "wider where the model reads a tooth less consistently and reaching further up than down, because "
+                    f"severe bone loss tends to be underestimated.{span} A stage set with more than one stage means "
                     "the stages cannot be told apart at that coverage.")
     else:
         unc_text = ("Uncertainty is NOT calibrated for this model yet, so no numeric interval can be trusted; "
