@@ -203,7 +203,7 @@ This was verified end to end both in the browser and in `tests/test_api.py::test
 
 **Frontend:** TypeScript strict with 0 errors, ESLint with 0 errors, and a clean production build. The 3D code is split into its own lazy chunk.
 
-**CI:** `.github/workflows/ci.yml` runs ruff and pytest on the backend, and lint and build on the frontend.
+**Checks:** run locally with `.un.ps1 test` and `.un.ps1 lint` (ruff and pytest on the backend, lint on the frontend) and `cd frontend; npm run build`. The GitHub Actions workflow that ran the same checks on every push was removed on 2026-10-15 so the repository uses no GitHub-hosted (potentially billed) jobs; it is in git history.
 
 **Browser verification:** every route was checked as dentist, admin and auditor. Role denials and the 404 page behave correctly. The walkthrough covered sign-off → signed report → "Authentic, unaltered report".
 
