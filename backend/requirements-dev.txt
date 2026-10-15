@@ -1,8 +1,8 @@
 # Development, testing and training-script extras.
 -r requirements.txt
-pytest==9.0.1
+pytest==9.1.1
 pytest-cov==7.1.0
-ruff==0.8.4
+ruff==0.17.0
 black==24.10.0
-matplotlib==3.10.7
+matplotlib==3.10.9
 PyYAML==6.0.3
