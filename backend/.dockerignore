@@ -1,6 +1,19 @@
+# Mounted at run time or local-only: never baked into the image
 storage/
+storage-production/
 logs/
+logs-production/
 weights/
+weights-production/
+weights_backup/
 keys/*.pem
+keys-production/
+.env
+.env.*
+# Development only
+tests/
+tests_live/
 __pycache__/
-tests/.pytest_cache/
+**/__pycache__/
+.pytest_cache/
+.ruff_cache/
