@@ -1,0 +1,33 @@
+# Keeps dependencies patched without anyone remembering to check.
+# Grouped so one PR covers each ecosystem's patches instead of a flood.
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /backend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      python-patches:
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      npm-patches:
+        update-types: [minor, patch]
+
+  # The workflows themselves are a supply-chain surface: a compromised action
+  # runs with repository credentials.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+
+  - package-ecosystem: docker
+    directory: /backend
+    schedule:
+      interval: weekly

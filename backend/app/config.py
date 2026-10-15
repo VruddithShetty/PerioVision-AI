@@ -39,6 +39,40 @@ LANDMARK_WEIGHTS = WEIGHTS_DIR / "dental_landmark_yolov8n-pose.pt"
 
 MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "16"))
 
+# Number of reverse proxies in front of the app (nginx, a load balancer, Render/Heroku...).
+# Behind a proxy, request.remote_addr is the proxy's IP, so every client shares one
+# rate-limit bucket and audit records log the proxy instead of the caller. Setting this
+# makes Werkzeug read that many hops back from X-Forwarded-For. It must be set explicitly
+# and must match the real deployment: trusting the header with no proxy present would let
+# any client forge its own source IP and bypass rate limits.
+TRUSTED_PROXY_COUNT = int(os.getenv("TRUSTED_PROXY_COUNT", "0"))
+
+# ---------- model provenance ----------
+# Weight file expected for each model name. The signed manifest must agree, so a
+# manifest entry cannot quietly point a model name at a different file.
+# Must list every entry in app/ml/registry.MODEL_SPECS, including the optional
+# panoramic models: a model absent here is refused by the provenance gate, which
+# would silently disable it. A test keeps the two in step.
+MODEL_SPECS_FILES = {
+    "tooth_detector": "dental_yolov8n.pt",
+    "landmarks": "dental_landmark_yolov8n-pose.pt",
+    "panoramic_screen": "panoramic_screen.pt",
+    "panoramic_severity": "panoramic_severity.pt",
+}
+
+# Optional exact pins, e.g. MODEL_EXPECTED_VERSIONS="tooth_detector=1.2.0,landmarks=1.0.0".
+# When set, a model whose signed version differs is refused even if it is approved.
+MODEL_EXPECTED_VERSIONS = {
+    k.strip(): v.strip()
+    for k, _, v in (part.partition("=") for part in os.getenv("MODEL_EXPECTED_VERSIONS", "").split(","))
+    if k.strip() and v.strip()
+}
+
+# Highest manifest version accepted so far. Kept outside WEIGHTS_DIR on purpose:
+# that directory is mounted read-only in the container, so restoring an old signed
+# bundle there cannot also restore a floor low enough to accept it.
+MODEL_FLOOR_FILE = Path(os.getenv("MODEL_FLOOR_FILE", STORAGE_DIR / "model_floor.json"))
+
 # Roles that must have TOTP MFA switched on before they can use anything beyond their own account
 # settings (where they enrol). Default: admin and dentist in live mode, nobody in demo mode.
 REQUIRE_MFA_ROLES = {r.strip().lower() for r in os.getenv("REQUIRE_MFA_ROLES", "" if IS_DEMO else "admin,dentist")

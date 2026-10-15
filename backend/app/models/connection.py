@@ -2,7 +2,7 @@ import os
 import logging
 from pymongo import MongoClient
 import pymongo.errors
-from app import config  # noqa: F401  (loads ENV_FILE / .env before anything reads the environment)
+from app import config  # also loads ENV_FILE / .env before anything reads the environment
 from app.security.secrets import run_secrets_audit, enforce_mongo_tls
 
 logging.basicConfig(level=logging.INFO)
@@ -26,8 +26,18 @@ class DatabaseConnection:
         db_mode = os.getenv("DB_MODE", "production").strip().lower()
 
         # Perform security audit on startup
+        # The findings are reported: an audit whose result is discarded is a control in
+        # name only. Startup is not blocked, because a false positive must not take a
+        # clinical system down - the operator decides.
         if os.environ.get("SECRETS_AUDIT_ON_STARTUP", "true").lower() == "true":
-            run_secrets_audit()
+            findings = run_secrets_audit(config.PROJECT_ROOT)
+            if findings:
+                logger.error("[SECURITY] Possible hardcoded secrets found in %d place(s):", len(findings))
+                for f in findings[:20]:
+                    # Location and kind only - never the matched value.
+                    logger.error("[SECURITY]   %s:%s  %s", f["file"], f["line"], f["type"])
+                if len(findings) > 20:
+                    logger.error("[SECURITY]   ... and %d more", len(findings) - 20)
             
         mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
         db_name = os.environ.get("DB_NAME", "dental_prediction_db")

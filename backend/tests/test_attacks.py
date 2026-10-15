@@ -5,7 +5,6 @@ skipping a login step) and checks the server refuses it, not just that the UI hi
 """
 import datetime as dt
 
-import bcrypt
 import jwt
 import pyotp
 
@@ -38,12 +37,26 @@ def test_audit_entry_edited_in_the_database_is_pinpointed_by_verify_chain(client
 
 
 def test_passwords_are_stored_as_bcrypt_hashes(client):
+    """Still bcrypt, still never the plaintext.
+
+    Stored hashes carry a `pv1.` version marker because the password is SHA-256
+    pre-hashed before bcrypt sees it: bcrypt truncates at 72 bytes, so without that
+    step two passwords sharing a 72-byte prefix hash identically. The marker is
+    stripped here to check the underlying hash is genuinely bcrypt, and verification
+    goes through auth.verify_password so the test exercises the real path rather
+    than a raw checkpw that no longer matches how the hash was produced.
+    """
+    from app.security import auth
+
     login(client, "dentist")
     stored = db["doctors"].find_one({"email": "dentist@test.local"})["password"]
     stored = stored.encode() if isinstance(stored, str) else stored
-    assert stored.startswith((b"$2a$", b"$2b$", b"$2y$"))
-    assert PASSWORDS["dentist"].encode() not in stored
-    assert bcrypt.checkpw(PASSWORDS["dentist"].encode(), stored)
+
+    assert PASSWORDS["dentist"].encode() not in stored, "plaintext password in the database"
+    body = stored[len(auth.PREHASH_PREFIX):] if stored.startswith(auth.PREHASH_PREFIX) else stored
+    assert body.startswith((b"$2a$", b"$2b$", b"$2y$")), "not a bcrypt hash"
+    assert auth.verify_password(PASSWORDS["dentist"], stored)
+    assert not auth.verify_password(PASSWORDS["dentist"] + "x", stored)
 
 
 def test_mfa_cannot_be_skipped_by_calling_the_api_directly(client, admin):

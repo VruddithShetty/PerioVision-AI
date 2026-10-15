@@ -87,8 +87,11 @@ class DoctorManager:
             user["failed_attempts"] = 0
 
         if auth.verify_password(plain_password, user["password"]):
-            self.collection.update_one({"email": email},
-                                       {"$set": {"failed_attempts": 0, "last_login": current.isoformat()}})
+            updates = {"failed_attempts": 0, "last_login": current.isoformat()}
+            if auth.needs_rehash(user["password"]):
+                # Upgrade a pre-truncation-fix hash now that we hold the plaintext.
+                updates["password"] = auth.hash_password(plain_password)
+            self.collection.update_one({"email": email}, {"$set": updates})
             return self.get_doctor(user["doctor_id"])
 
         attempts = user.get("failed_attempts", 0) + 1

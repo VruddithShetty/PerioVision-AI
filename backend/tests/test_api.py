@@ -1,4 +1,5 @@
 """API integration and security tests, plus one end-to-end happy path."""
+import secrets
 import datetime as dt
 import io
 
@@ -45,14 +46,24 @@ def test_errors_do_not_leak_internals(client):
 
 # ---------- authentication / JWT ----------
 def test_login_failures_are_generic_and_lock_out(client, admin):
-    r = client.post("/api/auth/login", json={"email": "nobody@test.local", "password": "Whatever-123"}, headers=UA)
+    # Generated per run rather than written in the source: these are throwaway
+    # credentials for an in-memory account, and literals here read like committed
+    # secrets to a scanner. The prefix keeps them within the password policy
+    # (length, upper and lower case, a digit).
+    correct = "Lockme-" + secrets.token_hex(8)
+    wrong = "Wrong-" + secrets.token_hex(8)
+    assert correct != wrong
+
+    r = client.post("/api/auth/login",
+                    json={"email": "nobody@test.local", "password": wrong}, headers=UA)
     assert r.status_code == 401 and data(r) is None
     r = client.post("/api/admin/users", headers=admin, json={"name": "Lock Me", "email": "lockme@test.local",
-                                                               "password": "Lockme-pass-1", "role": "technician"})
+                                                               "password": correct, "role": "technician"})
     assert r.status_code == 201
     for _ in range(5):
-        client.post("/api/auth/login", json={"email": "lockme@test.local", "password": "Wrong-pass-123"}, headers=UA)
-    r = client.post("/api/auth/login", json={"email": "lockme@test.local", "password": "Lockme-pass-1"}, headers=UA)
+        client.post("/api/auth/login", json={"email": "lockme@test.local", "password": wrong}, headers=UA)
+    # The CORRECT password, and still refused: lockout blocks valid credentials too.
+    r = client.post("/api/auth/login", json={"email": "lockme@test.local", "password": correct}, headers=UA)
     assert r.status_code == 423
 
 

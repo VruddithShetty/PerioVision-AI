@@ -1,19 +1,32 @@
 # PerioVision AI - production stack (backend + MongoDB).
 # Secrets come from .env.production (create it with: cd backend; python scripts/make_production_env.py).
 # Start with:  docker compose --env-file .env.production up -d --build
+#
+# Hardening: both containers drop all Linux capabilities and cannot gain new privileges;
+# the backend runs as a non-root user (set in its Dockerfile) with a read-only root
+# filesystem, so only the explicitly mounted storage and logs paths are writable.
+# Weights and signing keys are mounted read-only - they are inputs the app must never rewrite.
 services:
   mongodb:
-    image: mongo:7.0
+    # Pinned by digest as well as tag, so a rebuild cannot silently pick up different content.
+    image: mongo:7.0@sha256:1f995ad6fdb93244a1addab1b58f934a0bc2f5643c38e02f5e9d7f0c7d227a7b
     container_name: periovision_mongodb
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:?set MONGO_ROOT_USER in .env.production}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?set MONGO_ROOT_PASSWORD in .env.production}
       MONGO_INITDB_DATABASE: periovision_db
+    # Bound to loopback: the database is never published to the network.
     ports:
       - "127.0.0.1:27017:27017"
     volumes:
       - mongodb_data:/data/db
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 1g
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -36,11 +49,29 @@ services:
       WEIGHTS_DIR: /app/weights
       STORAGE_DIR: /app/storage
       LOGS_DIR: /app/logs
+      # One proxy hop (the TLS terminator in front of this container). Without it every
+      # client would share a single rate-limit bucket and audit records would log the
+      # proxy's address instead of the caller's.
+      TRUSTED_PROXY_COUNT: "1"
     ports:
       - "127.0.0.1:5000:5000"
     depends_on:
       mongodb:
         condition: service_healthy
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      # waitress, OpenCV and torch need a scratch area; noexec stops anything dropped
+      # here from being run.
+      - /tmp:rw,noexec,nosuid,size=512m
+    deploy:
+      resources:
+        limits:
+          # Headroom for torch and the ConvNeXt panoramic models.
+          memory: 6g
     volumes:
       - ./backend/storage-production:/app/storage
       - ./backend/logs-production:/app/logs

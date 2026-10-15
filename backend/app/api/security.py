@@ -7,6 +7,7 @@ from pydantic import ValidationError
 from app import config
 from app.api._common import fail, ok, validation_error
 from app.schemas import UserCreateIn, UserUpdateIn
+from app.security import events
 from app.security.audit_log import audit
 from app.security.rbac import ROLES, permission_matrix
 from app.security.zero_trust import public, secured
@@ -29,6 +30,32 @@ def all_sessions():
     for s in sessions:
         s["sid"] = s["sid"][:8] + "..."
     return ok(sessions, count=len(sessions))
+
+
+@bp.get("/api/security/events")
+@secured("security:read")
+def security_events():
+    """Detection over the audit trail: what the recorded events add up to.
+
+    Reads the tamper-evident audit log rather than a separate store, so hiding a
+    burst of failures from this view means defeating the hash chain. Alerts carry
+    actor IDs and counts only - patient resources are already pseudonymous in the
+    log, so nothing here exposes PHI to an auditor.
+    """
+    try:
+        limit = min(max(int(request.args.get("limit", 500)), 1), 2000)
+    except (TypeError, ValueError):
+        limit = 500
+    entries = audit().recent(limit=limit)
+    alerts = events.detect(entries)
+    return ok({
+        "alerts": [a.as_dict() for a in alerts],
+        "summary": events.summarise(entries),
+        "rules": [{"name": r.name, "description": r.description, "severity": r.severity,
+                   "threshold": r.threshold, "window_minutes": int(r.window.total_seconds() // 60)}
+                  for r in events.RULES],
+        "scanned": len(entries),
+    }, count=len(alerts))
 
 
 # ---------- model trust ----------

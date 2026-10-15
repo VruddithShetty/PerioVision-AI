@@ -1,0 +1,40 @@
+# gitleaks: historical findings that are not secrets.
+#
+# Each line below is one finding, pinned to an exact commit, file, rule and line.
+# This is deliberately NOT a rule-wide or path-wide suppression: the same pattern
+# appearing anywhere else, or on any other line, is still reported. These entries
+# exist only because the strings are already in committed history and the history
+# is not being rewritten - none of them is a credential, so there is nothing to
+# rotate.
+#
+# Every one was checked individually before being listed here. The working tree
+# itself is clean: the fixtures were replaced with values generated at run time,
+# and the event names are now read from the rule that owns them.
+
+
+# backend/tests/test_security_events.py
+#   the audit event name PATIENT_ACCESS_DENIED, a taxonomy constant
+33fa55644b87ef249ccfff455c61e75fcc2e6818:backend/tests/test_security_events.py:generic-api-key:90
+3980e945ee3e0be2b3c1aaa69c84956963a15f58:backend/tests/test_security_events.py:generic-api-key:88
+
+# backend/app/services/security_lab.py
+#   the audit event name PATIENT_ACCESS_DENIED, a taxonomy constant
+33fa55644b87ef249ccfff455c61e75fcc2e6818:backend/app/services/security_lab.py:generic-api-key:698
+51c11c5159fc0e0a0e9b645968029371eb5bf7aa:backend/app/services/security_lab.py:generic-api-key:668
+
+# backend/tests/test_model_provenance.py
+#   passphrase for an RSA keypair generated into pytest tmp_path and discarded
+33fa55644b87ef249ccfff455c61e75fcc2e6818:backend/tests/test_model_provenance.py:generic-api-key:53
+c57e6d2fdc0e698ce3939e006c5522a7768bb4ce:backend/tests/test_model_provenance.py:generic-api-key:53
+
+# docs/API.md
+#   key_fingerprint: a SHA-256 prefix of the PUBLIC signing key, published so reports can be verified
+90af6c30cf8c89454df727cd0031ad0ab80003b0:docs/API.md:generic-api-key:1167
+90af6c30cf8c89454df727cd0031ad0ab80003b0:docs/API.md:generic-api-key:1194
+90af6c30cf8c89454df727cd0031ad0ab80003b0:docs/API.md:generic-api-key:1206
+90af6c30cf8c89454df727cd0031ad0ab80003b0:docs/API.md:generic-api-key:1242
+
+# backend/tests/test_api.py
+#   throwaway login credentials for an in-memory account in the lockout test
+1b61bc64ae48c57552904289d8c37b1dee1475ee:backend/tests/test_api.py:generic-api-key:54
+41d25d96aedbf2d941c321b91fe116aa5ac26f4d:backend/tests/test_api.py:generic-api-key:54

@@ -8,6 +8,7 @@ import sys
 from flask import Flask, request
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app import config
 from app.extensions import limiter
@@ -91,6 +92,12 @@ def create_app(seed_accounts: bool = True) -> Flask:
     config.BLOB_DIR.mkdir(parents=True, exist_ok=True)
 
     app = Flask(__name__)
+    if config.TRUSTED_PROXY_COUNT > 0:
+        # Only trust X-Forwarded-* when we are actually told a proxy is in front,
+        # so the client IP used for rate limiting and audit records is the real one.
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=config.TRUSTED_PROXY_COUNT,
+                                x_proto=config.TRUSTED_PROXY_COUNT, x_host=0, x_prefix=0)
+        logger.info("ProxyFix enabled for %d proxy hop(s)", config.TRUSTED_PROXY_COUNT)
     app.config.from_object(config.FlaskConfig)
     app.json.sort_keys = False
     limiter.init_app(app)

@@ -61,3 +61,43 @@ def test_registry_refuses_unsigned_model(signer, tmp_path):
     assert reg.get("tooth_detector") is None
     status = {s["name"]: s for s in reg.status()}["tooth_detector"]
     assert status["present"] and not status["signature_valid"] and not status["loaded"]
+
+
+def test_behaviour_changing_json_is_signed(signer, tmp_path):
+    """Thresholds and calibration decide what a model outputs, so they are signed too."""
+    weights = tmp_path / "weights"
+    weights.mkdir()
+    (weights / "dental_yolov8n.pt").write_bytes(b"pretend weights")
+    calibration = weights / "conformal_calibration.json"
+    calibration.write_text('{"q": 0.12}', encoding="utf-8")
+
+    manifest = signer.sign_manifest(weights)
+    assert "conformal_calibration.json" in manifest["files"]
+    assert signer.verify_weight_file(calibration, weights)["verified"] is True
+
+    calibration.write_text('{"q": 0.99}', encoding="utf-8")  # widen the interval silently
+    assert signer.verify_weight_file(calibration, weights)["verified"] is False
+
+
+def test_the_manifest_never_signs_itself_or_the_approvals_record(signer, tmp_path):
+    """Both live in weights/ and both end in .json, which is now a signed suffix.
+
+    The manifest cannot contain its own hash. approvals.json is rewritten every time a
+    model is cleared, so signing it would mean the next approval invalidated the manifest
+    and the registry refused every model - the approval gate would take the whole system
+    down with it.
+    """
+    from app.security.model_signing import APPROVALS_NAME, MANIFEST_NAME
+
+    weights = tmp_path / "weights"
+    weights.mkdir()
+    (weights / "dental_yolov8n.pt").write_bytes(b"pretend weights")
+    (weights / APPROVALS_NAME).write_text('{"version": 1, "approvals": []}', encoding="utf-8")
+
+    manifest = signer.sign_manifest(weights)
+    assert MANIFEST_NAME not in manifest["files"]
+    assert APPROVALS_NAME not in manifest["files"]
+
+    # Re-approving rewrites approvals.json; the weights must still verify afterwards.
+    (weights / APPROVALS_NAME).write_text('{"version": 1, "approvals": [1]}', encoding="utf-8")
+    assert signer.verify_weight_file(weights / "dental_yolov8n.pt", weights)["verified"] is True

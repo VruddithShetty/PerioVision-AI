@@ -18,7 +18,11 @@ def log(monkeypatch):
     lg.logs.create_index("seq", unique=True)
     for i in range(12):
         lg.record(f"EVENT_{i}", actor="tester", details={"i": i})
-    return lg
+    yield lg
+    # Drop them too: a uuid name stops collisions, but left-behind collections still
+    # accumulate across a run and make the in-memory database grow for no reason.
+    db.drop_collection(name)
+    db.drop_collection(name + "_roots")
 
 
 def test_clean_chain_verifies(log):

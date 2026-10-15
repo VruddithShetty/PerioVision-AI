@@ -22,14 +22,16 @@ PerioVision AI is a clinical decision-support system. Its controls are **aligned
 | **AES-256-GCM**, fresh 96-bit random nonce per message, authenticated | `backend/app/security/crypto.py` | Reading or silently modifying stored PHI/images |
 | **Key IDs + key ring + rotation** (`FIELD_ENCRYPTION_KEYS`, KMS-style key file, `scripts/rotate_keys.py`) | `crypto.py` | Long-lived key exposure; lets old keys be retired |
 | **HKDF-separated keys** for blind index and pseudonyms | `crypto.py` | Reusing the encryption key for hashing |
-| **bcrypt** (cost 12) + password policy | `security/auth.py`, `models/doctors.py` | Offline password cracking |
-| **JWT access (15 min) + refresh (7 days, httpOnly SameSite=Strict cookie, rotated)** | `security/auth.py`, `api/auth.py` | Token theft (short lifetime), refresh replay (reuse revokes the session) |
+| **bcrypt** (cost 12, SHA-256 pre-hash so the 72-byte truncation limit does not apply) + password policy | `security/auth.py`, `models/doctors.py` | Offline password cracking; long passwords sharing a 72-byte prefix colliding |
+| **JWT access (15 min) + refresh (7 days, httpOnly SameSite=Strict cookie, rotated)**, audience-scoped, signed under a key ID so the secret can rotate without ending live sessions | `security/auth.py`, `api/auth.py` | Token theft (short lifetime), refresh replay (reuse revokes the session), cross-service token reuse, key-rotation outages |
 | **TOTP MFA** with QR enrolment and replay protection | `security/auth.py`, `api/auth.py` | Stolen passwords |
 | **Account lockout** (5 failures, 15 min) + **rate limiting** (login 5/min, API 120/min) | `models/doctors.py`, `extensions.py` | Brute force, credential stuffing |
 | **RBAC**: 4 roles, explicit permission matrix, enforced by `@secured(...)` | `security/rbac.py` | Privilege misuse |
 | **Zero Trust guard** (NIST SP 800-207 principles): every request re-checks token, session, device fingerprint, account state and policy; deny by default | `security/zero_trust.py` | Stolen/replayed tokens, revoked users, forgotten decorators |
 | **Object-level access**: users only see patients they own or are on the care team for | `rbac.can_access_patient` | IDOR / horizontal privilege escalation |
 | **RSA-PSS model signing** + hash manifest; registry refuses to load and logs `MODEL_LOAD_REFUSED` | `security/model_signing.py`, `ml/registry.py`, `scripts/sign_model.py` | Model tampering / supply-chain swap |
+| **Model provenance and approval gate**: the signed manifest also declares each model's identity, version, training commit and dataset version. A model is refused unless the manifest names it, points at the expected file, matches any version the deployment pins, and is no older than a manifest already accepted (a floor kept in writable storage, outside the read-only weights mount). Applies to all four models, panoramic included | `security/model_provenance.py`, `ml/registry.py`, `config/model_approvals.json` | Running an unapproved, superseded or substituted model whose signature is nonetheless valid, including replay of an archived weights bundle with its own valid signature |
+| **Separation of duties**: clinical approval is countersigned under a second key (`model_approval`) the model builder does not hold, and names the model's exact SHA-256, so a rebuild voids it | `security/model_approval.py`, `scripts/approve_model.py` | A model builder clearing their own model for use on patients |
 | **Signed reports** + `/api/reports/verify` | `services/report_service.py` | Forged or edited reports |
 | **Tamper-evident audit log**: hash chain (genesis included), unique sequence numbers, Merkle roots every 20 entries authenticated with `AUDIT_ANCHOR_KEY` and written to `backend/logs/merkle_anchors.jsonl`. Since 2026-10-04: anchors are numbered and hash-chained (v2), the Merkle tree is domain-separated, an optional witness copy goes to `AUDIT_ANCHOR_WITNESS_DIR`, and verification reports `unanchored_entries` | `security/audit_log.py`, `scripts/verify_audit.py` | Undetected log edits, deletions, full rewrites |
 | **Upload guard**: size, extension, magic bytes, pixel limits, re-encode (drops EXIF), DICOM PHI tags removed, random names | `security/upload_guard.py` | Disguised files, decompression bombs, metadata leaks, path traversal |
@@ -40,7 +42,14 @@ PerioVision AI is a clinical decision-support system. Its controls are **aligned
 | **Strict input validation** (pydantic, extra fields forbidden) | `app/schemas/` | NoSQL operator injection (`{"$ne": null}`), mass assignment |
 | **Safe errors**: generic messages, no stack traces, debug off | `app/__init__.py`, `wsgi.py` | Information disclosure |
 | **Secrets only in `.env`** (gitignored); private key password-protected and gitignored | `.gitignore`, `config.py` | Secret leakage via git |
-| **Pinned dependencies** | `backend/requirements.txt` | Unexpected upstream changes |
+| **Pinned dependencies**, audited by `pip-audit` and `npm audit` in CI (weekly as well as per push) and patched by Dependabot | `backend/requirements.txt`, `.github/workflows/security.yml`, `.github/dependabot.yml` | Unexpected upstream changes; known CVEs in dependencies |
+| **Secret scanning** (gitleaks over full history) and **CodeQL** static analysis for Python and TypeScript | `.github/workflows/security.yml` | Credentials committed to the repository; injection and unsafe-API patterns in our own code |
+| **Container scanning** (Trivy over the built image, failing on fixable HIGH/CRITICAL) and a **CycloneDX SBOM** kept with every build | `.github/workflows/security.yml` | CVEs in the OS userland that no Python manifest lists; not knowing what shipped when an advisory lands |
+| **Pinned supply chain**: every GitHub Action pinned to a commit SHA and both base images to a digest | `.github/workflows/*.yml`, `backend/Dockerfile`, `docker-compose.yml` | A mutable tag being repointed at attacker-controlled code that then runs with the repository's token |
+| **Real client IP behind a proxy** (`TRUSTED_PROXY_COUNT` enables ProxyFix; off by default so the header cannot be forged when no proxy is present) | `app/__init__.py`, `app/config.py` | Rate limits collapsing into one shared bucket; audit records logging the proxy instead of the caller |
+| **Hardened container**: waitress, non-root user (uid 10001), read-only root filesystem, `cap_drop: ALL`, `no-new-privileges`, memory limits, weights and keys mounted read-only | `backend/Dockerfile`, `docker-compose.yml` | Container escape and privilege escalation; a compromised process rewriting its own code, model weights or signing keys |
+| **Security event taxonomy and detection**: every recorded event is classified, and windowed rules over the audit log raise alerts for credential guessing, authorization probing, mass patient access, refused model loads and decoy access. Served at `GET /api/security/events` under `security:read` | `security/events.py`, `api/security.py` | Slow or distributed abuse that each single refusal looks innocent against |
+| **Data classification and retention**: twelve stores classified; a sweep cannot touch the audit log, clinical records, or any store nobody has classified. Orphaned encrypted blobs are found and removable | `security/retention.py` | PHI outliving the record that pointed at it; a retention job destroying the audit trail |
 
 ### Transport security (TLS/HTTPS)
 
@@ -91,6 +100,17 @@ Design choices: auditors can verify the audit trail but never see PHI. Admins ma
 | Minimum necessary (§164.502(b)) | Role- and care-team-scoped access; auditors see no PHI; pseudonyms in logs |
 
 ## 5. Known limitations
+
+- Authorization failures are detected but not throttled. A burst raises an `authorization_probing` alert on
+  `GET /api/security/events`, but nothing automatically blocks the account: detection is deliberately kept
+  separate from enforcement, and no second rate limiter was added alongside the existing one.
+- Detection is computed on demand from the audit log, not streamed. Nobody is paged; an alert is visible when
+  the security centre is opened. Routing alerts onward is left to deployment.
+- Model approval is an attestation of clinical fitness, not proof of it. The approver signs under a key the
+  builder does not hold, so the two roles are separated and the clearance covers exact bytes, but nothing
+  verifies the approver actually evaluated the model, and one person holding both keys defeats the split.
+- Retention never deletes on its own: `plan()` reports and `purge()` only runs when called. Nothing schedules
+  it, so retention happens only when someone makes it happen.
 
 - Decoy records are excluded from normal lists by a system owner ID. Someone with direct database access could spot them. The design targets API-level probing.
 - In demo mode, data and audit anchors live in memory and disappear on restart.
