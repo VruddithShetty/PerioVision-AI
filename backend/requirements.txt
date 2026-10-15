@@ -32,6 +32,6 @@ torch==2.13.0
 torchvision==0.28.0
 ultralytics==8.4.21
 # Reports
-reportlab==4.4.5
+reportlab==5.0.1
 # Production WSGI server
 waitress==3.0.2
