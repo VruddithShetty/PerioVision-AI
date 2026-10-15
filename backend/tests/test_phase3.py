@@ -13,14 +13,10 @@ def data(r):
 
 def test_security_lab_all_attacks_are_defended(client, auditor):
     listing = data(client.get("/api/security-lab", headers=auditor))
-    # Not a fixed count: scenarios are added as controls are. What must hold is that
-    # every scenario the lab offers is one it can actually run and defend.
-    assert len(listing) >= 7
+    assert len(listing) == 7
     r = client.post("/api/security-lab/run-all", headers=auditor)
     body = r.get_json()
-    assert r.status_code == 200
-    assert body["meta"]["total"] == len(listing)
-    assert body["meta"]["defended"] == body["meta"]["total"]
+    assert r.status_code == 200 and body["meta"]["defended"] == body["meta"]["total"] == 7
     for scenario in body["data"]:
         assert scenario["defended"], scenario
         assert scenario["steps"] and all(s["passed"] for s in scenario["steps"])

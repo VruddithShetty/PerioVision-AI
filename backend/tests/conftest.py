@@ -35,14 +35,9 @@ import pytest  # noqa: E402
 
 from app.security.model_signing import Signer  # noqa: E402
 
-# Explicit keys_dir, not config.KEYS_DIR: Signer() resolves that at import time, so if
-# anything imports app.config before the environment above is applied - which happens as
-# soon as a test module is imported outside pytest - this would generate a throwaway key
-# straight over the project's real backend/keys/model_signing.pub.
-_signer = Signer(keys_dir=_TMP / "keys")
-_signer.generate_keypair()  # test key pair in the temporary keys folder
+Signer().generate_keypair()  # test key pair in the temporary keys folder
 Path(os.environ["WEIGHTS_DIR"]).mkdir(parents=True, exist_ok=True)
-_signer.sign_manifest(Path(os.environ["WEIGHTS_DIR"]))  # signs the risk model coefficients (external/)
+Signer().sign_manifest(Path(os.environ["WEIGHTS_DIR"]))  # signs the risk model coefficients (external/)
 
 from app import create_app  # noqa: E402
 
