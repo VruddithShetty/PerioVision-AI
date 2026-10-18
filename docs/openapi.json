@@ -679,7 +679,7 @@
           },
           "password": {
             "maxLength": 256,
-            "minLength": 10,
+            "minLength": 12,
             "title": "Password",
             "type": "string"
           },
