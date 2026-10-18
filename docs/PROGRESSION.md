@@ -42,8 +42,9 @@ measure honestly what is left.
 2. **Repeatability threshold, calibrated on validation films only.** A side counts as changed when it moved by more
    than a threshold set at the 95th percentile of the largest per-site change on **unchanged** re-take pairs of
    validation films. Teeth whose mirrored readings agree closely at both visits are more repeatable and use a lower
-   threshold; this two-band rule was fixed before the test results were looked at. Thresholds: **4.61 points**
-   (mirrored-reading disagreement ≤ 3.52 points at both visits) and **6.15 points** otherwise
+   threshold; this two-band rule was fixed before the test results were looked at. Thresholds with the v3 landmark
+   model (recalibrated 2026-10-18): **2.90 points** (mirrored-reading disagreement ≤ 3.07 points at both visits) and
+   **5.44 points** otherwise (previous model: 4.61 / 6.15)
    (`backend/weights/progression_calibration.json`, signed; without it the app falls back to the old conservative rule).
 3. **Registration with an affine fallback.** If rotation + scale fails only because matches disagree, a full affine fit
    is tried. It must pass every other check (inliers, scale, rotation, image correlation, tooth overlap) plus a new
@@ -67,37 +68,37 @@ duplicated films excluded).
 
 ## Results (test films)
 
-| | Old rule | **New rule** |
-|---|---|---|
-| Specificity, unchanged re-takes (no false alarm) | – | **94.9 %** (95 % CI 91.4-97.1), 237 teeth |
-| Sensitivity, true change 5 points | 0 % | 12 % (7-22) |
-| Sensitivity, 10 points | 0 % | 39 % (28-50) |
-| Sensitivity, 15 points | 0 % | 66 % (55-76) |
-| Sensitivity, 20 points | 0 % | **84 %** (74-90) |
+| | Old rule | New rule, previous model | **New rule, v3 model (deployed)** |
+|---|---|---|---|
+| Specificity, unchanged re-takes (no false alarm) | – | 94.9 % (91.4-97.1), 237 teeth | **95.0 %** (91.8-97.0), 279 teeth |
+| Sensitivity, true change 5 points | 0 % | 12 % (7-22) | 22 % (14-32) |
+| Sensitivity, 10 points | 0 % | 39 % (28-50) | **63 %** (53-73) |
+| Sensitivity, 15 points | 0 % | 66 % (55-76) | **76 %** (67-84) |
+| Sensitivity, 20 points | 0 % | 84 % (74-90) | **83 %** (74-90) |
 | Re-takes that register (registration bench, 200 films) | 79.5 % | **99.0 %** (96.4-99.7) |
 | Different patients wrongly registered (300 pairs) | 0 | **0** (95 % CI 0-1.3 %) |
 
-Repeatability: the same site measured on an unchanged re-take moves by SD **2.7 points** (95 % of changes within
-5.3 points). The old rule assumed a noise level about seven times larger.
+Repeatability: the same site measured on an unchanged re-take moves by SD **1.9 points** with v3 (95 % of changes
+within 3.6 points; previous model 2.7 / 5.3). The old rule assumed a noise level about ten times larger.
 
-Other teeth of films with a simulated defect show 85 % specificity. That is lower because the defect sits in the
+Other teeth of films with a simulated defect show 77 % specificity with v3 (85 % with the previous model). That is lower because the defect sits in the
 interdental bone shared with the neighbouring tooth, so part of those "false alarms" are real changes in the
 neighbour.
 
 ## What this does and does not show
 
-- **Shown:** the detector is silent on about 95 % of unchanged teeth and catches most large changes (84 % at 20 points
-  of root length, roughly 2.5-3 mm on an average root). The new design is far more sensitive than the old one at the
+- **Shown:** the detector is silent on about 95 % of unchanged teeth and catches most large and medium changes (83 % at
+  20 points of root length, roughly 2.5-3 mm on an average root; 63 % at 10 points). The new design is far more sensitive than the old one at the
   same false-alarm level.
 - **Not reached: 90 % sensitivity.** The landmark model registers only about half of a simulated change (a true
-  20-point loss is measured as about 9.6 points on average), so small changes stay below the noise. This may be partly
+  20-point loss is measured as about 10.6 points on average with v3, 9.6 with the previous model), so small changes stay below the noise. This may be partly
   the simulation (a painted defect is not real disease) and partly the model.
 - **Not shown: clinical accuracy.** Simulated lesions on re-taken films are a technical (bench) validation, as used in
   subtraction-radiography research. Real progression has other appearances (vertical defects, remodelled crest,
   changed angulation of the patient's own teeth).
 
 **In the thesis:** "On a bench of simulated re-takes and simulated bone loss, the paired same-site detector kept a 95 %
-specificity and detected 84 % of 20-point changes (66 % at 15, 39 % at 10). Clinical validation on real follow-up
+specificity and detected 83 % of 20-point changes (76 % at 15, 63 % at 10). Clinical validation on real follow-up
 radiographs is required." Do not write "90 % accurate progression detection".
 
 ## What would close the gap
@@ -106,9 +107,9 @@ radiographs is required." Do not write "90 % accurate progression detection".
    of change. Then: `python scripts/evaluate_registration.py --pairs pairs.csv` (registration) and the bench's summary
    on those pairs. Sources: a partner clinic (de-identified, ethics approval) or PhysioNet's multimodal dental dataset
    (data-use agreement).
-2. **A more sensitive landmark model:** the v3 models (larger, higher resolution, ensemble) on corrected labels
-   (`notebooks/train_landmarks_v3_colab.ipynb`), then re-run the bench. Any gain in how fully the model follows
-   a crest shift raises sensitivity directly.
+2. **A more sensitive landmark model:** done once (v3 on corrected labels, 2026-10-18: 10-point sensitivity 39 % to
+   63 % at the same false-alarm rate). Any further gain in how fully the model follows a crest shift raises
+   sensitivity directly.
 3. **Patient-level progression:** AAP/EFP grading needs evidence of progression in the patient, not in one tooth.
    Combining several teeth lowers noise, but it needs real pairs to validate.
 

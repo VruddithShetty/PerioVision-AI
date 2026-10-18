@@ -112,8 +112,8 @@ Web app on Vercel, backend in a free Hugging Face Docker Space (demo mode); see 
 
 ## Results
 
-**In one line:** on held-out periapical X-rays PerioVision measures radiographic bone loss to within 6.6 percentage
-points on average and agrees with the specialist's stage for 76 % of teeth, refers every uncertain tooth to a dentist,
+**In one line:** on held-out periapical X-rays PerioVision measures radiographic bone loss to within 5.5 percentage
+points on average and agrees with the specialist's stage for 80 % of teeth, refers every uncertain tooth to a dentist,
 and is decision support, not a diagnosis; it has not yet been validated at another clinic or on real follow-up X-rays.
 
 All numbers are on films the models never trained on, with 95 % confidence intervals; full tables in
@@ -123,21 +123,21 @@ All numbers are on films the models never trained on, with 95 % confidence inter
 |---|---|---|---|
 | Find each tooth and give its FDI number (panoramic) | 89.6 % (88.3-90.8) | 250 films from a hospital the detector was not trained on | About 9 in 10 teeth are found and correctly numbered at a new hospital |
 | Same, after fine-tuning on part of that hospital's films | 94.5 % (93.0-95.8) | 96 unseen films, same hospital | Adapting to a new site's images helps a lot |
-| Bone loss per tooth (periapical) | 6.6 points error (5.9-7.5) | 553 teeth, 199 DenPAR test films | Half of teeth are within 4 points of the specialist; the average miss is 6.6 points |
-| Periodontitis stage per tooth (periapical) | 76 % exact (72-79), 98 % within one stage | same | Stage I and III are mostly right; stage II only about half the time |
-| Uncertainty range at 90 % | covers 93 % (90-95) | same | The stated range really contains the specialist's value about 9 times in 10 |
+| Bone loss per tooth (periapical) | 5.5 points error (4.8-6.2) | 551 teeth, 199 DenPAR test films | Half of teeth are within 3.5 points of the specialist; the average miss is 5.5 points |
+| Periodontitis stage per tooth (periapical) | 80 % exact (77-84), 99.8 % within one stage | same | Stage I and III are mostly right; stage II is right 58 % of the time |
+| Uncertainty range at 90 % | covers 92 % (90-95) | same | The stated range really contains the specialist's value about 9 times in 10 |
 | Bone loss per jaw (panoramic screen) | AUC 0.85 / 0.87 (approximate CI 0.81-0.89 / 0.84-0.91) | 450 films | Good at flagging which jaws need a closer look |
 | Worst tooth's bone loss (panoramic) | 11.4 points error (9.5-13.5), 68.5 % stage | 149 patients | Patient-level estimate only; per-tooth numbers are not given on panoramic films |
-| Change between two visits (bench) | 95 % of unchanged teeth stay silent; 84 % of 20-point losses flagged | simulated re-takes and bone loss, 100 test films | Large changes are caught; small yearly changes are not, and real follow-up X-rays are still untested |
+| Change between two visits (bench) | 95 % of unchanged teeth stay silent; 83 % of 20-point and 63 % of 10-point losses flagged | simulated re-takes and bone loss, 100 test films | Large changes are caught, most medium ones too; small yearly changes are not, and real follow-up X-rays are still untested |
 | Clinical risk from age, sex, smoking, diabetes | AUC 0.65 (0.63-0.67) | 3,855 people, later survey cycle | Context only; it never overrides what the X-ray shows |
 
 ## Known limitations (honest)
 
-- Measured on held-out data ([docs/MODEL_CARD.md](docs/MODEL_CARD.md); re-run commands in [docs/VERIFICATION_REPORT.md](docs/VERIFICATION_REPORT.md)): tooth detector: 89.6 % (95 % CI 88.3–90.8) found-and-correctly-numbered on 250 films from a hospital it was not trained on; after fine-tuning on part of that hospital's films, 94.5 % on its 96 unseen films (the deployed model) and 89.1 % of diseased teeth on the DENTEX official test; periapical bone-loss error 6.6 points (95 % CI 5.9–7.5), 76 % stage agreement, 93 % interval coverage (DenPAR test, two-site landmark model, corrected reference; see [docs/LIMITATIONS.md](docs/LIMITATIONS.md)).
+- Measured on held-out data ([docs/MODEL_CARD.md](docs/MODEL_CARD.md); re-run commands in [docs/VERIFICATION_REPORT.md](docs/VERIFICATION_REPORT.md)): tooth detector: 89.6 % (95 % CI 88.3–90.8) found-and-correctly-numbered on 250 films from a hospital it was not trained on; after fine-tuning on part of that hospital's films, 94.5 % on its 96 unseen films (the deployed model) and 89.1 % of diseased teeth on the DENTEX official test; periapical bone-loss error 5.5 points (95 % CI 4.8–6.2), 80 % stage agreement, 92 % interval coverage (DenPAR test, v3 two-site landmark model installed 2026-10-18, corrected reference; see [docs/LIMITATIONS.md](docs/LIMITATIONS.md)).
 - Panoramic films get no per-tooth bone-loss numbers (not accurate enough against expert grading of 240 films). Instead whole-film models give a patient-level estimate: bone loss per jaw (test AUC 0.85 / 0.87) and the worst tooth's bone loss (error 11 points, 69 % stage agreement).
-- Uncertainty intervals are honest but wide (on average ±19 points at 90 %), so most teeth still go to dentist review.
+- Uncertainty intervals are honest but wide (on average ±16 points at 90 %), so most teeth still go to dentist review.
 - Risk: the clinical model (trained on NHANES, AUC 0.65) does not read the radiograph; the radiograph's measured stage is combined with it by a documented rule (the higher level wins), not a learned weight. Neither part predicts future progression.
-- Progression: a change counts when the same side of a tooth moves by more than 4.6-6.2 points (repeatability, calibrated on validation re-takes). On a bench of simulated re-takes and simulated bone loss: 95 % specificity, sensitivity 84 % at 20, 66 % at 15 and 39 % at 10 points of root length. Not yet tested on real follow-up radiographs ([docs/PROGRESSION.md](docs/PROGRESSION.md)). The demo patients' trends use planted synthetic values and are labelled as such on every page.
+- Progression: a change counts when the same side of a tooth moves by more than 2.9-5.4 points (repeatability, calibrated on validation re-takes). On a bench of simulated re-takes and simulated bone loss: 95 % specificity, sensitivity 83 % at 20, 76 % at 15 and 63 % at 10 points of root length. Not yet tested on real follow-up radiographs ([docs/PROGRESSION.md](docs/PROGRESSION.md)). The demo patients' trends use planted synthetic values and are labelled as such on every page.
 - Demo mode uses an in-memory database; nothing persists after a restart.
 - The development server is HTTP unless you enable the local certificate; production needs a TLS reverse proxy.
 

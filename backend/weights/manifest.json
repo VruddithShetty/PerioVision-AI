@@ -1,15 +1,15 @@
 {
   "files": {
     "canary_expected.json": {
-      "sha256": "e28db377f9364911ddfa859601ecd052db1a9064d73f6b77474f3b7d57888085",
-      "size": 458
+      "sha256": "223c0ca74d714e32cf6283de0147bbabd85342c721d9c2100a1dd16afd078a48",
+      "size": 457
     },
     "conformal_calibration.json": {
-      "sha256": "5d3988b8f44c3e198db766789a1dbc56e2d3b9ac2df45b575f9a7d8936743125",
-      "size": 9211
+      "sha256": "482a07f174cdddb25f724d7e247254580ad69df02065d7902528e4356c43e158",
+      "size": 9053
     },
     "dental_landmark_yolov8n-pose.pt": {
-      "sha256": "bdc689c1e47f9ad343918a465bfc175e168517137cb19a394ad7777e110a634d",
+      "sha256": "ca778e0960f060fce5ba0369e095cedd31731afa05496d2d763e2611e59961db",
       "size": 42313882
     },
     "dental_yolov8n.pt": {
@@ -25,16 +25,16 @@
       "size": 1023
     },
     "evidence_summary.json": {
-      "sha256": "89345f5e03c2697f834a7d20a6c0e6df0fa4011a6993d5fb1f774f0364489c5c",
-      "size": 29636
+      "sha256": "5d11dce7c110b9c41914a81fd464db6c20ea8835c5b8474a0adc9e5bf79b68a4",
+      "size": 29724
     },
     "external/risk_model_nhanes.json": {
       "sha256": "1b6c93b0b23013ebf8f92b283c006aa5a6be6fe5084130f0231328afaa8d810e",
       "size": 4118
     },
     "landmark_test_metrics.json": {
-      "sha256": "5617e6e8b837123aca10858897ba4de56c5cf93ef7c5a508f2e686b4a1ccf17f",
-      "size": 1660
+      "sha256": "0e8b484c8e9114c6da4feca2f5c2b782347e05d7509f8fc4882c025518b867d5",
+      "size": 1962
     },
     "panoramic_screen.pt": {
       "sha256": "7826e5df1b4c57c7d867e0ba65aeb6607ab035ee87265f05fe4a8e9d4dc24887",
@@ -53,12 +53,12 @@
       "size": 1159
     },
     "pipeline_test_metrics.json": {
-      "sha256": "b1e18e00216e35367318e2be019682ef2cf25afa31bd55b40277c4199598b349",
-      "size": 1196
+      "sha256": "d6abdee0a8a87290dd51104c1874489905d219037539c11fc65761425184bcb8",
+      "size": 1025
     },
     "progression_calibration.json": {
-      "sha256": "1a246959820d358d164857c111904608321d735fd9233820c9b5532830524b2f",
-      "size": 1791
+      "sha256": "52b35c68ed0234abeb806d9910da4ed86676fa418924c7978eed3dce24d70166",
+      "size": 1804
     },
     "yolov8n.pt": {
       "sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",

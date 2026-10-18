@@ -311,7 +311,10 @@ def test_unrelated_radiographs_are_not_compared_as_progression(services, denpar_
     services["analyse"](_gray(denpar_images[0]), patient, "2025-01-01")
     second = services["analyse"](_gray(denpar_images[1]), patient, "2026-01-01")   # a different person's film
     assert second["alignment"]["status"] == "failed"
-    assert second["progression"] and not any(c["reliable"] for c in second["progression"])
+    # Without registration teeth pair only by near-identical position, so a different person's film may pair no
+    # tooth at all (v3 places its boxes so that none coincide here); whatever does pair must never count.
+    assert not any(c["reliable"] for c in second["progression"])
+    assert all(c["label"] == "unreliable comparison" for c in second["progression"])
     assert second["summary"]["max_velocity_pct_per_year"] is None
     assert second["summary"]["grade"]["basis"] != "direct (observed progression)"
 

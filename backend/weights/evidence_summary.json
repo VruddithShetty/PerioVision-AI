@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-06T15:13:27.439494+00:00",
+ "generated": "2026-10-18T06:32:02.886038+00:00",
  "source": "python -m research.compute_ci",
  "rows": [
   {
@@ -239,10 +239,10 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "tooth recall (IoU >= 0.5)",
-   "value": 0.9404761904761905,
+   "value": 0.9370748299319728,
    "ci95": [
-    0.9174857934737136,
-    0.9620705976615823
+    0.9153655824058348,
+    0.9571917808219178
    ],
    "n": 588,
    "unit_of_n": "labelled teeth in 200 films",
@@ -255,12 +255,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "bone-loss MAE (percentage points)",
-   "value": 6.635895117540687,
+   "value": 5.4813430127041745,
    "ci95": [
-    5.860137157782145,
-    7.4868002221078305
+    4.803531277840148,
+    6.210675814281779
    ],
-   "n": 553,
+   "n": 551,
    "unit_of_n": "measured teeth in 199 films",
    "status": "VERIFIED",
    "pct": false,
@@ -271,12 +271,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "median absolute error (points)",
-   "value": 4.02,
+   "value": 3.450000000000001,
    "ci95": [
-    3.5,
-    4.635
+    2.949874999999999,
+    3.8900000000000006
    ],
-   "n": 553,
+   "n": 551,
    "unit_of_n": "measured teeth in 199 films",
    "status": "VERIFIED",
    "pct": false,
@@ -287,12 +287,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "within 10 points",
-   "value": 0.8155515370705244,
+   "value": 0.8493647912885662,
    "ci95": [
-    0.7805254968709168,
-    0.8498190833556687
+    0.8116956363601558,
+    0.8840650626643973
    ],
-   "n": 553,
+   "n": 551,
    "unit_of_n": "measured teeth in 199 films",
    "status": "VERIFIED",
    "pct": true,
@@ -303,12 +303,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "exact stage agreement (I/II/III)",
-   "value": 0.759493670886076,
+   "value": 0.8039927404718693,
    "ci95": [
-    0.7230455134545207,
-    0.7937390484215364
+    0.7653429602888087,
+    0.8427580908963304
    ],
-   "n": 553,
+   "n": 551,
    "unit_of_n": "measured teeth in 199 films",
    "status": "VERIFIED",
    "pct": true,
@@ -319,12 +319,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "90 % interval coverage",
-   "value": 0.9276672694394213,
+   "value": 0.9219600725952813,
    "ci95": [
-    0.903283199905816,
-    0.9506184552674116
+    0.8949227688787185,
+    0.9461025563439759
    ],
-   "n": 553,
+   "n": 551,
    "unit_of_n": "measured teeth in 199 films",
    "status": "VERIFIED",
    "pct": true,
@@ -335,12 +335,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "90 % interval coverage, reference stage I",
-   "value": 0.9659863945578231,
+   "value": 0.976271186440678,
    "ci95": [
-    0.944827026421854,
-    0.9832228793966465
+    0.9543648980907979,
+    0.9934431586842387
    ],
-   "n": 294,
+   "n": 295,
    "unit_of_n": "teeth with reference stage I",
    "status": "VERIFIED",
    "pct": true,
@@ -351,12 +351,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "stage recall, reference stage I",
-   "value": 0.8537414965986394,
+   "value": 0.9050847457627119,
    "ci95": [
-    0.8090606459007552,
-    0.895425975268156
+    0.8619438327915836,
+    0.9434643649554489
    ],
-   "n": 294,
+   "n": 295,
    "unit_of_n": "teeth with reference stage I",
    "status": "VERIFIED",
    "pct": true,
@@ -367,10 +367,10 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "90 % interval coverage, reference stage II",
-   "value": 0.9027777777777778,
+   "value": 0.8888888888888888,
    "ci95": [
-    0.8523365647526722,
-    0.9496414189403194
+    0.8333333333333334,
+    0.9398533834586466
    ],
    "n": 144,
    "unit_of_n": "teeth with reference stage II",
@@ -383,10 +383,10 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "stage recall, reference stage II",
-   "value": 0.5208333333333334,
+   "value": 0.5763888888888888,
    "ci95": [
-    0.43379354401335,
-    0.6075949367088608
+    0.49253448665762095,
+    0.6582278481012658
    ],
    "n": 144,
    "unit_of_n": "teeth with reference stage II",
@@ -399,12 +399,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "90 % interval coverage, reference stage III",
-   "value": 0.8608695652173913,
+   "value": 0.8214285714285714,
    "ci95": [
-    0.7837837837837838,
-    0.9279580761864225
+    0.7307608695652174,
+    0.9019607843137255
    ],
-   "n": 115,
+   "n": 112,
    "unit_of_n": "teeth with reference stage III",
    "status": "VERIFIED",
    "pct": true,
@@ -415,12 +415,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "stage recall, reference stage III",
-   "value": 0.8173913043478261,
+   "value": 0.8303571428571429,
    "ci95": [
-    0.7264937106918239,
-    0.9016430035128805
+    0.7431192660550459,
+    0.9019727403156385
    ],
-   "n": 115,
+   "n": 112,
    "unit_of_n": "teeth with reference stage III",
    "status": "VERIFIED",
    "pct": true,
@@ -431,12 +431,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
    "metric": "severe (stage III) called stage I",
-   "value": 0.008695652173913044,
+   "value": 0.008928571428571428,
    "ci95": [
-    0.0015366489058808025,
-    0.047616726344313784
+    0.001577854703292133,
+    0.048848468308884896
    ],
-   "n": 115,
+   "n": 112,
    "unit_of_n": "teeth with reference stage III",
    "status": "VERIFIED",
    "pct": true,
@@ -447,10 +447,10 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
    "metric": "tooth recall (IoU >= 0.5)",
-   "value": 0.9401709401709402,
+   "value": 0.9367521367521368,
    "ci95": [
-    0.9162357305936073,
-    0.961335676625659
+    0.9144714311463591,
+    0.9578225881047081
    ],
    "n": 585,
    "unit_of_n": "labelled teeth in 198 films",
@@ -463,12 +463,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
    "metric": "bone-loss MAE (percentage points)",
-   "value": 6.630472727272727,
+   "value": 5.480894160583941,
    "ci95": [
-    5.846946442687747,
-    7.46276409426987
+    4.801659476758557,
+    6.22329986236236
    ],
-   "n": 550,
+   "n": 548,
    "unit_of_n": "measured teeth in 197 films",
    "status": "VERIFIED",
    "pct": false,
@@ -479,12 +479,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
    "metric": "median absolute error (points)",
-   "value": 4.01,
+   "value": 3.460000000000001,
    "ci95": [
-    3.5,
-    4.590000000000002
+    2.9499999999999993,
+    3.890249999999999
    ],
-   "n": 550,
+   "n": 548,
    "unit_of_n": "measured teeth in 197 films",
    "status": "VERIFIED",
    "pct": false,
@@ -495,12 +495,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
    "metric": "within 10 points",
-   "value": 0.8163636363636364,
+   "value": 0.8503649635036497,
    "ci95": [
-    0.7804382520082184,
-    0.8512248648320272
+    0.8131656312783274,
+    0.8861962188156689
    ],
-   "n": 550,
+   "n": 548,
    "unit_of_n": "measured teeth in 197 films",
    "status": "VERIFIED",
    "pct": true,
@@ -511,12 +511,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
    "metric": "exact stage agreement (I/II/III)",
-   "value": 0.76,
+   "value": 0.8047445255474452,
    "ci95": [
-    0.7224136909598093,
-    0.7966132455627672
+    0.7631567050537738,
+    0.8418181818181818
    ],
-   "n": 550,
+   "n": 548,
    "unit_of_n": "measured teeth in 197 films",
    "status": "VERIFIED",
    "pct": true,
@@ -527,12 +527,12 @@
   {
    "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
    "metric": "90 % interval coverage",
-   "value": 0.9272727272727272,
+   "value": 0.9215328467153284,
    "ci95": [
-    0.9016697588126159,
-    0.9503717067657451
+    0.8954345083685726,
+    0.9472751196172249
    ],
-   "n": 550,
+   "n": 548,
    "unit_of_n": "measured teeth in 197 films",
    "status": "VERIFIED",
    "pct": true,

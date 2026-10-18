@@ -15,12 +15,12 @@ runs the tests.
 
 ## train_landmarks_twosite_colab.ipynb
 
-Trained the **deployed** two-site landmark model on DenPAR (CC BY 4.0): CEJ and bone crest on both sides of each
-tooth plus the apex. Kept as the record of how the deployed model was made.
+Trained the first two-site landmark model on DenPAR (CC BY 4.0): CEJ and bone crest on both sides of each tooth
+plus the apex. Replaced by v3 on 2026-10-18; kept as the record of how it was made.
 
 ## train_landmarks_v3_colab.ipynb
 
-The **next** landmark models, on the corrected labels: up to three models (large / medium, 1280 / 1024 px), each
+Trained the **deployed** landmark model (v3, installed 2026-10-18), on the corrected labels: up to three models (large / medium, 1280 / 1024 px), each
 resumable across sessions, plus their ensemble. Chooses on validation films, compares against the deployed model on
 the same test teeth and exports to `MyDrive/PerioVision/export_v3/`. Needs the deployed model in
 `MyDrive/PerioVision/current/`.

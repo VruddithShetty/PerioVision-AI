@@ -53,8 +53,9 @@ teeth and picks each tooth's crest and worst site.
 **Found and fixed.** When a tooth had a single annotated CEJ, the converter could take the crest from the *other* side
 of the tooth: 11.1 % / 13.9 % / 10.2 % of train / val / test teeth. The crest now comes from the CEJ's own side
 (3 / 5 / 4 borderline teeth remain). Regression test: `tests/test_convert_denpar.py` fails on the old code.
-All periapical numbers were re-measured on the corrected reference (bone-loss error 6.64 points, stage agreement
-75.9 %) and the uncertainty was recalibrated on it.
+All periapical numbers were re-measured on the corrected reference and the uncertainty was recalibrated on it. The
+landmark model was then retrained on the corrected labels (v3, deployed 2026-10-18): bone-loss error 5.48 points,
+stage agreement 80.4 %.
 
 **Measured.** With the fix in place, changing the conversion distance (15 / 25 / 35 px) moves the reference bone loss
 by 0.3-0.4 points on average and changes the stage of about 2 % of teeth, so the reference is set by the
@@ -66,8 +67,8 @@ builds a 60-tooth pack (20 per stage) with the reference points drawn on; a dent
 
 ## 3. Stage II (MEASURED)
 
-Stage recall on the corrected reference: stage I 85.4 %, **stage II 52.1 %** (95 % CI 43-61), stage III 81.7 %.
-Severe teeth called stage I: **0.9 %** (1 of 115). The stage II band is 18 points wide and the typical error is about
+Stage recall on the corrected reference with the v3 model: stage I 90.5 %, **stage II 57.6 %** (95 % CI 49-66; was
+52.1 % with the previous model), stage III 83.0 %. Severe teeth called stage I: **0.9 %** (1 of 112). The stage II band is 18 points wide and the typical error is about
 6 points, so many stage II teeth sit near a boundary. A bias correction fitted on validation was tested and **rejected**:
 on split halves of validation it made the error worse, and its stage gains only traded stage I recall for stage II / III.
 How the app copes: every tooth carries a stage *set* from the calibrated interval (e.g. "II or III"), not a single
@@ -76,8 +77,9 @@ suggestion as "check clinically".
 
 ## 4. Interval width (MEASURED, by design)
 
-At the 90 % level the intervals cover 92.8 % of test teeth (86.1 % of severe teeth), with a mean width of about 39
-points; 7.6 % of teeth get a single-stage set. Narrower intervals would only be honest with a more accurate model.
+At the 90 % level the v3 intervals cover 92.2 % of test teeth (82.1 % of severe teeth), with a mean width of about 28
+points (was 39); 15.6 % of teeth get a single-stage set (was 7.6 %). The more accurate v3 model made honest intervals
+narrower; narrower still needs a more accurate model again.
 The app does not hide this: wide intervals send the case to a dentist rather than guessing. This is the intended
 behaviour of a decision-support tool whose error is the size of a stage band.
 
@@ -85,13 +87,14 @@ behaviour of a decision-support tool whose error is the size of a stage band.
 
 **Found and fixed (2026-10-07, `docs/PROGRESSION.md`).** The old rule required a change larger than both visits'
 accuracy intervals (about 39 points), although a tooth's constant offset cancels between visits; on 303 simulated
-changes it detected none. Changes are now compared side with side against a repeatability threshold (4.6 / 6.2
-points) calibrated on validation re-takes, and registration accepts 99 % of realistic re-takes (was 79.5 %) with
+changes it detected none. Changes are now compared side with side against a repeatability threshold (2.9 / 5.4
+points with the v3 model; 4.6 / 6.2 with the previous one) calibrated on validation re-takes, and registration accepts 99 % of realistic re-takes (was 79.5 %) with
 0 of 300 different-patient pairs accepted. Tests: `tests/test_progression_paired.py`, `tests/test_registration_fallback.py`.
 
-**Measured (bench, test films).** Specificity on unchanged re-takes 94.9 % (91.4-97.1); sensitivity 12 / 39 / 66 /
-84 % for simulated losses of 5 / 10 / 15 / 20 points of root length. 90 % sensitivity is not reached: the landmark
-model follows only about half of a simulated crest shift. For comparison, the only published multicentre study of
+**Measured (bench, test films, v3 model, 2026-10-18).** Specificity on unchanged re-takes 95.0 % (91.8-97.0);
+sensitivity 22 / 63 / 76 / 83 % for simulated losses of 5 / 10 / 15 / 20 points of root length (previous model:
+12 / 39 / 66 / 84 %). 90 % sensitivity is not reached: the landmark model follows only about half of a simulated crest
+shift. For comparison, the only published multicentre study of
 direct progression detection on real serial radiographs reports 79.5 % accuracy and 69 % sensitivity.
 
 **Still open.** No real follow-up radiographs have been tested. **Closes with** 20-50 real pairs of the same patient's
@@ -150,7 +153,8 @@ Found while pushing 300 real films through the app's API to build demonstration 
 
 ## What is fully in place
 
-- 143 unit tests and 34 live tests on the real models pass; every weight, calibration and metrics file is signed and
+- 145 unit tests and 34 live tests on the real models pass; every weight, calibration and metrics file is signed and
   checked at start-up.
-- A retrain on the corrected labels is ready: `notebooks/train_landmarks_v3_colab.ipynb`. It compares itself
-  against the deployed model on the same films and installs nothing unless the difference is real.
+- The retrain on the corrected labels is done and deployed (v3, 2026-10-18): paired against the previous model on
+  the same 536 test teeth it lowers the error by 1.00 point (95 % CI 0.46-1.55) and raises stage agreement by 3.7
+  points (0.4-7.1); the uncertainty and progression thresholds were recalibrated for it on validation films.

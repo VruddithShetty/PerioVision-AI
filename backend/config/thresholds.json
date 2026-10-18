@@ -23,7 +23,7 @@
     "match_iou": 0.3,
     "tta_mirror": true,
     "measure_unvalidated_image_types": false,
-    "twosite_min_site_confidence": 0.6
+    "twosite_min_site_confidence": 0.5
   },
   "explainability": {
     "min_roi_attention": 0.25,

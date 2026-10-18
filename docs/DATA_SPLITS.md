@@ -54,7 +54,7 @@ test and `1028`, `158`, `899` from validation (or move them to train), retrain, 
 
 > **Update 2026-10-04 (later the same day).** The *deployed* detector is now fine-tuned on AKU folders 1 and 3
 > (commit `0930bd2`). The evidence below holds for the **previous DENTEX-only detector** (`b73f30db…`, kept in
-> `weights_backup/20261004-095323/`) and for its 89.6 % different-hospital result. For the deployed detector, AKU
+> git history) and for its 89.6 % different-hospital result. For the deployed detector, AKU
 > folder 2 (96 films) is a held-out test from the same hospital: no film in it duplicates a folder 1 or 3 film
 > (`split_audit_aku_vs_team_detection.json` found no duplicates among all 250), but patients cannot be checked
 > because AKU publishes no patient IDs.

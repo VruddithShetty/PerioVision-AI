@@ -1,96 +1,96 @@
 {
-  "threshold_points": 5.517,
+  "threshold_points": 4.119,
   "threshold_rule": "95th percentile of the largest per-site increase on no-change validation teeth",
-  "validation_no_change_teeth": 354,
+  "validation_no_change_teeth": 458,
   "adaptive": {
-    "split_disagreement_points": 3.52,
-    "threshold_low": 4.61,
-    "threshold_high": 6.152
+    "split_disagreement_points": 3.066,
+    "threshold_low": 2.903,
+    "threshold_high": 5.435
   },
   "deployed_rule": "adaptive (declared before test results)",
   "both_rules_on_test": {
     "fixed": {
-      "specificity": 0.8838782412626832,
+      "specificity": 0.8217726396917149,
       "sensitivity": {
-        "5": 0.10810810810810811,
-        "10": 0.37333333333333335,
-        "15": 0.6216216216216216,
-        "20": 0.8
+        "5": 0.1724137931034483,
+        "10": 0.5591397849462365,
+        "15": 0.7640449438202247,
+        "20": 0.8426966292134831
       }
     },
     "adaptive": {
-      "specificity": 0.8771138669673055,
+      "specificity": 0.8208092485549133,
       "sensitivity": {
-        "5": 0.12162162162162163,
-        "10": 0.38666666666666666,
-        "15": 0.6621621621621622,
-        "20": 0.8375
+        "5": 0.21839080459770116,
+        "10": 0.6344086021505376,
+        "15": 0.7640449438202247,
+        "20": 0.8314606741573034
       }
     }
   },
   "specificity_no_change": {
-    "value": 0.8771138669673055,
-    "teeth": 887,
+    "value": 0.8208092485549133,
+    "teeth": 1038,
     "ci95": [
-      0.8540450078792615,
-      0.9015007231184906
+      0.7939484619520722,
+      0.846308745323387
     ]
   },
   "specificity_pure_no_change_retakes": {
-    "value": 0.9493670886075949,
-    "teeth": 237,
+    "value": 0.9498207885304659,
+    "teeth": 279,
     "ci95": [
-      0.9135974413817974,
-      0.9708017855742971
+      0.917545785553726,
+      0.9698771581920144
     ],
     "note": "teeth in films with no simulated change. The overall specificity above also counts the other teeth of films with a simulated defect; their neighbours share the edited interdental bone, so some of those 'false alarms' are real changes"
   },
   "sensitivity_by_true_change": {
     "5": {
-      "value": 0.12162162162162163,
-      "teeth": 74,
+      "value": 0.21839080459770116,
+      "teeth": 87,
       "ci95": [
-        0.06532315657822622,
-        0.21526586566768757
+        0.14450813844415483,
+        0.31609057236345317
       ]
     },
     "10": {
-      "value": 0.38666666666666666,
-      "teeth": 75,
+      "value": 0.6344086021505376,
+      "teeth": 93,
       "ci95": [
-        0.284552171134325,
-        0.4998252331617777
+        0.533010918790097,
+        0.7251429783572861
       ]
     },
     "15": {
-      "value": 0.6621621621621622,
-      "teeth": 74,
+      "value": 0.7640449438202247,
+      "teeth": 89,
       "ci95": [
-        0.5487851256985736,
-        0.7595338647674634
+        0.6660637395237937,
+        0.840175612991893
       ]
     },
     "20": {
-      "value": 0.8375,
-      "teeth": 80,
+      "value": 0.8314606741573034,
+      "teeth": 89,
       "ci95": [
-        0.7415709565930229,
-        0.9025018059704963
+        0.7403744938895832,
+        0.8951174592684067
       ]
     }
   },
   "repeatability": {
-    "sites": 368,
-    "sd_points": 2.6797969254909284,
-    "mean_points": 0.5661141304347826,
-    "mdc95_points": 5.252401973962219,
+    "sites": 435,
+    "sd_points": 1.8548782501122687,
+    "mean_points": 0.3131724137931035,
+    "mdc95_points": 3.6355613702200467,
     "note": "SD of the change measured on no-change pairs already includes both readings, so MDC95 = 1.96 x SD (no extra sqrt 2)"
   },
-  "registration_success_share_of_site_rows": 0.8425141242937854,
+  "registration_success_share_of_site_rows": 0.9807759524641734,
   "balanced_accuracy_vs_no_change": {
-    "5": 0.49936774429446357,
-    "10": 0.6318902668169861,
-    "15": 0.7696380145647339,
-    "20": 0.8573069334836527
+    "5": 0.5196000265763072,
+    "10": 0.7276089253527255,
+    "15": 0.792427096187569,
+    "20": 0.8261349613561084
   }
 }

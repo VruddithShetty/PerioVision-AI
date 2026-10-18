@@ -1,57 +1,66 @@
 {
   "dataset": "DenPAR periapical (CC BY 4.0), official split without the 5 films duplicated across splits",
-  "model": "yolo11m-pose, two-site: CEJ + crest on each side of the tooth, and the apex (5 keypoints)",
+  "model": "v3: yolo11m-pose, two-site (CEJ + crest on each side of the tooth, and the apex; 5 keypoints), 1024 px, trained on the corrected same-side labels",
   "imgsz": 1024,
-  "site_confidence_cut_off_chosen_on_val": 0.6,
-  "reference": "3-keypoint worst-site labels (scripts/convert_denpar.py), as for every earlier model",
-  "measured_by": "research/compare_landmark_models.py on Colab (mirrored test-time augmentation)",
+  "site_confidence_cut_off_chosen_on_val": 0.5,
+  "selection": {
+    "chosen_on_validation_films": "m1024",
+    "validation_mae_by_candidate": {
+      "l1280": 6.687,
+      "m1280": 7.312,
+      "m1024": 5.511,
+      "ensemble": 5.991
+    }
+  },
+  "reference": "same-side corrected labels (crest taken from the CEJ's own side)",
+  "measured_by": "notebooks/train_landmarks_v3_colab.ipynb on Colab (mirrored test-time augmentation)",
   "val": {
-    "reference_teeth": 449,
-    "teeth_measured": 428,
-    "bone_loss_MAE_pct_points": 6.542,
+    "reference_teeth": 440,
+    "teeth_measured": 419,
+    "bone_loss_MAE_pct_points": 5.511,
     "bone_loss_MAE_ci95": [
-      5.71,
-      7.427
+      4.897,
+      6.185
     ],
-    "bone_loss_median_abs_error": 4.043,
-    "within_10_points": 0.8014,
-    "stage_agreement": 0.7523,
-    "kappa_quadratic": 0.7841
+    "bone_loss_median_abs_error": 3.709,
+    "within_10_points": 0.8449,
+    "stage_agreement": 0.7589,
+    "stage_agreement_ci95": [
+      0.715,
+      0.8024
+    ],
+    "kappa_quadratic": 0.7831
   },
   "test": {
-    "reference_teeth": 593,
-    "teeth_measured": 560,
-    "bone_loss_MAE_pct_points": 6.373,
+    "reference_teeth": 585,
+    "teeth_measured": 555,
+    "bone_loss_MAE_pct_points": 5.5,
     "bone_loss_MAE_ci95": [
-      5.62,
-      7.186
+      4.822,
+      6.243
     ],
-    "bone_loss_median_abs_error": 4.037,
-    "within_10_points": 0.8268,
-    "stage_agreement": 0.7714,
-    "kappa_quadratic": 0.8047
-  },
-  "previous_model_same_test_films": {
-    "reference_teeth": 593,
-    "teeth_measured": 587,
-    "bone_loss_MAE_pct_points": 7.34,
-    "bone_loss_MAE_ci95": [
-      6.642,
-      8.092
+    "bone_loss_median_abs_error": 3.503,
+    "within_10_points": 0.8505,
+    "stage_agreement": 0.8018,
+    "stage_agreement_ci95": [
+      0.7604,
+      0.8394
     ],
-    "bone_loss_median_abs_error": 4.897,
-    "within_10_points": 0.7956,
-    "stage_agreement": 0.7359,
-    "kappa_quadratic": 0.7567
+    "kappa_quadratic": 0.8361
   },
   "paired_test_vs_previous": {
-    "teeth": 559,
-    "mae_previous": 7.313,
-    "mae_new": 6.378,
-    "difference": -0.935,
-    "difference_ci95": [
-      -1.508,
-      -0.392
+    "measured_by": "app pipeline (scripts/evaluate_landmarks.py), both models on the same test teeth, the 2 duplicated test films excluded, film-level bootstrap",
+    "teeth": 536,
+    "films": 196,
+    "mae_difference": -1.001,
+    "mae_difference_ci95": [
+      -1.555,
+      -0.464
+    ],
+    "stage_agreement_difference": 0.0373,
+    "stage_agreement_difference_ci95": [
+      0.0038,
+      0.0709
     ]
   }
 }

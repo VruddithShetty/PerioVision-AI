@@ -1,0 +1,63 @@
+{
+  "change_threshold_points": 5.435,
+  "false_alarm_target": 0.05,
+  "adaptive": {
+    "split_disagreement_points": 3.066,
+    "threshold_low": 2.903,
+    "threshold_high": 5.435
+  },
+  "rule": "paired_site_repeatability: a tooth changed when a side measured in both visits moved by more than the threshold",
+  "created": "2026-10-18T06:24:34.062178+00:00",
+  "source": "research/progression_bench.py: DenPAR validation films, no-change re-takes (458 teeth); bench results on test films in docs/evidence/progression_bench.json",
+  "bench_test": {
+    "specificity_no_change": {
+      "value": 0.8208092485549133,
+      "teeth": 1038,
+      "ci95": [
+        0.7939484619520722,
+        0.846308745323387
+      ]
+    },
+    "sensitivity_by_true_change": {
+      "5": {
+        "value": 0.21839080459770116,
+        "teeth": 87,
+        "ci95": [
+          0.14450813844415483,
+          0.31609057236345317
+        ]
+      },
+      "10": {
+        "value": 0.6344086021505376,
+        "teeth": 93,
+        "ci95": [
+          0.533010918790097,
+          0.7251429783572861
+        ]
+      },
+      "15": {
+        "value": 0.7640449438202247,
+        "teeth": 89,
+        "ci95": [
+          0.6660637395237937,
+          0.840175612991893
+        ]
+      },
+      "20": {
+        "value": 0.8314606741573034,
+        "teeth": 89,
+        "ci95": [
+          0.7403744938895832,
+          0.8951174592684067
+        ]
+      }
+    },
+    "repeatability": {
+      "sites": 435,
+      "sd_points": 1.8548782501122687,
+      "mean_points": 0.3131724137931035,
+      "mdc95_points": 3.6355613702200467,
+      "note": "SD of the change measured on no-change pairs already includes both readings, so MDC95 = 1.96 x SD (no extra sqrt 2)"
+    }
+  }
+}

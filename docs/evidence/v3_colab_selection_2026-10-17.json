@@ -1,0 +1,28 @@
+{
+  "chosen": "m1024",
+  "members": [
+    "m1024"
+  ],
+  "imgsz": {
+    "m1024": 1024
+  },
+  "validation": {
+    "l1280": {
+      "mae": 6.686979397158,
+      "measured_share": 0.95
+    },
+    "m1280": {
+      "mae": 7.311671591487421,
+      "measured_share": 0.975
+    },
+    "m1024": {
+      "mae": 5.5105421380646185,
+      "measured_share": 0.9522727272727273
+    },
+    "ensemble": {
+      "mae": 5.9914823555568795,
+      "measured_share": 0.9613636363636363
+    }
+  },
+  "verdict": "no deployed model to compare against"
+}

@@ -28,7 +28,8 @@ FILES = {"dental_yolov8n.pt": "detect", "dental_landmark_yolov8n-pose.pt": "pose
          "dental_landmark_ens2-pose.pt": "pose", "dental_landmark_ens3-pose.pt": "pose",   # optional ensemble members
          "panoramic_screen.pt": "whole_film", "panoramic_severity.pt": "whole_film"}
 METRIC_FILES = ("detector_test_metrics.json", "landmark_test_metrics.json", "conformal_calibration.json",
-                "panoramic_screen_metrics.json", "panoramic_severity_metrics.json", "pipeline_test_metrics.json")
+                "panoramic_screen_metrics.json", "panoramic_severity_metrics.json", "pipeline_test_metrics.json",
+                "progression_calibration.json")
 FDI = {f"{q}{n}" for q in (1, 2, 3, 4) for n in range(1, 9)}
 
 
