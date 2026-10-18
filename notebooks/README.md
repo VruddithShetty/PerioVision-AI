@@ -25,6 +25,14 @@ resumable across sessions, plus their ensemble. Chooses on validation films, com
 the same test teeth and exports to `MyDrive/PerioVision/export_v3/`. Needs the deployed model in
 `MyDrive/PerioVision/current/`.
 
+## train_landmarks_crop_colab.ipynb
+
+Experimental second stage for the landmark reading: a model that re-reads the CEJ and bone crest on a zoomed
+crop of each tooth's root region (about 1.7x the detail at 768 px), with the deployed v3 model as stage A. Aims
+at stage II recall. Same paired comparison against v3 on the same test teeth; exports to
+`MyDrive/PerioVision/export_crop/`. Install only if its verdict is REAL IMPROVEMENT (the app then needs the
+two-stage code). Needs v3 in `MyDrive/PerioVision/current/`.
+
 ## priority1_eval_colab.ipynb
 
 Evaluation only (no training): DENTEX and MM-OPG split audits and per-film predictions for confidence intervals.
