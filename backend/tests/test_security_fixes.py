@@ -198,3 +198,23 @@ def test_encryption_is_randomised_authenticated_gcm():
         enc.decrypt_bytes(bytes(blob))
     src = open(crypto.__file__, encoding="utf-8").read()
     assert "modes.CBC" not in src and "AESGCM" in src
+
+
+def test_forwarded_https_is_trusted_only_when_configured(client, monkeypatch):
+    """Behind a TLS proxy the refresh cookie must be Secure and HSTS sent; with no trusted proxy (default) a
+    client-supplied X-Forwarded-Proto is ignored, so the headers cannot be spoofed."""
+    from app import config, create_app
+    from tests.conftest import PASSWORDS, UA
+
+    creds = {"email": "dentist@test.local", "password": PASSWORDS["dentist"]}
+    spoofed = {**UA, "X-Forwarded-Proto": "https", "X-Forwarded-For": "203.0.113.9"}
+    r = client.post("/api/auth/login", json=creds, headers=spoofed)           # default: trust no proxy
+    assert r.status_code == 200
+    assert "Secure" not in r.headers.get("Set-Cookie", "") and "Strict-Transport-Security" not in r.headers
+
+    monkeypatch.setattr(config, "TRUST_PROXY_HOPS", 1)
+    proxied = create_app().test_client()
+    r = proxied.post("/api/auth/login", json=creds, headers=spoofed)
+    assert r.status_code == 200
+    assert "Secure" in r.headers["Set-Cookie"] and "HttpOnly" in r.headers["Set-Cookie"]
+    assert r.headers["Strict-Transport-Security"].startswith("max-age=")

@@ -257,6 +257,23 @@ def test_end_to_end_workflow(client, dentist, auditor):
     assert all("Synthetic Patient" not in str(e) for e in data(client.get("/api/audit/logs?limit=500", headers=auditor)))
 
 
+def test_review_comment_cannot_inject_pdf_markup(client, dentist):
+    """A sign-off comment is user text: tags in it must appear literally, not break or alter the signed PDF."""
+    pid = data(client.post("/api/patients", headers=dentist, json={"name": "Markup Test", "age": 40}))["patient_id"]
+    up = client.post("/api/radiographs", headers=dentist, content_type="multipart/form-data",
+                     data={"image": (io.BytesIO(synthetic_radiograph(seed=7)), "scan.png")})
+    an = data(client.post("/api/analyses", headers=dentist,
+                          json={"upload_id": data(up)["upload_id"], "patient_id": pid}))
+    evil = 'ok <a href="http://evil.example">click</a> <b>unclosed & 5 < 6'
+    assert client.post(f"/api/review/{an['analysis_id']}", headers=dentist,
+                       json={"decision": "approve", "comment": evil}).status_code == 200
+    rep = client.post("/api/reports", headers=dentist, json={"analysis_id": an["analysis_id"]})
+    assert rep.status_code == 201, rep.get_json()                       # malformed markup no longer breaks it
+    pdf = client.get(f"/api/reports/{data(rep)['report_id']}/download", headers=dentist).data
+    assert b"/URI" not in pdf                                           # no clickable link was injected
+    assert "evil.example" in _pdf_text(pdf) and "unclosed" in _pdf_text(pdf)   # the comment is shown as text
+
+
 def test_openapi_lists_permissions(client):
     spec = client.get("/api/docs").get_json()
     assert spec["openapi"].startswith("3.")

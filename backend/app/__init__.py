@@ -55,6 +55,11 @@ def _install_security(app: Flask) -> None:
     from app.api._common import fail
     from app.security.zero_trust import enforce_deny_by_default
 
+    if config.TRUST_PROXY_HOPS:
+        from werkzeug.middleware.proxy_fix import ProxyFix
+
+        n = config.TRUST_PROXY_HOPS
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=n, x_proto=n, x_host=n)
     CORS(app, resources={r"/api/*": {"origins": config.CORS_ORIGINS}}, supports_credentials=True,
          allow_headers=["Authorization", "Content-Type"], methods=["GET", "POST", "PATCH", "OPTIONS"], max_age=600)
     enforce_deny_by_default(app)

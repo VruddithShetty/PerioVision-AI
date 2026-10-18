@@ -10,6 +10,7 @@
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Components, data flow, request lifecycle |
 | [API.md](API.md) · [openapi.json](openapi.json) | Every endpoint, its permission and payloads |
 | [SECURITY.md](SECURITY.md) · [KEY_ROTATION.md](KEY_ROTATION.md) | Security controls, threat model, key rotation |
+| [OWASP_TOP10.md](OWASP_TOP10.md) | Review against each OWASP Top 10 (2021) category: controls, tests, fixes, accepted risks |
 | [DEPLOYMENT.md](DEPLOYMENT.md) | Production setup (MongoDB, secrets, waitress, HTTPS proxy) |
 | [MODEL_CARD.md](MODEL_CARD.md) | Every model, its training data and its held-out accuracy |
 | [ANALYSES.md](ANALYSES.md) | Where the model fails, how landmark error drives bone-loss error, accuracy vs referral rate, and a case gallery |

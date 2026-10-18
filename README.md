@@ -56,7 +56,7 @@ Full diagram and data flow: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
    ```powershell
    copy .env.example .env
    ```
-   Open `.env` and set `DB_MODE=demo`. Generate each secret with `python -c "import secrets; print(secrets.token_hex(32))"` and paste it in. Then fill in the `DEMO_*` accounts. Passwords need 10+ characters with upper- and lower-case letters and a digit, and these accounts are for demos only.
+   Open `.env` and set `DB_MODE=demo`. Generate each secret with `python -c "import secrets; print(secrets.token_hex(32))"` and paste it in. Then fill in the `DEMO_*` accounts. Passwords need 12+ characters with upper- and lower-case letters and a digit, and these accounts are for demos only.
 4. **Install everything:**
    ```powershell
    .\run.ps1 setup

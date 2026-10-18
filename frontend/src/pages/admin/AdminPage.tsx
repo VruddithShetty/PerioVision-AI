@@ -21,7 +21,7 @@ function NewUserModal({ open, onClose }: { open: boolean; onClose: () => void })
       <form onSubmit={submit} className="space-y-4">
         <Field label="Name" htmlFor="u-name"><Input id="u-name" required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></Field>
         <Field label="Email" htmlFor="u-email"><Input id="u-email" type="email" required value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} /></Field>
-        <Field label="Initial password" htmlFor="u-pw" hint="10+ characters with upper- and lower-case letters and a digit">
+        <Field label="Initial password" htmlFor="u-pw" hint="12+ characters with upper- and lower-case letters and a digit">
           <Input id="u-pw" type="password" required minLength={10} value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} />
         </Field>
         <div className="grid gap-4 sm:grid-cols-2">

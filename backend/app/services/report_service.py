@@ -16,6 +16,7 @@ from __future__ import annotations
 import hashlib
 import io
 import os
+from xml.sax.saxutils import escape
 
 from reportlab.graphics.charts.lineplots import LinePlot
 from reportlab.graphics.shapes import Drawing, String
@@ -170,8 +171,10 @@ def build_pdf(analysis: dict, patient: dict, progression: dict, reviewer: dict |
     review = analysis.get("review", {})
     story.append(Paragraph("<b>Clinician review</b>", styles["Heading3"]))
     if reviewer:
-        story.append(Paragraph(f"Signed off by {reviewer['name']} ({reviewer['role']}) on {reviewer['at'][:19]} UTC. "
-                               f"Decision: {reviewer['decision']}. {reviewer.get('comment') or ''}", small))
+        # Name and comment are typed by users: escape them, ReportLab Paragraphs interpret <tags> as markup
+        story.append(Paragraph(f"Signed off by {escape(str(reviewer['name']))} ({escape(str(reviewer['role']))}) on "
+                               f"{escape(str(reviewer['at'])[:19])} UTC. Decision: {escape(str(reviewer['decision']))}. "
+                               f"{escape(str(reviewer.get('comment') or ''))}", small))
         if reviewer.get("corrections"):
             # The clinician's values override the model's for these teeth; both are shown, neither is hidden.
             model = {t["tooth_id"]: t for t in analysis["teeth"]}

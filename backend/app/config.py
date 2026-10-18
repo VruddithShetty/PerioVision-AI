@@ -81,5 +81,12 @@ PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "http://127.0.0.1:5000").rstrip("
 CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
                 if o.strip()]
 
+# Number of reverse proxies in front of the API that are allowed to set X-Forwarded-For / -Proto / -Host
+# (an HTTPS proxy in production; Vercel + Hugging Face for the online demo = 2). With 0 (default) those headers
+# are ignored, so a client cannot spoof them; with the right number the app sees the real HTTPS scheme (Secure
+# cookie, HSTS) and the real client IP (rate limits, hashed IPs in the audit log). Never set it higher than the
+# number of proxies you actually run.
+TRUST_PROXY_HOPS = max(0, int(os.getenv("TRUST_PROXY_HOPS", "0") or 0))
+
 # Where the QR code on a report points (the frontend's public verification page)
 PUBLIC_VERIFY_URL = os.getenv("PUBLIC_VERIFY_URL", "http://localhost:5173/verify").rstrip("/")

@@ -23,7 +23,7 @@ def main() -> int:
     name = input("Full name: ").strip() or "Administrator"
     email = input("Email: ").strip()
     while True:
-        pw = getpass.getpass("Password (10+ chars, upper + lower case, a digit): ")
+        pw = getpass.getpass("Password (12+ chars, upper + lower case, a digit): ")
         problems = password_problems(pw)
         if problems:
             print("Password needs " + ", ".join(problems) + ".")

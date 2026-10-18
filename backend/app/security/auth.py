@@ -34,7 +34,7 @@ REFRESH_TTL = dt.timedelta(days=int(os.getenv("REFRESH_TOKEN_DAYS", "7")))
 MFA_TTL = dt.timedelta(minutes=5)
 SESSION_IDLE_TIMEOUT = dt.timedelta(minutes=int(os.getenv("SESSION_IDLE_MINUTES", "30")))
 BCRYPT_ROUNDS = 12
-MIN_PASSWORD_LENGTH = 10
+MIN_PASSWORD_LENGTH = 12  # OWASP ASVS 2.1.1
 
 _jwt_secret: str | None = None
 

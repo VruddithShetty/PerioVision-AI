@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir --retries 10 --timeout 120 -r backend/requirement
 COPY --chown=user . .
 RUN chown user:user /home/user/app    # WORKDIR is created by root; setup writes .env here
 USER user
-ENV HOME=/home/user PYTHONUNBUFFERED=1 DB_MODE=demo YOLO_CONFIG_DIR=/tmp/ultralytics
+ENV HOME=/home/user PYTHONUNBUFFERED=1 DB_MODE=demo YOLO_CONFIG_DIR=/tmp/ultralytics TRUST_PROXY_HOPS=1
 
 EXPOSE 7860
 # setup_local.py: fresh secrets in .env, verifies the shipped weights with the publisher key and creates this

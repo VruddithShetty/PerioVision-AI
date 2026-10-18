@@ -11,6 +11,8 @@ The demo setup (`.env`, in-memory database, demo accounts) stays untouched for p
 
 Losing `.env.production` or `keys-production` means encrypted data can no longer be read, so back up both together.
 
+**Behind an HTTPS reverse proxy** (nginx, Caddy, a cloud load balancer) set `TRUST_PROXY_HOPS=1` in `.env.production`, so the app sees the real HTTPS scheme and client IP (Secure refresh cookie, HSTS header, per-client rate limits). Leave it at 0 when nothing is in front of the API: the forwarded headers are then ignored and cannot be spoofed.
+
 ## Steps (Windows, from the repository root)
 
 1. **Secrets and keys** (done once per server): `.\run.ps1 make-prod-env`. It refuses to overwrite an existing `.env.production`.
