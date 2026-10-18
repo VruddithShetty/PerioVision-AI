@@ -19,7 +19,7 @@ has one of three statuses:
 | 4 | Uncertainty intervals too wide to give a single stage | MEASURED (by design) |
 | 5 | Per-tooth progression between visits | FIXED (design: 0 → 84 % of 20-point changes detected) + MEASURED + NEEDS DATA |
 | 6 | Landmarks looked 18-20 % off | FIXED (the metric was wrong; real error 4-10 %) |
-| 7 | Clinical risk model is weak (AUC 0.65) | MEASURED (role limited by design) |
+| 7 | Clinical risk model is modest (AUC 0.65; 0.73 with the gum-health questions) | MEASURED + IMPROVED (role limited by design) |
 | 8 | Some numbers could be read as better than they are | FIXED (wording, labels per test type) |
 | 9 | Patient overlap unverifiable; no human-agreement baseline | MEASURED + NEEDS DATA (tooling ready) |
 | 10 | App refusing good films or failing under load | FIXED (quality gate re-calibrated; model calls serialised) |
@@ -111,7 +111,10 @@ tooth. Against the annotated point on the same side, the two-site model's errors
 ## 7. Clinical risk model (MEASURED, role limited by design)
 
 AUC 0.650 (0.633-0.668) on a later NHANES cycle; Brier 0.226 against 0.240 for the base rate; predictions run 4-10
-points high on that cycle. Its role in the app is limited on purpose: the combined risk level is the **higher** of the
+points high on that cycle. **Improved 2026-10-18:** with the eight CDC/AAP gum-health self-report questions
+(asked in every NHANES cycle and now on the patient form) the AUC is **0.730 (0.713-0.747)**, Brier 0.204; on the
+same 3,757 later-cycle people that is **+0.079 (95 % CI +0.066 to +0.092)** over the clinical-only model
+(`docs/evidence/risk_selfreport_2026-10-18.json`). The better model is used only when all eight answers are on file. Its role in the app is limited on purpose: the combined risk level is the **higher** of the
 clinical level and the radiograph's measured stage, so the clinical model can add a warning but can never hide what
 the radiograph shows. It does not change stage or grade (grade modifiers follow the 2017 AAP/EFP rules directly). In
 the thesis, present it as context from routinely recorded factors, not as a predictor.

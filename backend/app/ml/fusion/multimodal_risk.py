@@ -17,6 +17,12 @@ Missing inputs are never replaced by a typical value: without age, sex (male / f
 status and, for current smokers, cigarettes per day, the result is status "insufficient_data" with
 no probability. HbA1c is optional: without it the validated model that omits HbA1c is used.
 
+Self-report questions (optional, added 2026-10-18): when all eight CDC/AAP periodontal self-report answers are on
+file (SELF_REPORT_FIELDS), the self-report model is used: AUC 0.73 against 0.65 on the same later-cycle people
+(difference +0.079, 95 % CI +0.066 to +0.092). With any answer missing, the clinical-only model is used unchanged.
+Flossing and mouthwash days are in the model but never shown as a reason: in survey data they rise WITH gum problems
+(people who have symptoms clean more), which must not read as advice to floss less.
+
 Because the model is linear in the log-odds, each factor's contribution (relative to a reference
 person: female, never smoker, no diabetes, HbA1c 5.4 %, same age) is exact and is reported as an
 odds ratio in plain language.
@@ -33,10 +39,18 @@ from app import config
 MODEL_FILE = Path(__file__).with_name("risk_model_nhanes.json")
 MODEL_TYPE = "logistic regression trained on NHANES"
 MODEL_VERSION = "nhanes-perio-1.0"
-REFERENCE = {"male": 0.0, "current_smoker": 0.0, "former_smoker": 0.0, "log_cigs": 0.0, "diabetic": 0.0, "hba1c": 5.4}
+SELF_REPORT_FIELDS = ("sr_think_gum_disease", "sr_gum_treatment", "sr_loose_teeth", "sr_told_bone_loss",
+                      "sr_tooth_not_right", "sr_teeth_gum_health", "sr_floss_days", "sr_mouthwash_days")
+REFERENCE = {"male": 0.0, "current_smoker": 0.0, "former_smoker": 0.0, "log_cigs": 0.0, "diabetic": 0.0, "hba1c": 5.4,
+             "sr_think_gum_disease": 0.0, "sr_gum_treatment": 0.0, "sr_loose_teeth": 0.0, "sr_told_bone_loss": 0.0,
+             "sr_tooth_not_right": 0.0, "sr_teeth_gum_health": 1.0}
+NOT_A_REASON = {"sr_floss_days", "sr_mouthwash_days"}     # associated with symptoms, not causes (see module doc)
 LABELS = {
     "male": "Male sex", "current_smoker": "Current smoker", "former_smoker": "Former smoker",
     "log_cigs": "Cigarettes per day", "diabetic": "Diabetes", "hba1c": "HbA1c level",
+    "sr_think_gum_disease": "Patient thinks they may have gum disease", "sr_gum_treatment": "Earlier gum disease treatment",
+    "sr_loose_teeth": "Teeth that became loose", "sr_told_bone_loss": "Told of bone loss around the teeth",
+    "sr_tooth_not_right": "A tooth that does not look right", "sr_teeth_gum_health": "Self-rated teeth and gum health",
 }
 
 
@@ -83,7 +97,12 @@ def features(clinical: dict) -> dict:
         "log_cigs": math.log1p(float(clinical.get("cigarettes_per_day") or 0)) if current else 0.0,
         "diabetic": 1.0 if clinical.get("diabetic") else 0.0,
         "hba1c": None if clinical.get("hba1c") is None else float(clinical["hba1c"]),
+        **{f: (None if clinical.get(f) is None else float(clinical[f])) for f in SELF_REPORT_FIELDS},
     }
+
+
+def has_self_report(x: dict) -> bool:
+    return all(x.get(f) is not None for f in SELF_REPORT_FIELDS)
 
 
 def predict_patient_risk(clinical: dict, image: dict | None = None) -> dict:
@@ -101,6 +120,9 @@ def predict_patient_risk(clinical: dict, image: dict | None = None) -> dict:
                 "disclaimer": "No risk score: required inputs are missing (" + ", ".join(missing) + ")."}
     x = features(clinical)
     variant = "with_hba1c" if x["hba1c"] is not None else "without_hba1c"
+    use_sr = has_self_report(x) and f"selfreport_{variant}" in model["models"]
+    if use_sr:
+        variant = f"selfreport_{variant}"
     m = model["models"][variant]
     coef = m["coefficients"]
     logit = m["intercept"] + sum(coef[k] * x[k] for k in m["features"])
@@ -109,7 +131,7 @@ def predict_patient_risk(clinical: dict, image: dict | None = None) -> dict:
     category = "high" if prob >= t["high_min_probability"] else (
         "moderate" if prob >= t["moderate_min_probability"] else "low")
     # contributions to the log-odds relative to the reference person of the same age
-    contrib = {k: coef[k] * (x[k] - REFERENCE[k]) for k in m["features"] if k != "age"}
+    contrib = {k: coef[k] * (x[k] - REFERENCE[k]) for k in m["features"] if k != "age" and k not in NOT_A_REASON}
     ranked = sorted(((c, k) for k, c in contrib.items() if c > 0.05), reverse=True)[:3]
     factors = [{"factor": LABELS[k], "contribution": round(c, 3),
                 "text": f"{LABELS[k]} raises the odds about {math.exp(c):.1f}×"} for c, k in ranked]
@@ -120,14 +142,17 @@ def predict_patient_risk(clinical: dict, image: dict | None = None) -> dict:
         "category": category,
         "probability": round(prob, 3),
         "top_factors": factors,
-        "missing_inputs": [] if x["hba1c"] is not None else ["HbA1c (optional; model without HbA1c used)"],
+        "missing_inputs": ([] if x["hba1c"] is not None else ["HbA1c (optional; model without HbA1c used)"]) + (
+            [] if use_sr else ["gum-health questions (optional; answering all eight raises the model's AUC from about "
+                               "0.65 to 0.73)"]),
         "variant": variant,
         "validation": {"source": model["source"], "outcome": model["outcome"], "test_n": test["n"],
                        "roc_auc": test["roc_auc"], "brier": test["brier"]},
-        "disclaimer": (f"Share of US adults with this age, sex, smoking and diabetes profile who have moderate or "
+        "disclaimer": (f"Share of US adults with this age, sex, smoking, diabetes{' and gum-health answers' if use_sr else ''} profile who have moderate or "
                        f"severe periodontitis (CDC/AAP), from NHANES; AUC {test['roc_auc']:.2f} on a later cycle of the same survey "
-                       "(predictions ran about 5 points high there: the high band, predicted about 70 %, had 55 %). "
-                       "The clinical model does not read the radiograph; the radiograph's evidence is combined with it in the fused level. It does not predict future progression."),
+                       + ("(predictions ran about 5 points high there). " if use_sr else
+                          "(predictions ran about 5 points high there: the high band, predicted about 70 %, had 55 %). ")
+                       + "The clinical model does not read the radiograph; the radiograph's evidence is combined with it in the fused level. It does not predict future progression."),
     }
 
 

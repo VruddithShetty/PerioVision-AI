@@ -1,0 +1,336 @@
+{
+  "created": "2026-10-18T11:33:57.914920+00:00",
+  "source": "NHANES 2009-2012 (training) and 2013-2014 (temporal test), US CDC, public domain",
+  "outcome": "moderate or severe periodontitis, CDC/AAP case definition (Eke et al. 2012)",
+  "questions": "CDC/AAP periodontal self-report: OHQ835, OHQ845, OHQ850, OHQ855, OHQ860, OHQ865, OHQ870, OHQ875 (NHANES OHQ)",
+  "models": {
+    "with_hba1c": {
+      "features": [
+        "age",
+        "male",
+        "current_smoker",
+        "former_smoker",
+        "log_cigs",
+        "diabetic",
+        "hba1c"
+      ],
+      "train": {
+        "n": 7417,
+        "prevalence": 0.4421
+      },
+      "test": {
+        "n": 3855,
+        "prevalence": 0.3878,
+        "roc_auc": 0.6504,
+        "brier": 0.2261,
+        "brier_of_prevalence_only": 0.2404,
+        "calibration_bins": [
+          {
+            "bin": [
+              0.0,
+              0.2
+            ],
+            "n": 169,
+            "mean_predicted": 0.188,
+            "observed_rate": 0.136
+          },
+          {
+            "bin": [
+              0.2,
+              0.4
+            ],
+            "n": 1495,
+            "mean_predicted": 0.309,
+            "observed_rate": 0.279
+          },
+          {
+            "bin": [
+              0.4,
+              0.6
+            ],
+            "n": 1560,
+            "mean_predicted": 0.494,
+            "observed_rate": 0.452
+          },
+          {
+            "bin": [
+              0.6,
+              0.8
+            ],
+            "n": 617,
+            "mean_predicted": 0.667,
+            "observed_rate": 0.559
+          },
+          {
+            "bin": [
+              0.8,
+              1.0
+            ],
+            "n": 14,
+            "mean_predicted": 0.817,
+            "observed_rate": 0.357
+          }
+        ]
+      }
+    },
+    "without_hba1c": {
+      "features": [
+        "age",
+        "male",
+        "current_smoker",
+        "former_smoker",
+        "log_cigs",
+        "diabetic"
+      ],
+      "train": {
+        "n": 7745,
+        "prevalence": 0.4411
+      },
+      "test": {
+        "n": 3965,
+        "prevalence": 0.3881,
+        "roc_auc": 0.6455,
+        "brier": 0.2271,
+        "brier_of_prevalence_only": 0.2403,
+        "calibration_bins": [
+          {
+            "bin": [
+              0.0,
+              0.2
+            ],
+            "n": 134,
+            "mean_predicted": 0.192,
+            "observed_rate": 0.142
+          },
+          {
+            "bin": [
+              0.2,
+              0.4
+            ],
+            "n": 1565,
+            "mean_predicted": 0.311,
+            "observed_rate": 0.277
+          },
+          {
+            "bin": [
+              0.4,
+              0.6
+            ],
+            "n": 1634,
+            "mean_predicted": 0.494,
+            "observed_rate": 0.457
+          },
+          {
+            "bin": [
+              0.6,
+              0.8
+            ],
+            "n": 625,
+            "mean_predicted": 0.663,
+            "observed_rate": 0.541
+          },
+          {
+            "bin": [
+              0.8,
+              1.0
+            ],
+            "n": 7,
+            "mean_predicted": 0.812,
+            "observed_rate": 0.286
+          }
+        ]
+      }
+    },
+    "selfreport_with_hba1c": {
+      "features": [
+        "age",
+        "male",
+        "current_smoker",
+        "former_smoker",
+        "log_cigs",
+        "diabetic",
+        "hba1c",
+        "sr_think_gum_disease",
+        "sr_gum_treatment",
+        "sr_loose_teeth",
+        "sr_told_bone_loss",
+        "sr_tooth_not_right",
+        "sr_teeth_gum_health",
+        "sr_floss_days",
+        "sr_mouthwash_days"
+      ],
+      "train": {
+        "n": 7019,
+        "prevalence": 0.4454
+      },
+      "test": {
+        "n": 3757,
+        "prevalence": 0.3833,
+        "roc_auc": 0.7304,
+        "brier": 0.2039,
+        "brier_of_prevalence_only": 0.2402,
+        "calibration_bins": [
+          {
+            "bin": [
+              0.0,
+              0.2
+            ],
+            "n": 565,
+            "mean_predicted": 0.142,
+            "observed_rate": 0.12
+          },
+          {
+            "bin": [
+              0.2,
+              0.4
+            ],
+            "n": 1172,
+            "mean_predicted": 0.3,
+            "observed_rate": 0.265
+          },
+          {
+            "bin": [
+              0.4,
+              0.6
+            ],
+            "n": 1084,
+            "mean_predicted": 0.499,
+            "observed_rate": 0.411
+          },
+          {
+            "bin": [
+              0.6,
+              0.8
+            ],
+            "n": 713,
+            "mean_predicted": 0.692,
+            "observed_rate": 0.627
+          },
+          {
+            "bin": [
+              0.8,
+              1.0
+            ],
+            "n": 223,
+            "mean_predicted": 0.855,
+            "observed_rate": 0.762
+          }
+        ]
+      }
+    },
+    "selfreport_without_hba1c": {
+      "features": [
+        "age",
+        "male",
+        "current_smoker",
+        "former_smoker",
+        "log_cigs",
+        "diabetic",
+        "sr_think_gum_disease",
+        "sr_gum_treatment",
+        "sr_loose_teeth",
+        "sr_told_bone_loss",
+        "sr_tooth_not_right",
+        "sr_teeth_gum_health",
+        "sr_floss_days",
+        "sr_mouthwash_days"
+      ],
+      "train": {
+        "n": 7328,
+        "prevalence": 0.4445
+      },
+      "test": {
+        "n": 3863,
+        "prevalence": 0.3834,
+        "roc_auc": 0.7265,
+        "brier": 0.205,
+        "brier_of_prevalence_only": 0.2401,
+        "calibration_bins": [
+          {
+            "bin": [
+              0.0,
+              0.2
+            ],
+            "n": 553,
+            "mean_predicted": 0.144,
+            "observed_rate": 0.118
+          },
+          {
+            "bin": [
+              0.2,
+              0.4
+            ],
+            "n": 1219,
+            "mean_predicted": 0.299,
+            "observed_rate": 0.263
+          },
+          {
+            "bin": [
+              0.4,
+              0.6
+            ],
+            "n": 1128,
+            "mean_predicted": 0.499,
+            "observed_rate": 0.418
+          },
+          {
+            "bin": [
+              0.6,
+              0.8
+            ],
+            "n": 738,
+            "mean_predicted": 0.69,
+            "observed_rate": 0.614
+          },
+          {
+            "bin": [
+              0.8,
+              1.0
+            ],
+            "n": 225,
+            "mean_predicted": 0.854,
+            "observed_rate": 0.756
+          }
+        ]
+      }
+    }
+  },
+  "same_people_comparison": {
+    "with_hba1c": {
+      "people": 3757,
+      "auc_base": 0.6514,
+      "auc_new": 0.7304,
+      "auc_base_ci95": [
+        0.6333,
+        0.6691
+      ],
+      "auc_new_ci95": [
+        0.7134,
+        0.7465
+      ],
+      "difference": 0.079,
+      "difference_ci95": [
+        0.0656,
+        0.092
+      ]
+    },
+    "without_hba1c": {
+      "people": 3863,
+      "auc_base": 0.647,
+      "auc_new": 0.7265,
+      "auc_base_ci95": [
+        0.6284,
+        0.6642
+      ],
+      "auc_new_ci95": [
+        0.7107,
+        0.7421
+      ],
+      "difference": 0.0793,
+      "difference_ci95": [
+        0.0661,
+        0.0931
+      ]
+    }
+  }
+}

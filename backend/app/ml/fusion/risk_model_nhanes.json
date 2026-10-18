@@ -1,5 +1,5 @@
 {
-  "created": "2026-10-02T11:00:36.547508+00:00",
+  "created": "2026-10-18T11:33:57.914920+00:00",
   "model_type": "logistic regression trained on NHANES",
   "outcome": "moderate or severe periodontitis, CDC/AAP case definition (Eke et al. 2012)",
   "source": "NHANES 2009-2012 (training) and 2013-2014 (temporal test), US CDC, public domain",
@@ -160,6 +160,232 @@
           }
         ]
       }
+    },
+    "selfreport_with_hba1c": {
+      "features": [
+        "age",
+        "male",
+        "current_smoker",
+        "former_smoker",
+        "log_cigs",
+        "diabetic",
+        "hba1c",
+        "sr_think_gum_disease",
+        "sr_gum_treatment",
+        "sr_loose_teeth",
+        "sr_told_bone_loss",
+        "sr_tooth_not_right",
+        "sr_teeth_gum_health",
+        "sr_floss_days",
+        "sr_mouthwash_days"
+      ],
+      "intercept": -5.285142837152119,
+      "coefficients": {
+        "age": 0.039647709969117595,
+        "male": 0.7506003742220911,
+        "current_smoker": 0.5276037916249929,
+        "former_smoker": -0.0937250928072313,
+        "log_cigs": 0.0015482652746618927,
+        "diabetic": -0.18794230152702265,
+        "hba1c": 0.15716343260918844,
+        "sr_think_gum_disease": 0.6139268884955877,
+        "sr_gum_treatment": 0.3932257579719015,
+        "sr_loose_teeth": 0.16835045993619846,
+        "sr_told_bone_loss": 0.17017479127493,
+        "sr_tooth_not_right": 0.37746607164498736,
+        "sr_teeth_gum_health": 0.35986661295162314,
+        "sr_floss_days": 0.036461995451597146,
+        "sr_mouthwash_days": 0.022100932821202617
+      },
+      "train": {
+        "n": 7019,
+        "prevalence": 0.4454
+      },
+      "test": {
+        "n": 3757,
+        "prevalence": 0.3833,
+        "roc_auc": 0.7304,
+        "brier": 0.2039,
+        "brier_of_prevalence_only": 0.2402,
+        "calibration_bins": [
+          {
+            "bin": [
+              0.0,
+              0.2
+            ],
+            "n": 565,
+            "mean_predicted": 0.142,
+            "observed_rate": 0.12
+          },
+          {
+            "bin": [
+              0.2,
+              0.4
+            ],
+            "n": 1172,
+            "mean_predicted": 0.3,
+            "observed_rate": 0.265
+          },
+          {
+            "bin": [
+              0.4,
+              0.6
+            ],
+            "n": 1084,
+            "mean_predicted": 0.499,
+            "observed_rate": 0.411
+          },
+          {
+            "bin": [
+              0.6,
+              0.8
+            ],
+            "n": 713,
+            "mean_predicted": 0.692,
+            "observed_rate": 0.627
+          },
+          {
+            "bin": [
+              0.8,
+              1.0
+            ],
+            "n": 223,
+            "mean_predicted": 0.855,
+            "observed_rate": 0.762
+          }
+        ]
+      }
+    },
+    "selfreport_without_hba1c": {
+      "features": [
+        "age",
+        "male",
+        "current_smoker",
+        "former_smoker",
+        "log_cigs",
+        "diabetic",
+        "sr_think_gum_disease",
+        "sr_gum_treatment",
+        "sr_loose_teeth",
+        "sr_told_bone_loss",
+        "sr_tooth_not_right",
+        "sr_teeth_gum_health",
+        "sr_floss_days",
+        "sr_mouthwash_days"
+      ],
+      "intercept": -4.462697166086307,
+      "coefficients": {
+        "age": 0.04063616118334351,
+        "male": 0.742332738671657,
+        "current_smoker": 0.5610878939980761,
+        "former_smoker": -0.07143871307173519,
+        "log_cigs": -0.014375306065855829,
+        "diabetic": 0.08391964746985982,
+        "sr_think_gum_disease": 0.6077754750320249,
+        "sr_gum_treatment": 0.3909310590459639,
+        "sr_loose_teeth": 0.1786100479776494,
+        "sr_told_bone_loss": 0.15876649143956686,
+        "sr_tooth_not_right": 0.3975770599756652,
+        "sr_teeth_gum_health": 0.3655030000805148,
+        "sr_floss_days": 0.03493475292798996,
+        "sr_mouthwash_days": 0.019996447119023125
+      },
+      "train": {
+        "n": 7328,
+        "prevalence": 0.4445
+      },
+      "test": {
+        "n": 3863,
+        "prevalence": 0.3834,
+        "roc_auc": 0.7265,
+        "brier": 0.205,
+        "brier_of_prevalence_only": 0.2401,
+        "calibration_bins": [
+          {
+            "bin": [
+              0.0,
+              0.2
+            ],
+            "n": 553,
+            "mean_predicted": 0.144,
+            "observed_rate": 0.118
+          },
+          {
+            "bin": [
+              0.2,
+              0.4
+            ],
+            "n": 1219,
+            "mean_predicted": 0.299,
+            "observed_rate": 0.263
+          },
+          {
+            "bin": [
+              0.4,
+              0.6
+            ],
+            "n": 1128,
+            "mean_predicted": 0.499,
+            "observed_rate": 0.418
+          },
+          {
+            "bin": [
+              0.6,
+              0.8
+            ],
+            "n": 738,
+            "mean_predicted": 0.69,
+            "observed_rate": 0.614
+          },
+          {
+            "bin": [
+              0.8,
+              1.0
+            ],
+            "n": 225,
+            "mean_predicted": 0.854,
+            "observed_rate": 0.756
+          }
+        ]
+      }
+    }
+  },
+  "self_report_comparison_same_people": {
+    "with_hba1c": {
+      "people": 3757,
+      "auc_base": 0.6514,
+      "auc_new": 0.7304,
+      "auc_base_ci95": [
+        0.6333,
+        0.6691
+      ],
+      "auc_new_ci95": [
+        0.7134,
+        0.7465
+      ],
+      "difference": 0.079,
+      "difference_ci95": [
+        0.0656,
+        0.092
+      ]
+    },
+    "without_hba1c": {
+      "people": 3863,
+      "auc_base": 0.647,
+      "auc_new": 0.7265,
+      "auc_base_ci95": [
+        0.6284,
+        0.6642
+      ],
+      "auc_new_ci95": [
+        0.7107,
+        0.7421
+      ],
+      "difference": 0.0793,
+      "difference_ci95": [
+        0.0661,
+        0.0931
+      ]
     }
   }
 }

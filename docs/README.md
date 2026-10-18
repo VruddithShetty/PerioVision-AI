@@ -1,7 +1,7 @@
 # docs
 
 > The analysis and dataset-conversion scripts quoted below (`backend/research/`, `scripts/convert_*`,
-> `scripts/evaluate_*` other than `evaluate_landmarks.py`, `scripts/train_*`) were removed from the working tree in the
+> `scripts/evaluate_*` other than `evaluate_landmarks.py`, `scripts/train_panoramic_boneloss.py`) were removed from the working tree in the
 > final cleanup (2026-10-12). Every result they produced is kept in [evidence/](evidence/), and the scripts themselves
 > are in git history: `git checkout 6bbad02 -- backend/research backend/scripts`.
 

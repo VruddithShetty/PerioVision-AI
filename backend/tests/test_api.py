@@ -322,3 +322,19 @@ def test_production_refuses_analysis_without_a_verified_model(client, dentist, m
     monkeypatch.setattr(config, "IS_DEMO", False)
     r = client.post("/api/analyses", headers=dentist, json={"upload_id": data(up)["upload_id"], "patient_id": pid})
     assert r.status_code == 503 and "cannot be analysed" in r.get_json()["error"]["message"]
+
+
+def test_gum_health_answers_are_stored_validated_and_used(client, dentist):
+    body = {"name": "Self-report Patient", "age": 50, "sex": "female", "smoking_status": "never", "diabetic": False,
+            "sr_think_gum_disease": True, "sr_gum_treatment": False, "sr_loose_teeth": False, "sr_told_bone_loss": False,
+            "sr_tooth_not_right": True, "sr_teeth_gum_health": 4, "sr_floss_days": 3, "sr_mouthwash_days": 0}
+    p = data(client.post("/api/patients", headers=dentist, json=body))
+    assert p["sr_think_gum_disease"] is True and p["sr_teeth_gum_health"] == 4 and p["sr_floss_days"] == 3
+    for bad in ({"sr_floss_days": 9}, {"sr_teeth_gum_health": 0}, {"sr_loose_teeth": "maybe"}):
+        r = client.post("/api/patients", headers=dentist, json={**body, **bad})
+        assert r.status_code == 422, bad
+    up = client.post("/api/radiographs", headers=dentist, content_type="multipart/form-data",
+                     data={"image": (io.BytesIO(synthetic_radiograph(seed=11)), "scan.png")})
+    an = data(client.post("/api/analyses", headers=dentist, json={"upload_id": data(up)["upload_id"],
+                                                                 "patient_id": p["patient_id"]}))
+    assert an["risk"]["variant"] == "selfreport_without_hba1c"

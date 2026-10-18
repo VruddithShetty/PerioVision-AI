@@ -21,12 +21,33 @@ type FormState = {
   diabetic: string;
   hba1c: string;
   teeth_lost_perio: string;
+  sr_think_gum_disease: string;
+  sr_gum_treatment: string;
+  sr_loose_teeth: string;
+  sr_told_bone_loss: string;
+  sr_tooth_not_right: string;
+  sr_teeth_gum_health: string;
+  sr_floss_days: string;
+  sr_mouthwash_days: string;
 };
+
+/** The eight CDC/AAP gum-health self-report questions (optional; all eight -> the more accurate risk model). */
+const YES_NO_QUESTIONS: { key: keyof FormState; label: string }[] = [
+  { key: "sr_think_gum_disease", label: "Do you think you might have gum disease?" },
+  { key: "sr_gum_treatment", label: "Ever had treatment for gum disease (e.g. deep cleaning)?" },
+  { key: "sr_loose_teeth", label: "Ever had a tooth become loose on its own, not from an injury?" },
+  { key: "sr_told_bone_loss", label: "Ever been told by a dentist that you lost bone around your teeth?" },
+  { key: "sr_tooth_not_right", label: "In the past 3 months, noticed a tooth that doesn't look right?" },
+];
 
 const EMPTY: FormState = {
   name: "", age: "", sex: "unknown", contact: "", notes: "", smoking_status: "unknown",
   cigarettes_per_day: "", diabetic: "unknown", hba1c: "", teeth_lost_perio: "",
+  sr_think_gum_disease: "unknown", sr_gum_treatment: "unknown", sr_loose_teeth: "unknown", sr_told_bone_loss: "unknown",
+  sr_tooth_not_right: "unknown", sr_teeth_gum_health: "", sr_floss_days: "", sr_mouthwash_days: "",
 };
+
+const yn = (v: boolean | null | undefined) => (v === true ? "yes" : v === false ? "no" : "unknown");
 
 function toForm(p?: Patient): FormState {
   if (!p) return EMPTY;
@@ -41,6 +62,14 @@ function toForm(p?: Patient): FormState {
     diabetic: p.diabetic === true ? "yes" : p.diabetic === false ? "no" : "unknown",
     hba1c: p.hba1c?.toString() ?? "",
     teeth_lost_perio: p.teeth_lost_perio?.toString() ?? "",
+    sr_think_gum_disease: yn(p.sr_think_gum_disease),
+    sr_gum_treatment: yn(p.sr_gum_treatment),
+    sr_loose_teeth: yn(p.sr_loose_teeth),
+    sr_told_bone_loss: yn(p.sr_told_bone_loss),
+    sr_tooth_not_right: yn(p.sr_tooth_not_right),
+    sr_teeth_gum_health: p.sr_teeth_gum_health?.toString() ?? "",
+    sr_floss_days: p.sr_floss_days?.toString() ?? "",
+    sr_mouthwash_days: p.sr_mouthwash_days?.toString() ?? "",
   };
 }
 
@@ -54,6 +83,7 @@ function PatientForm({ patient, onDone }: { patient?: Patient; onDone: (p: Patie
     e.preventDefault();
     setErrors({});
     const num = (v: string) => (v === "" ? null : Number(v));
+    const bool = (v: string) => (v === "unknown" ? null : v === "yes");
     const body: Record<string, unknown> = {
       name: f.name,
       age: num(f.age),
@@ -65,6 +95,10 @@ function PatientForm({ patient, onDone }: { patient?: Patient; onDone: (p: Patie
       diabetic: f.diabetic === "unknown" ? null : f.diabetic === "yes",
       hba1c: num(f.hba1c),
       teeth_lost_perio: num(f.teeth_lost_perio),
+      ...Object.fromEntries(YES_NO_QUESTIONS.map((q) => [q.key, bool(f[q.key])])),
+      sr_teeth_gum_health: num(f.sr_teeth_gum_health),
+      sr_floss_days: num(f.sr_floss_days),
+      sr_mouthwash_days: num(f.sr_mouthwash_days),
     };
     try {
       onDone(await save.mutateAsync({ id: patient?.patient_id, body }));
@@ -124,6 +158,40 @@ function PatientForm({ patient, onDone }: { patient?: Patient; onDone: (p: Patie
           </Field>
           <Field label="HbA1c (%)" htmlFor="hba1c" error={errors.hba1c}>
             <Input id="hba1c" type="number" step="0.1" min={3} max={20} value={f.hba1c} onChange={set("hba1c")} />
+          </Field>
+        </div>
+      </div>
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+        <p className="label mb-1">Gum-health questions (optional)</p>
+        <p className="mb-3 text-xs text-mist-400">
+          Ask the patient. When all eight are answered, the risk score uses a more accurate model (AUC 0.73 instead of
+          0.65 on a later survey cycle).
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {YES_NO_QUESTIONS.map((q) => (
+            <Field key={q.key} label={q.label} htmlFor={q.key} error={errors[q.key]}>
+              <Select id={q.key} value={f[q.key]} onChange={set(q.key)}>
+                <option value="unknown">Not asked</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </Select>
+            </Field>
+          ))}
+          <Field label="How would you rate the health of your teeth and gums?" htmlFor="sr_teeth_gum_health" error={errors.sr_teeth_gum_health}>
+            <Select id="sr_teeth_gum_health" value={f.sr_teeth_gum_health} onChange={set("sr_teeth_gum_health")}>
+              <option value="">Not asked</option>
+              <option value="1">Excellent</option>
+              <option value="2">Very good</option>
+              <option value="3">Good</option>
+              <option value="4">Fair</option>
+              <option value="5">Poor</option>
+            </Select>
+          </Field>
+          <Field label="Days you used dental floss in the past week (0-7)" htmlFor="sr_floss_days" error={errors.sr_floss_days}>
+            <Input id="sr_floss_days" type="number" min={0} max={7} value={f.sr_floss_days} onChange={set("sr_floss_days")} />
+          </Field>
+          <Field label="Days you used mouthwash for a dental problem in the past week (0-7)" htmlFor="sr_mouthwash_days" error={errors.sr_mouthwash_days}>
+            <Input id="sr_mouthwash_days" type="number" min={0} max={7} value={f.sr_mouthwash_days} onChange={set("sr_mouthwash_days")} />
           </Field>
         </div>
       </div>

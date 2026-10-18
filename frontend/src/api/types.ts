@@ -46,6 +46,14 @@ export interface Patient {
   diabetic?: boolean | null;
   hba1c?: number | null;
   teeth_lost_perio?: number | null;
+  sr_think_gum_disease?: boolean | null;
+  sr_gum_treatment?: boolean | null;
+  sr_loose_teeth?: boolean | null;
+  sr_told_bone_loss?: boolean | null;
+  sr_tooth_not_right?: boolean | null;
+  sr_teeth_gum_health?: number | null;
+  sr_floss_days?: number | null;
+  sr_mouthwash_days?: number | null;
   created_date?: string;
   analyses?: PatientAnalysisRef[];
 }

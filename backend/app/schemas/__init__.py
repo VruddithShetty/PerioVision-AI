@@ -49,6 +49,15 @@ class PatientIn(Strict):
     diabetic: bool | None = None
     hba1c: float | None = Field(default=None, ge=3.0, le=20.0)
     teeth_lost_perio: int | None = Field(default=None, ge=0, le=32)
+    # optional CDC/AAP gum-health self-report questions (all eight -> the better risk model is used)
+    sr_think_gum_disease: bool | None = None
+    sr_gum_treatment: bool | None = None
+    sr_loose_teeth: bool | None = None
+    sr_told_bone_loss: bool | None = None
+    sr_tooth_not_right: bool | None = None
+    sr_teeth_gum_health: int | None = Field(default=None, ge=1, le=5)     # 1 excellent ... 5 poor
+    sr_floss_days: int | None = Field(default=None, ge=0, le=7)
+    sr_mouthwash_days: int | None = Field(default=None, ge=0, le=7)
 
     @field_validator("name")
     @classmethod

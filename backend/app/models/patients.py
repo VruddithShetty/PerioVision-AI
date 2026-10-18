@@ -15,7 +15,11 @@ from app.models.connection import db
 from app.security.crypto import get_encryptor
 from app.security.rbac import can_access_patient, patient_query_for
 
-CLINICAL_FIELDS = ("age", "sex", "smoking_status", "cigarettes_per_day", "diabetic", "hba1c", "teeth_lost_perio")
+# The eight optional CDC/AAP gum-health self-report answers feed the risk model (ml/fusion/multimodal_risk.py)
+SELF_REPORT_FIELDS = ("sr_think_gum_disease", "sr_gum_treatment", "sr_loose_teeth", "sr_told_bone_loss",
+                      "sr_tooth_not_right", "sr_teeth_gum_health", "sr_floss_days", "sr_mouthwash_days")
+CLINICAL_FIELDS = ("age", "sex", "smoking_status", "cigarettes_per_day", "diabetic", "hba1c", "teeth_lost_perio",
+                   *SELF_REPORT_FIELDS)
 
 
 class PatientManager:

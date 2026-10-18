@@ -379,3 +379,39 @@ def test_film_type_routing_uses_count_shape_and_arches():
     assert decision == "periapical" and reason
     # few teeth on a panoramic-shaped film: flagged whichever way it goes
     assert _route_film(pano, dets(["11"]), Pose(0), None)[1]
+
+
+SELF_REPORT = {"sr_think_gum_disease": True, "sr_gum_treatment": False, "sr_loose_teeth": True, "sr_told_bone_loss": False,
+               "sr_tooth_not_right": True, "sr_teeth_gum_health": 4, "sr_floss_days": 2, "sr_mouthwash_days": 0}
+
+
+def test_self_report_model_is_used_only_with_all_eight_answers():
+    import math
+
+    from app.ml.fusion.multimodal_risk import load_model
+
+    c = {"age": 52, "sex": "female", "smoking_status": "never", "diabetic": False, "hba1c": 5.6}
+    assert predict_patient_risk(c)["variant"] == "with_hba1c"                      # unchanged without answers
+    r = predict_patient_risk({**c, **SELF_REPORT})
+    assert r["variant"] == "selfreport_with_hba1c" and not any("gum-health" in m for m in r["missing_inputs"])
+    m = load_model()["models"]["selfreport_with_hba1c"]
+    x = {"age": 52, "male": 0, "current_smoker": 0, "former_smoker": 0, "log_cigs": 0, "diabetic": 0, "hba1c": 5.6,
+         **{k: float(v) for k, v in SELF_REPORT.items()}}
+    expected = 1 / (1 + math.exp(-(m["intercept"] + sum(m["coefficients"][k] * x[k] for k in m["features"]))))
+    assert r["probability"] == round(expected, 3)                                  # exactly the signed coefficients
+    partial = predict_patient_risk({**c, **{**SELF_REPORT, "sr_floss_days": None}})
+    assert partial["variant"] == "with_hba1c"                                       # one answer missing -> old model
+    assert any("gum-health questions" in m for m in partial["missing_inputs"])
+    assert predict_patient_risk({**c, **SELF_REPORT, "hba1c": None})["variant"] == "selfreport_without_hba1c"
+
+
+def test_self_report_answers_raise_risk_and_flossing_is_never_a_reason():
+    c = {"age": 50, "sex": "female", "smoking_status": "never", "diabetic": False, "hba1c": 5.4}
+    calm = {**SELF_REPORT, "sr_think_gum_disease": False, "sr_loose_teeth": False, "sr_tooth_not_right": False,
+            "sr_teeth_gum_health": 1, "sr_floss_days": 7}
+    worried = {**calm, "sr_think_gum_disease": True, "sr_teeth_gum_health": 5}
+    lo, hi = predict_patient_risk({**c, **calm}), predict_patient_risk({**c, **worried})
+    assert hi["probability"] > lo["probability"]
+    assert "Patient thinks they may have gum disease" in [f["factor"] for f in hi["top_factors"]]
+    for r in (lo, hi):                       # flossing rises with symptoms in survey data: never shown as a cause
+        assert not any("floss" in f["factor"].lower() or "mouthwash" in f["factor"].lower() for f in r["top_factors"])
