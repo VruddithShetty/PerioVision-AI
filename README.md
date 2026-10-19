@@ -91,7 +91,11 @@ On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
 
 ### Optional: put it online
 
-Web app on Vercel, backend in a free Hugging Face Docker Space (demo mode); see [deploy/README.md](deploy/README.md):
+**Full working system** (live mode: real accounts with MFA, MongoDB, encrypted storage, signed reports, HTTPS,
+nightly backups) on one free Oracle Cloud server or any Ubuntu server: `bash deploy/server/setup.sh <your-domain>`;
+step-by-step guide in [deploy/server/README.md](deploy/server/README.md).
+
+**Demo only**: web app on Vercel, backend in a free Hugging Face Docker Space (demo mode); see [deploy/README.md](deploy/README.md):
 
 ```powershell
 .\deploy\make_hf_space.ps1 -Space <hf-username>/<space-name>

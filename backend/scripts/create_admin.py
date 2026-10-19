@@ -23,12 +23,13 @@ def main() -> int:
     name = input("Full name: ").strip() or "Administrator"
     email = input("Email: ").strip()
     while True:
-        pw = getpass.getpass("Password (12+ chars, upper + lower case, a digit): ")
+        # a Windows line end from a pasted / piped password must not become part of it
+        pw = getpass.getpass("Password (12+ chars, upper + lower case, a digit): ").rstrip("\r")
         problems = password_problems(pw)
         if problems:
             print("Password needs " + ", ".join(problems) + ".")
             continue
-        if getpass.getpass("Repeat password: ") != pw:
+        if getpass.getpass("Repeat password: ").rstrip("\r") != pw:
             print("Passwords do not match.")
             continue
         break

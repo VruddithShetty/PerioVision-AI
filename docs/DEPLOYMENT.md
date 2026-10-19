@@ -12,6 +12,12 @@ The demo setup (`.env`, in-memory database, demo accounts) stays untouched for p
 Losing `.env.production` or `keys-production` means encrypted data can no longer be read, so back up both together.
 
 **Behind an HTTPS reverse proxy** (nginx, Caddy, a cloud load balancer) set `TRUST_PROXY_HOPS=1` in `.env.production`, so the app sees the real HTTPS scheme and client IP (Secure refresh cookie, HSTS header, per-client rate limits). Leave it at 0 when nothing is in front of the API: the forwarded headers are then ignored and cannot be spoofed.
+waitress also drops forwarded headers unless told which proxy to trust: `.\run.ps1 prod` adds the waitress
+`--trusted-proxy` options automatically when `TRUST_PROXY_HOPS` is set, and the server kit does the same for its Caddy
+front (found in the 2026-10-19 rehearsal: without it the refresh cookie was not marked Secure).
+
+**Complete online installation on one server** (Oracle Cloud Always Free or any Ubuntu server: HTTPS, MongoDB, live
+mode, nightly backups, one command): see [deploy/server/README.md](../deploy/server/README.md).
 
 ## Steps (Windows, from the repository root)
 

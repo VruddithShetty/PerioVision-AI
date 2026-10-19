@@ -1,0 +1,32 @@
+# Site and API on one HTTPS address. Caddy obtains and renews the certificate for {$DOMAIN} automatically.
+{$DOMAIN} {
+	encode zstd gzip
+	request_body {
+		max_size 20MB
+	}
+	header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+	# API: the backend sets its own strict headers (CSP default-src 'none', no-store, ...)
+	handle /api/* {
+		reverse_proxy backend:5000
+	}
+	handle /health {
+		reverse_proxy backend:5000
+	}
+
+	# Website: single-page app with the same security headers as frontend/vercel.json
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+		header {
+			Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+			X-Content-Type-Options nosniff
+			X-Frame-Options DENY
+			Referrer-Policy strict-origin-when-cross-origin
+			Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+			Cross-Origin-Opener-Policy same-origin
+			-Server
+		}
+	}
+}

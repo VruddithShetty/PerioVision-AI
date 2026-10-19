@@ -1,0 +1,75 @@
+# PerioVision AI - full production stack on one server: MongoDB + backend (live mode) + web (site and HTTPS).
+# Started by setup.sh; see README.md. Paths are relative to this folder; secrets come from ../../.env.production.
+name: periovision
+
+services:
+  mongodb:
+    image: mongo:7.0
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:?run setup.sh first}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?run setup.sh first}
+      MONGO_INITDB_DATABASE: periovision_db
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    # no published port: only the backend can reach the database
+
+  backend:
+    build:
+      context: ../../backend
+    image: periovision-backend
+    restart: unless-stopped
+    # waitress drops X-Forwarded-* from untrusted proxies by default; trust exactly the one Caddy hop in front (the
+    # backend port is not published) so HTTPS is recognised: Secure cookies, real client IPs for rate limits and audit
+    command: ["waitress-serve", "--host=0.0.0.0", "--port=5000", "--threads=8", "--ident=PerioVision",
+              "--trusted-proxy=*", "--trusted-proxy-count=1",
+              "--trusted-proxy-headers=x-forwarded-for x-forwarded-proto x-forwarded-host", "wsgi:app"]
+    env_file: ../../.env.production
+    environment:
+      DB_MODE: production
+      MONGO_URI: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/periovision_db?authSource=admin
+      MONGO_REQUIRE_TLS: "false"            # database traffic stays on the private Docker network
+      KEYS_DIR: /app/keys
+      WEIGHTS_DIR: /app/weights
+      STORAGE_DIR: /app/storage
+      LOGS_DIR: /app/logs
+      TRUST_PROXY_HOPS: "1"                 # the web container in front terminates HTTPS
+      PUBLIC_BASE_URL: https://${DOMAIN:?run setup.sh first}
+      CORS_ORIGINS: https://${DOMAIN}
+      PUBLIC_VERIFY_URL: https://${DOMAIN}/verify
+    volumes:
+      - ../../backend/keys-production:/app/keys:ro
+      - ../../backend/weights-production:/app/weights:ro
+      - ../../backend/storage-production:/app/storage
+      - ../../backend/logs-production:/app/logs
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    # no published port: reached only through the web container
+
+  web:
+    build:
+      context: ../..
+      dockerfile: deploy/server/Dockerfile.web
+    image: periovision-web
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - caddy_data:/data                    # HTTPS certificates
+      - caddy_config:/config
+    depends_on:
+      - backend
+
+volumes:
+  mongodb_data:
+  caddy_data:
+  caddy_config:
