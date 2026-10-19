@@ -71,6 +71,9 @@ Stage recall on the corrected reference with the v3 model: stage I 90.5 %, **sta
 52.1 % with the previous model), stage III 83.0 %. Severe teeth called stage I: **0.9 %** (1 of 112). The stage II band is 18 points wide and the typical error is about
 6 points, so many stage II teeth sit near a boundary. A bias correction fitted on validation was tested and **rejected**:
 on split halves of validation it made the error worse, and its stage gains only traded stage I recall for stage II / III.
+A zoomed second stage that re-reads the CEJ and crest on a crop of each root (2026-10-19) was also tested and **rejected**:
+alone it was worse than v3 (+0.54 points, 95 % CI +0.13 to +0.96), and averaged with v3 it made no clear difference
+(−0.19, −0.47 to +0.08) while lowering stage II recall. The remaining lever is more and better-labelled data.
 How the app copes: every tooth carries a stage *set* from the calibrated interval (e.g. "II or III"), not a single
 stage, and any set with more than one stage goes to dentist review. The instructions for use say to treat a stage II
 suggestion as "check clinically".

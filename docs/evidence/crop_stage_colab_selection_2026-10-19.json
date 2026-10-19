@@ -1,0 +1,41 @@
+{
+  "chosen": "s768",
+  "imgsz": 768,
+  "stage_a_imgsz": 1024,
+  "site_conf_chosen_on_val": {
+    "site_conf": 0.55,
+    "val_mae": 7.043880468539306,
+    "val_share": 0.9522727272727273
+  },
+  "crop": {
+    "above_cej": 0.18,
+    "along_root": 0.95,
+    "width_pad": 0.2,
+    "min_side": 48
+  },
+  "validation_mae": {
+    "s768": 7.043880468539306
+  },
+  "test": {
+    "mae": 5.977068092594775,
+    "stage_agreement": 0.779385171790235,
+    "stage_ii_recall": 0.5714285714285714
+  },
+  "deployed_test": {
+    "mae": 5.4998779100769735,
+    "stage_agreement": 0.8018018018018018,
+    "stage_ii_recall": 0.5862068965517241
+  },
+  "paired": {
+    "teeth": 543,
+    "mae_old": 5.431576908346796,
+    "mae_new": 5.9764901268183745,
+    "mae_new_minus_old": 0.5449132184715785,
+    "mae_new_minus_old_ci95": [
+      0.1301283058234529,
+      0.957775052403913
+    ],
+    "note": "negative = the new model's error is lower; CI excluding 0 = a real difference"
+  },
+  "verdict": "REAL WORSENING"
+}

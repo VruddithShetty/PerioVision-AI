@@ -1,0 +1,20 @@
+{
+  "what": "v3 (stage A) combined with the root-crop model (stage B) in three ways, scored with research.compare_landmark_models; variant chosen on validation, test used once",
+  "validation_mae": {
+    "v3_only": 5.511,
+    "replace": 7.044,
+    "crest_only": 7.881,
+    "average": 5.785
+  },
+  "test_average_vs_v3": {
+    "teeth": 554,
+    "mae_old": 5.503985591478574,
+    "mae_new": 5.313951726133654,
+    "mae_new_minus_old": -0.19003386534492037,
+    "mae_new_minus_old_ci95": [
+      -0.46724895874273,
+      0.07864411092281194
+    ],
+    "note": "negative = the new model's error is lower; CI excluding 0 = a real difference"
+  }
+}

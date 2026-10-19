@@ -27,7 +27,8 @@ the same test teeth and exports to `MyDrive/PerioVision/export_v3/`. Needs the d
 
 ## train_landmarks_crop_colab.ipynb
 
-Experimental second stage for the landmark reading: a model that re-reads the CEJ and bone crest on a zoomed
+**Evaluated 2026-10-19 and not adopted** (worse than v3 alone; no clear gain as an average with v3; see
+`docs/TRAINING_INVENTORY.md` #11). Experimental second stage for the landmark reading: a model that re-reads the CEJ and bone crest on a zoomed
 crop of each tooth's root region (about 1.7x the detail at 768 px), with the deployed v3 model as stage A. Aims
 at stage II recall. Same paired comparison against v3 on the same test teeth; exports to
 `MyDrive/PerioVision/export_crop/`. Install only if its verdict is REAL IMPROVEMENT (the app then needs the
