@@ -1,3 +1,6 @@
 # Signed files must reach every clone byte-for-byte (no line-ending conversion), or their signatures fail.
 backend/weights/** -text binary
 backend/keys/*.pub -text
+# Run on Linux servers and in containers: always LF, even when checked out on Windows.
+*.sh text eol=lf
+deploy/server/Caddyfile text eol=lf
