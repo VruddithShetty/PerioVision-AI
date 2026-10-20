@@ -4,3 +4,4 @@ backend/keys/*.pub -text
 # Run on Linux servers and in containers: always LF, even when checked out on Windows.
 *.sh text eol=lf
 deploy/server/Caddyfile text eol=lf
+backend/app/ml/fusion/risk_model_nhanes.json -text binary
