@@ -122,8 +122,8 @@ def main() -> int:
                 kp_row[f"{k}_err_pct_root"] = round(kp_err[k][-1], 3)
                 kp_row[f"{k}_dx_px"] = round(float(lm[k][0] - ref[k][0]), 2)
                 kp_row[f"{k}_dy_px"] = round(float(lm[k][1] - ref[k][1]), 2)
-            unc = predict_interval(p, bounds[0] if bounds else None, calibration.scale_for(lm),
-                                   bounds[1] if bounds else None)
+            tb = calibration.current_bounds(pred_pct=p) if bounds else None   # the tooth's own Mondrian bin
+            unc = predict_interval(p, tb[0] if tb else None, calibration.scale_for(lm), tb[1] if tb else None)
             inside = None if q is None else bool(unc["interval"][0] <= ref_pct <= unc["interval"][1])
             per_tooth.append({**base, "status": "measured", "tooth_id": dets[best[0]].get("tooth_id"),
                               "pred_pct": round(p, 3), "abs_err": round(abs(p - ref_pct), 3),

@@ -213,7 +213,8 @@ def test_periapical_intervals_use_the_asymmetric_calibration(services, denpar_im
             continue
         u = t["uncertainty"]
         if calibration.load().get("signed_scores"):
-            assert u["upper_margin"] / u["lower_margin"] == pytest.approx(bounds[1] / bounds[0], rel=1e-3)
+            tb = calibration.current_bounds(pred_pct=t["bone_loss_pct"])   # the tooth's own Mondrian bin
+            assert u["upper_margin"] / u["lower_margin"] == pytest.approx(tb[1] / tb[0], rel=1e-3)
 
 
 def test_model_self_check_passes_then_catches_drift(services):
@@ -292,7 +293,7 @@ def test_conformal_intervals_use_the_calibrated_q(services, denpar_images):
         lo, hi = t["uncertainty"]["interval"]
         # margins = (q_lower, q_upper) * sigma(mirrored-pass disagreement of THIS tooth); asymmetric calibration:
         # the upper margin is the wider one because the model underestimates severe bone loss
-        q_dn, q_up = calibration.current_bounds()
+        q_dn, q_up = calibration.current_bounds(pred_pct=t["bone_loss_pct"])   # margins of the tooth's own bin
         sig = calibration.scale_for(t)
         half = max(q_dn, q_up) * sig
         assert t["uncertainty"]["half_width"] == pytest.approx(half, abs=0.01)
@@ -564,3 +565,18 @@ def test_batched_per_tooth_maps_equal_one_backward_per_tooth(services, denpar_im
         alone = model.gradcam_heatmap(r["bgr"], [det])
         assert batched[k] is not None and alone is not None
         assert float(np.abs(batched[k] - alone).max()) < 1e-4
+
+
+
+def test_mondrian_bins_give_low_predictions_a_wider_upper_margin():
+    """Teeth predicted below the cut are often really more severe; their bin's upper margin is wider."""
+    from app.ml.uncertainty import calibration
+
+    cal = calibration.load()
+    if not (cal and cal.get("mondrian")):
+        pytest.skip("calibration without Mondrian bins")
+    cut = cal["mondrian"]["cut_pct"]
+    lo_dn, lo_up = calibration.current_bounds(pred_pct=cut - 10)
+    hi_dn, hi_up = calibration.current_bounds(pred_pct=cut + 10)
+    assert (lo_dn, lo_up) != (hi_dn, hi_up)
+    assert lo_up > lo_dn          # low predictions: reaches further up than down

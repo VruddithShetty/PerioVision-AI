@@ -36,6 +36,11 @@ need an access request from a university account. `scripts/convert_periokpt.py` 
 references (worst site, same rule as DenPAR) and **checks the keypoint order on the data** before anything is scored
 (test: `tests/test_convert_periokpt.py`).
 
+**Openly downloadable alternatives checked (2026-10-20): none.** PRAD (10,000 periapical films, Nankai University,
+CC BY-NC 4.0) needs a signed application form e-mailed to the authors (about 14 days) and labels teeth and alveolar
+bone but not the CEJ; perio-KPT (above) needs a Zenodo access request from a university account. Both are
+evaluation-only routes; neither can be downloaded without the student's own application.
+
 **Closes with.** (1) Request access on the Zenodo page with your university e-mail. (2) Then:
 
 ```bash
@@ -80,8 +85,10 @@ suggestion as "check clinically".
 
 ## 4. Interval width (MEASURED, by design)
 
-At the 90 % level the v3 intervals cover 92.2 % of test teeth (82.1 % of severe teeth), with a mean width of about 28
-points (was 39); 15.6 % of teeth get a single-stage set (was 7.6 %). The more accurate v3 model made honest intervals
+At the 90 % level the v3 intervals cover 93.6 % of test teeth and, since the 2026-10-20 Mondrian recalibration,
+**91.1 % of severe teeth (was 82.1 %)**, with a mean width of about 35 points (28 before; 39 with the previous model);
+11.1 % of teeth get a single-stage set. Wider intervals for the teeth the model reads as mild are the price of covering
+severe teeth honestly. The more accurate v3 model made honest intervals
 narrower; narrower still needs a more accurate model again.
 The app does not hide this: wide intervals send the case to a dentist rather than guessing. This is the intended
 behaviour of a decision-support tool whose error is the size of a stage band.
@@ -113,8 +120,11 @@ tooth. Against the annotated point on the same side, the two-site model's errors
 
 ## 7. Clinical risk model (MEASURED, role limited by design)
 
-AUC 0.650 (0.633-0.668) on a later NHANES cycle; Brier 0.226 against 0.240 for the base rate; predictions run 4-10
-points high on that cycle. **Improved 2026-10-18:** with the eight CDC/AAP gum-health self-report questions
+AUC 0.650 (0.633-0.668) on a later NHANES cycle; Brier 0.226 against 0.240 for the base rate; predictions ran about
+5 points high on that cycle. **Recalibrated 2026-10-20** (`scripts/recalibrate_risk_nhanes.py`): an intercept shift
+fitted on a random half of the later cycle and checked on the other half removes the average bias (calibration in
+the large +0.05 -> 0.00 for every variant; Brier improves). The clinical-only model's top band still runs high
+(predicted about 0.70, observed about 0.54); the self-report model's does not (about 0.75 vs 0.69-0.70). **Improved 2026-10-18:** with the eight CDC/AAP gum-health self-report questions
 (asked in every NHANES cycle and now on the patient form) the AUC is **0.730 (0.713-0.747)**, Brier 0.204; on the
 same 3,757 later-cycle people that is **+0.079 (95 % CI +0.066 to +0.092)** over the clinical-only model
 (`docs/evidence/risk_selfreport_2026-10-18.json`). The better model is used only when all eight answers are on file. Its role in the app is limited on purpose: the combined risk level is the **higher** of the
@@ -135,7 +145,10 @@ cross-source external, temporal hold-out). In particular:
 ## 9. Patient overlap and human agreement (MEASURED + NEEDS DATA)
 
 DenPAR, DENTEX and MM-OPG publish no patient IDs. Pixel-identical and near-identical films across splits were searched
-for (`research.split_audit`); the 5 DenPAR films found are excluded from every reported test number. Two different
+for (`research.split_audit`); the 5 DenPAR films found are excluded from every reported test number. MM-OPG
+(checked 2026-10-20 on the full archive): **346 of its 450 official test films are copies of training films**; the
+panoramic screen is reported on all 450 and on the 104 clean films, where it is not worse. PDCNN, the external panoramic
+test set, shares no film with MM-OPG or BRAR. Two different
 films of the same patient cannot be ruled out without IDs; BRAR (one film per patient) and NHANES (separate survey
 cycles) are verified patient-level.
 

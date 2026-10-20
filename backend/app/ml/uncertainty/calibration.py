@@ -73,18 +73,27 @@ def current_q(coverage: float | None = None) -> float | None:
     return q if np.isfinite(q) else None
 
 
-def current_bounds(coverage: float | None = None) -> tuple[float, float] | None:
+def current_bounds(coverage: float | None = None, pred_pct: float | None = None) -> tuple[float, float] | None:
     """(lower q, upper q) for the configured coverage, or None when uncalibrated.
 
     With signed scores (reference - predicted) / sigma on file, each side gets its own quantile at
     1 - alpha / 2 (asymmetric split conformal; coverage >= 1 - alpha by the union bound). The landmark model
     underestimates severe bone loss, so the upper margin is the wider one. Without signed scores: (q, q).
+
+    Mondrian bins (calibration key "mondrian"): the scores are kept separately for teeth predicted below and at or
+    above a cut (25 % bone loss), and a tooth gets the margins of its own bin, chosen by its PREDICTION (known at
+    test time). Low predictions that are really severe need a wider upper margin; this raised stage III coverage from
+    77.9 % to 82.1 % on average over 50 calibration splits (higher in 45 of 50), overall 93.5 %.
     """
     cal = load()
     if not cal or not cal.get("scores"):
         return None
     coverage = coverage or config.THRESHOLDS["uncertainty"]["coverage"]
     signed = cal.get("signed_scores")
+    mondrian = cal.get("mondrian")
+    if mondrian and pred_pct is not None:
+        side = "high" if float(pred_pct) >= float(mondrian["cut_pct"]) else "low"
+        signed = mondrian["signed_scores"].get(side) or signed
     if not signed:
         q = current_q(coverage)
         return None if q is None else (q, q)

@@ -1,12 +1,16 @@
 {
   "files": {
     "canary_expected.json": {
-      "sha256": "223c0ca74d714e32cf6283de0147bbabd85342c721d9c2100a1dd16afd078a48",
+      "sha256": "1193a61fe7f471f5cf4757b048f0840b93fa4ffb6219ab30851ddce930261eb4",
       "size": 457
     },
-    "conformal_calibration.json": {
+    "conformal_calibration.backup-20261020-145711.json": {
       "sha256": "482a07f174cdddb25f724d7e247254580ad69df02065d7902528e4356c43e158",
       "size": 9053
+    },
+    "conformal_calibration.json": {
+      "sha256": "f3c1660ecbcfaf4ffc234406b218ae13881f1976bbfa93e35c75712c528a9e6f",
+      "size": 13810
     },
     "dental_landmark_yolov8n-pose.pt": {
       "sha256": "ca778e0960f060fce5ba0369e095cedd31731afa05496d2d763e2611e59961db",
@@ -25,12 +29,12 @@
       "size": 1023
     },
     "evidence_summary.json": {
-      "sha256": "5d11dce7c110b9c41914a81fd464db6c20ea8835c5b8474a0adc9e5bf79b68a4",
-      "size": 29724
+      "sha256": "83e8f16bd58824bf1237f5b0c6438c1e839f079f7471225add278f592cdfe93a",
+      "size": 43855
     },
     "external/risk_model_nhanes.json": {
-      "sha256": "765eda04be18fe5b9d71f361ca8869e3e7b1abdc7dcd0c2d75feae21ed0aea9c",
-      "size": 9842
+      "sha256": "7929003d13f8ed53368f4b96dfc18911f2c3ce02b42d40e75b505d1d40cff4d7",
+      "size": 13674
     },
     "landmark_test_metrics.json": {
       "sha256": "0e8b484c8e9114c6da4feca2f5c2b782347e05d7509f8fc4882c025518b867d5",
@@ -53,8 +57,8 @@
       "size": 1159
     },
     "pipeline_test_metrics.json": {
-      "sha256": "d6abdee0a8a87290dd51104c1874489905d219037539c11fc65761425184bcb8",
-      "size": 1025
+      "sha256": "3eda3fa432344b04a4915463b0ed027c3de6d2aebfe04d4c09f512e451ee7056",
+      "size": 1029
     },
     "progression_calibration.json": {
       "sha256": "52b35c68ed0234abeb806d9910da4ed86676fa418924c7978eed3dce24d70166",

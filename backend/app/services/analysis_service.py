@@ -264,6 +264,13 @@ def _route_film(gray: np.ndarray, detections: list[dict], lm_model, bgr) -> tupl
     return "panoramic", f"{n} teeth on a periapical-shaped film, but no periapical teeth found; film type unclear.", []
 
 
+def _interval(pct: float | None, lm: dict | None) -> dict:
+    """The calibrated interval for one tooth: margins of the tooth's own Mondrian bin (chosen by its prediction)."""
+    bounds = calibration.current_bounds(pred_pct=pct)
+    return predict_interval(pct, bounds[0] if bounds else None,
+                            calibration.scale_for(lm) if pct is not None else 1.0, bounds[1] if bounds else None)
+
+
 def measured(lm: dict | None) -> bool:
     """True only for landmarks that came from a model (or, in demo mode, from the image itself).
 
@@ -374,9 +381,7 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
             "bone_loss_pct": pct,
             "cej_to_crest_mm": bl.get("cej_to_crest_mm"),
             "stage": stage_for_pct(pct, clinical.get("teeth_lost_perio")),
-            "uncertainty": predict_interval(pct, bounds[0] if bounds else None,
-                                            calibration.scale_for(lm) if pct is not None else 1.0,
-                                            bounds[1] if bounds else None),
+            "uncertainty": _interval(pct, lm),
             "roi": list(roi) if roi else None,
             "roi_attention": attention,
             "flags": {

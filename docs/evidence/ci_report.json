@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-18T06:32:02.886038+00:00",
+  "generated": "2026-10-20T09:42:36.588651+00:00",
   "bootstrap_resamples": 2000,
   "rows": [
     {
@@ -339,10 +339,10 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "90 % interval coverage",
-      "value": 0.9219600725952813,
+      "value": 0.9364791288566243,
       "ci95": [
-        0.8949227688787185,
-        0.9461025563439759
+        0.9139330167307886,
+        0.9570661896243292
       ],
       "n": 551,
       "unit_of_n": "measured teeth in 199 films",
@@ -356,10 +356,10 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "90 % interval coverage, reference stage I",
-      "value": 0.976271186440678,
+      "value": 0.9661016949152542,
       "ci95": [
-        0.9543648980907979,
-        0.9934431586842387
+        0.9417434023954893,
+        0.9868008440188281
       ],
       "n": 295,
       "unit_of_n": "teeth with reference stage I",
@@ -390,10 +390,10 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "90 % interval coverage, reference stage II",
-      "value": 0.8888888888888888,
+      "value": 0.8958333333333334,
       "ci95": [
-        0.8333333333333334,
-        0.9398533834586466
+        0.836711848918672,
+        0.9444529652351737
       ],
       "n": 144,
       "unit_of_n": "teeth with reference stage II",
@@ -424,10 +424,10 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (all 200 films)",
       "metric": "90 % interval coverage, reference stage III",
-      "value": 0.8214285714285714,
+      "value": 0.9107142857142857,
       "ci95": [
-        0.7307608695652174,
-        0.9019607843137255
+        0.8508552631578947,
+        0.9629629629629629
       ],
       "n": 112,
       "unit_of_n": "teeth with reference stage III",
@@ -560,10 +560,10 @@
     {
       "task": "Periapical bone loss, DenPAR test, deployed pipeline (excluding the 2 test films duplicated in train/val)",
       "metric": "90 % interval coverage",
-      "value": 0.9215328467153284,
+      "value": 0.9379562043795621,
       "ci95": [
-        0.8954345083685726,
-        0.9472751196172249
+        0.915252740013176,
+        0.9581818181818181
       ],
       "n": 548,
       "unit_of_n": "measured teeth in 197 films",
@@ -575,24 +575,24 @@
       "small_sample": false
     },
     {
-      "task": "Panoramic bone-loss screen, maxilla (MM-OPG test)",
+      "task": "Panoramic bone-loss screen, maxilla (MM-OPG test), all 450 official test films",
       "metric": "AUC",
-      "value": 0.8496,
+      "value": 0.8494936078366263,
       "ci95": [
-        0.8059823234434234,
-        0.8932176765565767
+        0.810925371196222,
+        0.8861819328306652
       ],
       "n": 450,
       "unit_of_n": "films (133 with bone loss)",
-      "ci_method": "Hanley-McNeil (approximation)",
-      "status": "APPROX",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
       "pct": false,
-      "note": "replace with the bootstrap: run notebooks/priority1_eval_colab.ipynb on Colab",
+      "note": "",
       "test_type": "same-source held-out",
       "small_sample": false
     },
     {
-      "task": "Panoramic bone-loss screen, maxilla (MM-OPG test)",
+      "task": "Panoramic bone-loss screen, maxilla (MM-OPG test), all 450 official test films",
       "metric": "sensitivity",
       "value": 0.6917293233082706,
       "ci95": [
@@ -600,16 +600,16 @@
         0.7639041698658515
       ],
       "n": 133,
-      "unit_of_n": "films with bone loss",
+      "unit_of_n": "films",
       "ci_method": "Wilson",
-      "status": "FROM-COUNTS",
+      "status": "VERIFIED",
       "pct": true,
       "note": "",
       "test_type": "same-source held-out",
       "small_sample": false
     },
     {
-      "task": "Panoramic bone-loss screen, maxilla (MM-OPG test)",
+      "task": "Panoramic bone-loss screen, maxilla (MM-OPG test), all 450 official test films",
       "metric": "specificity",
       "value": 0.8138801261829653,
       "ci95": [
@@ -617,33 +617,84 @@
         0.8528747467856533
       ],
       "n": 317,
-      "unit_of_n": "films without",
+      "unit_of_n": "films",
       "ci_method": "Wilson",
-      "status": "FROM-COUNTS",
+      "status": "VERIFIED",
       "pct": true,
       "note": "",
       "test_type": "same-source held-out",
       "small_sample": false
     },
     {
-      "task": "Panoramic bone-loss screen, mandible (MM-OPG test)",
+      "task": "Panoramic bone-loss screen, maxilla (MM-OPG test), clean: test films with no copy in training",
       "metric": "AUC",
-      "value": 0.874,
+      "value": 0.8722879684418146,
       "ci95": [
-        0.8347832037493729,
-        0.9132167962506271
+        0.7965625329954598,
+        0.931958629520067
       ],
-      "n": 450,
-      "unit_of_n": "films (143 with bone loss)",
-      "ci_method": "Hanley-McNeil (approximation)",
-      "status": "APPROX",
+      "n": 104,
+      "unit_of_n": "films (26 with bone loss)",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
       "pct": false,
-      "note": "replace with the bootstrap: run notebooks/priority1_eval_colab.ipynb on Colab",
+      "note": "",
       "test_type": "same-source held-out",
       "small_sample": false
     },
     {
-      "task": "Panoramic bone-loss screen, mandible (MM-OPG test)",
+      "task": "Panoramic bone-loss screen, maxilla (MM-OPG test), clean: test films with no copy in training",
+      "metric": "sensitivity",
+      "value": 0.7692307692307693,
+      "ci95": [
+        0.5794844592105632,
+        0.8896615059421671
+      ],
+      "n": 26,
+      "unit_of_n": "films",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
+    },
+    {
+      "task": "Panoramic bone-loss screen, maxilla (MM-OPG test), clean: test films with no copy in training",
+      "metric": "specificity",
+      "value": 0.7564102564102564,
+      "ci95": [
+        0.6506022263099065,
+        0.8381476148633271
+      ],
+      "n": 78,
+      "unit_of_n": "films",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
+    },
+    {
+      "task": "Panoramic bone-loss screen, mandible (MM-OPG test), all 450 official test films",
+      "metric": "AUC",
+      "value": 0.8739664244550238,
+      "ci95": [
+        0.8392105925703414,
+        0.9065560981520708
+      ],
+      "n": 450,
+      "unit_of_n": "films (143 with bone loss)",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
+    },
+    {
+      "task": "Panoramic bone-loss screen, mandible (MM-OPG test), all 450 official test films",
       "metric": "sensitivity",
       "value": 0.8041958041958042,
       "ci95": [
@@ -651,16 +702,16 @@
         0.8609116867094846
       ],
       "n": 143,
-      "unit_of_n": "films with bone loss",
+      "unit_of_n": "films",
       "ci_method": "Wilson",
-      "status": "FROM-COUNTS",
+      "status": "VERIFIED",
       "pct": true,
       "note": "",
       "test_type": "same-source held-out",
       "small_sample": false
     },
     {
-      "task": "Panoramic bone-loss screen, mandible (MM-OPG test)",
+      "task": "Panoramic bone-loss screen, mandible (MM-OPG test), all 450 official test films",
       "metric": "specificity",
       "value": 0.745928338762215,
       "ci95": [
@@ -668,13 +719,64 @@
         0.7913799658890143
       ],
       "n": 307,
-      "unit_of_n": "films without",
+      "unit_of_n": "films",
       "ci_method": "Wilson",
-      "status": "FROM-COUNTS",
+      "status": "VERIFIED",
       "pct": true,
       "note": "",
       "test_type": "same-source held-out",
       "small_sample": false
+    },
+    {
+      "task": "Panoramic bone-loss screen, mandible (MM-OPG test), clean: test films with no copy in training",
+      "metric": "AUC",
+      "value": 0.8931020572811618,
+      "ci95": [
+        0.8287205668834038,
+        0.9472701686606846
+      ],
+      "n": 104,
+      "unit_of_n": "films (37 with bone loss)",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": false
+    },
+    {
+      "task": "Panoramic bone-loss screen, mandible (MM-OPG test), clean: test films with no copy in training",
+      "metric": "sensitivity",
+      "value": 0.8918918918918919,
+      "ci95": [
+        0.7529146845587398,
+        0.9571481005958853
+      ],
+      "n": 37,
+      "unit_of_n": "films",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
+    },
+    {
+      "task": "Panoramic bone-loss screen, mandible (MM-OPG test), clean: test films with no copy in training",
+      "metric": "specificity",
+      "value": 0.7164179104477612,
+      "ci95": [
+        0.5990676171551951,
+        0.8102971881828981
+      ],
+      "n": 67,
+      "unit_of_n": "films",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "same-source held-out",
+      "small_sample": true
     },
     {
       "task": "Panoramic worst-tooth bone loss (BRAR test)",
@@ -967,6 +1069,57 @@
     },
     {
       "task": "Clinical risk model (NHANES 2013-14 temporal test), with hba1c",
+      "metric": "calibration in the large AFTER recalibration (held-out half)",
+      "value": 0.003610739782721155,
+      "ci95": [
+        -0.01804787309881014,
+        0.025789509454216198
+      ],
+      "n": 1933,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "deployed probabilities; 0 = no average bias",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), with hba1c",
+      "metric": "Brier score AFTER recalibration (held-out half)",
+      "value": 0.22518646670067255,
+      "ci95": [
+        0.2180730405718272,
+        0.23243151042007779
+      ],
+      "n": 1933,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), with hba1c",
+      "metric": "observed prevalence in the high band AFTER recalibration (held-out half)",
+      "value": 0.5394736842105263,
+      "ci95": [
+        0.4282262398210874,
+        0.6469226876737701
+      ],
+      "n": 76,
+      "unit_of_n": "people (mean predicted 0.701)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": true
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), with hba1c",
       "metric": "calibration in the large (mean predicted - observed)",
       "value": 0.050189669520103765,
       "ci95": [
@@ -1069,6 +1222,57 @@
     },
     {
       "task": "Clinical risk model (NHANES 2013-14 temporal test), without hba1c",
+      "metric": "calibration in the large AFTER recalibration (held-out half)",
+      "value": 0.00691278517397882,
+      "ci95": [
+        -0.013398369679778114,
+        0.026918132034795764
+      ],
+      "n": 1983,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "deployed probabilities; 0 = no average bias",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), without hba1c",
+      "metric": "Brier score AFTER recalibration (held-out half)",
+      "value": 0.22588980617311397,
+      "ci95": [
+        0.2192735305161855,
+        0.2328132667058941
+      ],
+      "n": 1983,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), without hba1c",
+      "metric": "observed prevalence in the high band AFTER recalibration (held-out half)",
+      "value": 0.5070422535211268,
+      "ci95": [
+        0.39341308325020075,
+        0.6199484948878713
+      ],
+      "n": 71,
+      "unit_of_n": "people (mean predicted 0.691)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": true
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), without hba1c",
       "metric": "calibration in the large (mean predicted - observed)",
       "value": 0.0507427182849937,
       "ci95": [
@@ -1128,6 +1332,312 @@
       ],
       "n": 1231,
       "unit_of_n": "people (mean predicted 0.273)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport with hba1c",
+      "metric": "AUC",
+      "value": 0.7303994029636024,
+      "ci95": [
+        0.713839408534856,
+        0.7458595270703224
+      ],
+      "n": 3757,
+      "unit_of_n": "people (1440 with moderate/severe periodontitis)",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport with hba1c",
+      "metric": "Brier score",
+      "value": 0.20389303107563536,
+      "ci95": [
+        0.1981704785115656,
+        0.20995775585969836
+      ],
+      "n": 3757,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport with hba1c",
+      "metric": "calibration in the large AFTER recalibration (held-out half)",
+      "value": -0.0029059914802981876,
+      "ci95": [
+        -0.023335975026624073,
+        0.01773350346112886
+      ],
+      "n": 1878,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "deployed probabilities; 0 = no average bias",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport with hba1c",
+      "metric": "Brier score AFTER recalibration (held-out half)",
+      "value": 0.20211538413090632,
+      "ci95": [
+        0.19358100515718038,
+        0.21087860993235397
+      ],
+      "n": 1878,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport with hba1c",
+      "metric": "observed prevalence in the high band AFTER recalibration (held-out half)",
+      "value": 0.6890756302521008,
+      "ci95": [
+        0.6276581309844386,
+        0.7444864981410734
+      ],
+      "n": 238,
+      "unit_of_n": "people (mean predicted 0.748)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport with hba1c",
+      "metric": "calibration in the large (mean predicted - observed)",
+      "value": 0.058090445035932914,
+      "ci95": [
+        0.04380148842826723,
+        0.07315159969390471
+      ],
+      "n": 3757,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "positive = predictions run high",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport with hba1c",
+      "metric": "observed prevalence in the high band (>= 0.65)",
+      "value": 0.6826923076923077,
+      "ci95": [
+        0.6479993424239212,
+        0.7154673576297195
+      ],
+      "n": 728,
+      "unit_of_n": "people (mean predicted 0.761)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport with hba1c",
+      "metric": "observed prevalence in the moderate band (0.35-0.65)",
+      "value": 0.4214876033057851,
+      "ci95": [
+        0.3973054691237799,
+        0.4460522770730196
+      ],
+      "n": 1573,
+      "unit_of_n": "people (mean predicted 0.494)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport with hba1c",
+      "metric": "observed prevalence in the low band (< 0.35)",
+      "value": 0.19230769230769232,
+      "ci95": [
+        0.17288416161346642,
+        0.21335055957069765
+      ],
+      "n": 1456,
+      "unit_of_n": "people (mean predicted 0.225)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport without hba1c",
+      "metric": "AUC",
+      "value": 0.7265225178031727,
+      "ci95": [
+        0.7102691704776296,
+        0.7424843691814887
+      ],
+      "n": 3863,
+      "unit_of_n": "people (1481 with moderate/severe periodontitis)",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport without hba1c",
+      "metric": "Brier score",
+      "value": 0.20501132496723506,
+      "ci95": [
+        0.19928485319216363,
+        0.210623046553476
+      ],
+      "n": 3863,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport without hba1c",
+      "metric": "calibration in the large AFTER recalibration (held-out half)",
+      "value": 0.0004588254545454553,
+      "ci95": [
+        -0.019595485558441556,
+        0.019470739051948047
+      ],
+      "n": 1925,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "deployed probabilities; 0 = no average bias",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport without hba1c",
+      "metric": "Brier score AFTER recalibration (held-out half)",
+      "value": 0.20297700398099897,
+      "ci95": [
+        0.19447493764085816,
+        0.21170323766005664
+      ],
+      "n": 1925,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": false,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport without hba1c",
+      "metric": "observed prevalence in the high band AFTER recalibration (held-out half)",
+      "value": 0.7012448132780082,
+      "ci95": [
+        0.640668346132933,
+        0.7555063886003559
+      ],
+      "n": 241,
+      "unit_of_n": "people (mean predicted 0.749)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport without hba1c",
+      "metric": "calibration in the large (mean predicted - observed)",
+      "value": 0.058915038312192594,
+      "ci95": [
+        0.04462971368754854,
+        0.07227574670592803
+      ],
+      "n": 3863,
+      "unit_of_n": "people",
+      "ci_method": "bootstrap",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "positive = predictions run high",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport without hba1c",
+      "metric": "observed prevalence in the high band (>= 0.65)",
+      "value": 0.6883468834688347,
+      "ci95": [
+        0.6540275625113386,
+        0.7207155806421012
+      ],
+      "n": 738,
+      "unit_of_n": "people (mean predicted 0.760)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport without hba1c",
+      "metric": "observed prevalence in the moderate band (0.35-0.65)",
+      "value": 0.4120845921450151,
+      "ci95": [
+        0.38860105980438664,
+        0.43597530434865417
+      ],
+      "n": 1655,
+      "unit_of_n": "people (mean predicted 0.493)",
+      "ci_method": "Wilson",
+      "status": "VERIFIED",
+      "pct": true,
+      "note": "",
+      "test_type": "temporal hold-out (same survey, later cycle)",
+      "small_sample": false
+    },
+    {
+      "task": "Clinical risk model (NHANES 2013-14 temporal test), selfreport without hba1c",
+      "metric": "observed prevalence in the low band (< 0.35)",
+      "value": 0.19795918367346937,
+      "ci95": [
+        0.1783884953411821,
+        0.21910436612945375
+      ],
+      "n": 1470,
+      "unit_of_n": "people (mean predicted 0.225)",
       "ci_method": "Wilson",
       "status": "VERIFIED",
       "pct": true,
@@ -1416,6 +1926,130 @@
         "n": 396,
         "mean_predicted": 0.692,
         "observed": 0.538
+      }
+    ],
+    "selfreport_with_hba1c": [
+      {
+        "decile": 1,
+        "n": 376,
+        "mean_predicted": 0.122,
+        "observed": 0.09
+      },
+      {
+        "decile": 2,
+        "n": 376,
+        "mean_predicted": 0.199,
+        "observed": 0.176
+      },
+      {
+        "decile": 3,
+        "n": 376,
+        "mean_predicted": 0.265,
+        "observed": 0.229
+      },
+      {
+        "decile": 4,
+        "n": 376,
+        "mean_predicted": 0.328,
+        "observed": 0.287
+      },
+      {
+        "decile": 5,
+        "n": 376,
+        "mean_predicted": 0.393,
+        "observed": 0.372
+      },
+      {
+        "decile": 6,
+        "n": 376,
+        "mean_predicted": 0.46,
+        "observed": 0.388
+      },
+      {
+        "decile": 7,
+        "n": 376,
+        "mean_predicted": 0.53,
+        "observed": 0.404
+      },
+      {
+        "decile": 8,
+        "n": 375,
+        "mean_predicted": 0.602,
+        "observed": 0.525
+      },
+      {
+        "decile": 9,
+        "n": 375,
+        "mean_predicted": 0.695,
+        "observed": 0.632
+      },
+      {
+        "decile": 10,
+        "n": 375,
+        "mean_predicted": 0.821,
+        "observed": 0.731
+      }
+    ],
+    "selfreport_without_hba1c": [
+      {
+        "decile": 1,
+        "n": 387,
+        "mean_predicted": 0.126,
+        "observed": 0.093
+      },
+      {
+        "decile": 2,
+        "n": 387,
+        "mean_predicted": 0.204,
+        "observed": 0.171
+      },
+      {
+        "decile": 3,
+        "n": 387,
+        "mean_predicted": 0.268,
+        "observed": 0.248
+      },
+      {
+        "decile": 4,
+        "n": 386,
+        "mean_predicted": 0.33,
+        "observed": 0.301
+      },
+      {
+        "decile": 5,
+        "n": 386,
+        "mean_predicted": 0.394,
+        "observed": 0.345
+      },
+      {
+        "decile": 6,
+        "n": 386,
+        "mean_predicted": 0.462,
+        "observed": 0.394
+      },
+      {
+        "decile": 7,
+        "n": 386,
+        "mean_predicted": 0.531,
+        "observed": 0.438
+      },
+      {
+        "decile": 8,
+        "n": 386,
+        "mean_predicted": 0.601,
+        "observed": 0.472
+      },
+      {
+        "decile": 9,
+        "n": 386,
+        "mean_predicted": 0.691,
+        "observed": 0.635
+      },
+      {
+        "decile": 10,
+        "n": 386,
+        "mean_predicted": 0.819,
+        "observed": 0.741
       }
     ]
   }

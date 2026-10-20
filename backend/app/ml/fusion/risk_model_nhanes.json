@@ -82,6 +82,32 @@
             "observed_rate": 0.357
           }
         ]
+      },
+      "recalibration": {
+        "intercept_shift": -0.219152,
+        "method": "logistic recalibration in the large (intercept only; coefficients and ranking unchanged)",
+        "fitted_on": "random half of NHANES 2013-2014 (seed 0), n = 1922",
+        "evaluated_on": "the other half, n = 1933",
+        "half_b_before": {
+          "n": 1933,
+          "observed": 0.3859,
+          "mean_predicted": 0.4379,
+          "calibration_in_the_large": 0.052,
+          "brier": 0.2278,
+          "high_band_n": 191,
+          "high_band_mean_predicted": 0.7002,
+          "high_band_observed": 0.5288
+        },
+        "half_b_after": {
+          "n": 1933,
+          "observed": 0.3859,
+          "mean_predicted": 0.3895,
+          "calibration_in_the_large": 0.0036,
+          "brier": 0.2252,
+          "high_band_n": 76,
+          "high_band_mean_predicted": 0.7014,
+          "high_band_observed": 0.5395
+        }
       }
     },
     "without_hba1c": {
@@ -159,6 +185,32 @@
             "observed_rate": 0.286
           }
         ]
+      },
+      "recalibration": {
+        "intercept_shift": -0.212618,
+        "method": "logistic recalibration in the large (intercept only; coefficients and ranking unchanged)",
+        "fitted_on": "random half of NHANES 2013-2014 (seed 0), n = 1982",
+        "evaluated_on": "the other half, n = 1983",
+        "half_b_before": {
+          "n": 1983,
+          "observed": 0.3853,
+          "mean_predicted": 0.4395,
+          "calibration_in_the_large": 0.0542,
+          "brier": 0.2287,
+          "high_band_n": 177,
+          "high_band_mean_predicted": 0.6975,
+          "high_band_observed": 0.5141
+        },
+        "half_b_after": {
+          "n": 1983,
+          "observed": 0.3853,
+          "mean_predicted": 0.3922,
+          "calibration_in_the_large": 0.0069,
+          "brier": 0.2259,
+          "high_band_n": 71,
+          "high_band_mean_predicted": 0.6913,
+          "high_band_observed": 0.507
+        }
       }
     },
     "selfreport_with_hba1c": {
@@ -254,6 +306,32 @@
             "observed_rate": 0.762
           }
         ]
+      },
+      "recalibration": {
+        "intercept_shift": -0.301521,
+        "method": "logistic recalibration in the large (intercept only; coefficients and ranking unchanged)",
+        "fitted_on": "random half of NHANES 2013-2014 (seed 0), n = 1879",
+        "evaluated_on": "the other half, n = 1878",
+        "half_b_before": {
+          "n": 1878,
+          "observed": 0.3829,
+          "mean_predicted": 0.4395,
+          "calibration_in_the_large": 0.0567,
+          "brier": 0.2055,
+          "high_band_n": 357,
+          "high_band_mean_predicted": 0.7611,
+          "high_band_observed": 0.6807
+        },
+        "half_b_after": {
+          "n": 1878,
+          "observed": 0.3829,
+          "mean_predicted": 0.3799,
+          "calibration_in_the_large": -0.0029,
+          "brier": 0.2021,
+          "high_band_n": 238,
+          "high_band_mean_predicted": 0.7475,
+          "high_band_observed": 0.6891
+        }
       }
     },
     "selfreport_without_hba1c": {
@@ -347,6 +425,32 @@
             "observed_rate": 0.756
           }
         ]
+      },
+      "recalibration": {
+        "intercept_shift": -0.295498,
+        "method": "logistic recalibration in the large (intercept only; coefficients and ranking unchanged)",
+        "fitted_on": "random half of NHANES 2013-2014 (seed 0), n = 1938",
+        "evaluated_on": "the other half, n = 1925",
+        "half_b_before": {
+          "n": 1925,
+          "observed": 0.3813,
+          "mean_predicted": 0.4405,
+          "calibration_in_the_large": 0.0592,
+          "brier": 0.2067,
+          "high_band_n": 362,
+          "high_band_mean_predicted": 0.7602,
+          "high_band_observed": 0.6823
+        },
+        "half_b_after": {
+          "n": 1925,
+          "observed": 0.3813,
+          "mean_predicted": 0.3818,
+          "calibration_in_the_large": 0.0005,
+          "brier": 0.203,
+          "high_band_n": 241,
+          "high_band_mean_predicted": 0.7491,
+          "high_band_observed": 0.7012
+        }
       }
     }
   },

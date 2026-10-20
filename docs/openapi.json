@@ -274,6 +274,108 @@
             ],
             "default": null,
             "title": "Teeth Lost Perio"
+          },
+          "sr_think_gum_disease": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Think Gum Disease"
+          },
+          "sr_gum_treatment": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Gum Treatment"
+          },
+          "sr_loose_teeth": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Loose Teeth"
+          },
+          "sr_told_bone_loss": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Told Bone Loss"
+          },
+          "sr_tooth_not_right": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Tooth Not Right"
+          },
+          "sr_teeth_gum_health": {
+            "anyOf": [
+              {
+                "maximum": 5,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Teeth Gum Health"
+          },
+          "sr_floss_days": {
+            "anyOf": [
+              {
+                "maximum": 7,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Floss Days"
+          },
+          "sr_mouthwash_days": {
+            "anyOf": [
+              {
+                "maximum": 7,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Mouthwash Days"
           }
         },
         "required": [
@@ -428,6 +530,108 @@
             ],
             "default": null,
             "title": "Teeth Lost Perio"
+          },
+          "sr_think_gum_disease": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Think Gum Disease"
+          },
+          "sr_gum_treatment": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Gum Treatment"
+          },
+          "sr_loose_teeth": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Loose Teeth"
+          },
+          "sr_told_bone_loss": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Told Bone Loss"
+          },
+          "sr_tooth_not_right": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Tooth Not Right"
+          },
+          "sr_teeth_gum_health": {
+            "anyOf": [
+              {
+                "maximum": 5,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Teeth Gum Health"
+          },
+          "sr_floss_days": {
+            "anyOf": [
+              {
+                "maximum": 7,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Floss Days"
+          },
+          "sr_mouthwash_days": {
+            "anyOf": [
+              {
+                "maximum": 7,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sr Mouthwash Days"
           }
         },
         "title": "PatientUpdateIn",

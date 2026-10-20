@@ -22,17 +22,17 @@
   "conformal": {
     "target_coverage": 0.9,
     "q": 2.56,
-    "empirical_interval_coverage": 0.922,
+    "empirical_interval_coverage": 0.9365,
     "reference_stage_in_prediction_set": 0.9837,
     "set_size_counts": {
-      "1": 86,
-      "2": 374,
-      "3": 91
+      "1": 61,
+      "2": 349,
+      "3": 141
     },
     "adaptive": true,
-    "mean_half_width_pct": 16.448,
-    "coverage_easier_half": 0.8841,
-    "coverage_harder_half": 0.96
+    "mean_half_width_pct": 18.751,
+    "coverage_easier_half": 0.9094,
+    "coverage_harder_half": 0.9636
   },
   "calibration_file_source": "DenPAR validation split, same-side corrected reference; v3 landmark model"
 }

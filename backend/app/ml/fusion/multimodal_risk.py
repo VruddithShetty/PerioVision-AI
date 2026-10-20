@@ -125,7 +125,11 @@ def predict_patient_risk(clinical: dict, image: dict | None = None) -> dict:
         variant = f"selfreport_{variant}"
     m = model["models"][variant]
     coef = m["coefficients"]
-    logit = m["intercept"] + sum(coef[k] * x[k] for k in m["features"])
+    recal = m.get("recalibration") or {}
+    # Temporal recalibration (scripts/recalibrate_risk_nhanes.py): an intercept shift fitted on one random half of
+    # the newer NHANES cycle and checked on the other half; ranking is unchanged, the probabilities match the newer
+    # (lower) prevalence instead of running about 5 points high.
+    logit = m["intercept"] + float(recal.get("intercept_shift", 0.0)) + sum(coef[k] * x[k] for k in m["features"])
     prob = 1.0 / (1.0 + math.exp(-logit))
     t = config.THRESHOLDS["risk"]
     category = "high" if prob >= t["high_min_probability"] else (
@@ -147,11 +151,16 @@ def predict_patient_risk(clinical: dict, image: dict | None = None) -> dict:
                                "0.65 to 0.73)"]),
         "variant": variant,
         "validation": {"source": model["source"], "outcome": model["outcome"], "test_n": test["n"],
-                       "roc_auc": test["roc_auc"], "brier": test["brier"]},
+                       "roc_auc": test["roc_auc"], "brier": test["brier"],
+                       "recalibration": ({k: recal[k] for k in ("intercept_shift", "fitted_on", "evaluated_on")}
+                                         | {"calibration_in_the_large_after": recal["half_b_after"]["calibration_in_the_large"]})
+                       if recal else None},
         "disclaimer": (f"Share of US adults with this age, sex, smoking, diabetes{' and gum-health answers' if use_sr else ''} profile who have moderate or "
                        f"severe periodontitis (CDC/AAP), from NHANES; AUC {test['roc_auc']:.2f} on a later cycle of the same survey "
-                       + ("(predictions ran about 5 points high there). " if use_sr else
-                          "(predictions ran about 5 points high there: the high band, predicted about 70 %, had 55 %). ")
+                       + (("(recalibrated to that cycle's prevalence; checked on people not used for it). " if use_sr else
+                           "(recalibrated to that cycle's prevalence; the top band still runs high: predicted about "
+                           "70 %, observed about 54 %). ") if recal else
+                          "(predictions ran about 5 points high there). ")
                        + "The clinical model does not read the radiograph; the radiograph's evidence is combined with it in the fused level. It does not predict future progression."),
     }
 

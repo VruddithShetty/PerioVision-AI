@@ -12,7 +12,7 @@ Decision support for dental professionals reviewing panoramic or periapical radi
 | Landmark model | `weights/dental_landmark_yolov8n-pose.pt` (file name kept for compatibility) | **Two-site** YOLO11m-pose at 1024 px, 5 keypoints per tooth: CEJ and bone crest on each side of the tooth, and the root apex; the worse confident site is measured (site confidence ≥ 0.5, chosen on validation) | **v3, deployed 2026-10-18** (`notebooks/train_landmarks_v3_colab.ipynb`): trained on the corrected same-side labels; of three candidates (large 1280 px, medium 1280 px, medium 1024 px) and their ensemble, the medium 1024 px model had the lowest validation error and was chosen on validation films only. App pipeline, 200 DenPAR test films, **corrected same-side reference**: bone-loss error **5.48 points** (95 % CI 4.8–6.2), stage agreement **80.4 %** (76.5–84.3), 90 % intervals cover 92.2 %. **Paired against the previous two-site model on the same 536 test teeth: −1.00 points (95 % CI −1.55 to −0.46), stage agreement +3.7 points (+0.4 to +7.1)** (`docs/evidence/v3_vs_deployed_paired_2026-10-18.json`). The previous model is kept in `backend/weights_backup/20261018-120014/` |
 | Grad-CAM (LayerCAM weighting) | `ml/explainability/gradcam.py` | Class-activation maps over the P3-P5 neck layers of the model that made the detection (detector on panoramic films, pose model on periapical films). Each location is weighted by its own positive gradient (LayerCAM, Jiang et al., IEEE TIP 2021) | **Why LayerCAM:** with classic Grad-CAM (layer-averaged gradients) a single tooth's map put only 16 % of its mass inside that tooth's box, the same as chance (14 %); LayerCAM puts 82 % there (64 % on a panoramic film, where a box covers about 1 % of the image) (`docs/evidence/gradcam_localisation_2026-10-04.json`). **Views:** all teeth (stored with every analysis) and only the selected tooth (on demand, `GET /api/analyses/{id}/teeth/{tooth}/gradcam`, about 1-2 s on a CPU). **Attention check:** on films where bone loss is reported (periapical) each tooth is judged by its own map; on 129 DenPAR test teeth this flags 3.1 % (4.7 % with the all-teeth map; 6.2 % of teeth change flag; median attention 0.63) for about 2 s extra per film (all teeth in one batched backward pass, identical to one pass per tooth) (`docs/evidence/gradcam_attention_per_tooth_denpar40_2026-10-04.json`). The 0.25 threshold is an engineering default, not a validated cut-off |
 | Staging/grading | `ml/measurement/staging.py` | 2017 AAP/EFP bands applied to radiographic bone loss | Rule-based |
-| Conformal uncertainty | `ml/uncertainty/`, `weights/conformal_calibration.json` | **Normalised (adaptive)** split-conformal intervals on bone-loss %: half-width = q × σ(x), σ grows with the disagreement between the normal and mirrored readings | **Recalibrated 2026-10-05, asymmetric**: σ fitted on half of DenPAR validation, and each side of the interval gets its own quantile (α/2) from the other half's signed errors, because the model underestimates severe bone loss. On the 578 DenPAR test teeth: coverage **93.4 %** at the 90 % target; by reference stage I 98.5 %, II 96.2 %, **III 81.2 %** (symmetric intervals gave 76.9 % on stage III). The guarantee is on average over teeth, not per stage: severe teeth are still under-covered. Periapical only. Earlier files are kept as timestamped backups |
+| Conformal uncertainty | `ml/uncertainty/`, `weights/conformal_calibration.json` | **Normalised (adaptive)** split-conformal intervals on bone-loss %: margins = q × σ(x), σ grows with the disagreement between the normal and mirrored readings; **asymmetric** (each side its own α/2 quantile, because the model underestimates severe bone loss) and **Mondrian** (separate quantiles for teeth predicted below / at or above 25 % bone loss, the bin chosen by the tooth's own prediction) | **Recalibrated 2026-10-20** on the corrected DenPAR reference. On the 551 test teeth at the 90 % target: coverage **93.6 %**; by reference stage I 96.6 %, II 89.6 %, **III 91.1 %** (one bin: 82.1 % on stage III). Over 50 random calibration splits the Mondrian rule raised stage III coverage from 79.6 % to 88.5 % on average and was better in all 50; it costs about 2-6 points of width. Periapical only. Earlier files are kept as timestamped backups |
 | Risk | `ml/fusion/multimodal_risk.py`, `ml/fusion/risk_model_nhanes.json` | Logistic regression on age, sex, smoking (status, cigarettes/day), diabetes, HbA1c; **plus, when all eight are answered, the CDC/AAP gum-health self-report questions** (thinks has gum disease, rated teeth/gum health, earlier gum treatment, loose teeth, told of bone loss, a tooth not looking right, floss and mouthwash days) | **Self-report model (2026-10-18):** AUC **0.730** (0.713-0.747) on NHANES 2013-14, +0.079 (0.066-0.092) over the clinical-only model on the same 3,757 people; Brier 0.204 (`scripts/train_risk_model_nhanes.py`, `docs/evidence/risk_selfreport_2026-10-18.json`). Floss / mouthwash days are never shown as reasons (they rise with symptoms). **Clinical-only model:** **Trained** on NHANES 2009-2012 (n = 7,417), tested on a later cycle of the same survey, NHANES 2013-2014 (n = 3,855; temporal hold-out, not an external population): ROC AUC 0.650 (0.645 without HbA1c), Brier 0.226 vs 0.240 for prevalence alone. Outcome: moderate/severe periodontitis (CDC/AAP). Predictions run high on 2013-14 because prevalence fell from 44 % to 39 %: calibration in the large +5.0 points; people in the high band (mean predicted 0.70) had 54.7 % prevalence; deciles in `docs/RESULTS_WITH_CI.md`. Read the probability as a relative ranking. Boosted trees and splines gave no gain (AUC 0.652 / 0.649). The logistic model does not read the radiograph and does not predict progression. **Fusion** (`fuse_with_radiograph`): the combined level is the higher of the clinical level and the radiographic level (measured periapical stage or the panoramic whole-film stage: I low, II moderate, III/IV high; measurable rapid progression high). A documented rule, not a learned weight, because no public dataset links radiographs to periodontitis outcomes |
 
 ## Performance
@@ -55,8 +55,9 @@ each film periodontitis yes / no (1,173 / 574). Screen AUC **0.963** (0.955-0.97
 **0.953** (0.943-0.961); at the deployed thresholds the screen flags 92.1 % of periodontitis films and clears
 85.4 % of the others. **Read with care:** the label (periodontitis yes / no for the whole film) is an easier
 separation than the models' own targets, so this is higher than the same-source MM-OPG result (AUC 0.85 / 0.87)
-and says nothing about stage accuracy; and an overlap between PDCNN and the MM-OPG training films could not be
-checked because the local MM-OPG archive is incomplete. Per-film output: `docs/evidence/predictions/pdcnn_wholefilm_external.csv`.
+and says nothing about stage accuracy. **Overlap checked (2026-10-20):** none of the 1,747 PDCNN films duplicates an
+MM-OPG film (74 look-alike candidates, 0 confirmed; `docs/evidence/split_audit_pdcnn_vs_mmopg.json`) or a BRAR film,
+so the result is not inflated by training films. Per-film output: `docs/evidence/predictions/pdcnn_wholefilm_external.csv`.
 
 ### Panoramic whole-film models (patient level, measured)
 
@@ -65,7 +66,7 @@ patient-level estimate instead (`app/ml/panoramic/whole_film.py`, trained with `
 
 | Model | Training data | Held-out test | Result |
 |---|---|---|---|
-| Generalised bone loss, per jaw | ToothXpert MM-OPG, 8,047 films (894 validation) | official 450-film test split | maxilla AUC **0.850** (sensitivity 69 %, specificity 81 %); mandible AUC **0.874** (80 % / 75 %) |
+| Generalised bone loss, per jaw | ToothXpert MM-OPG, 8,047 films (894 validation) | official 450-film test split; **346 of the 450 test films are copies of training films** (published split, found 2026-10-20) | all 450: maxilla AUC **0.850** (sensitivity 69 %, specificity 81 %), mandible AUC **0.874** (80 % / 75 %); **the 104 clean test films:** maxilla AUC 0.872, mandible AUC 0.893 (small sample: 26 / 37 films with bone loss; CIs in `docs/RESULTS_WITH_CI.md`) |
 | Worst-tooth bone loss % | BRAR, 690 films (fine-tuned from the screen model; 149 validation) | 149 BRAR films | MAE **11.4** points (median 8.0; predicting the mean: 18.0); stage agreement **68.5 %**; grade agreement 65.1 %; 90 % interval asymmetric (-14.9 / +35.8 points, from validation films' signed errors), coverage 91.3 % overall and 83.3 % on stage III films (the symmetric ±26.5 interval: 90.6 % / 74.1 %) |
 
 Compared with the per-tooth landmark route on panoramic films (18.6 points, 46 % stage agreement), this is clearly
@@ -137,23 +138,28 @@ Validation split: MAE 8.33, stage agreement 66.4 %. The CEJ and crest are often 
 
 ### Uncertainty (measured)
 
-Recalibrated 2026-10-18 for the v3 model on the **corrected** reference (`scripts/calibrate_conformal.py`,
-asymmetric, normalised; validation split without the duplicated films: σ fitted on 212 teeth, quantiles on the other
-212). Held-out DenPAR test teeth:
+Recalibrated 2026-10-20 for the v3 model on the **corrected** reference (`scripts/calibrate_conformal.py`,
+normalised, asymmetric, **Mondrian with a cut at 25 % predicted bone loss**; validation split without the duplicated
+films: σ fitted on 212 teeth, quantiles on the other 212). Held-out DenPAR test teeth:
 
 | Target | Coverage, all teeth | Stage I | Stage II | Stage III (severe) | Mean width (points) |
 |---|---|---|---|---|---|
-| 80 % | 83.3 % | 92.5 % | 75.7 % | 68.8 % | 19.0 |
-| **90 % (deployed)** | **92.2 %** | 97.6 % | 88.9 % | **82.1 %** | 28.5 |
-| 95 % | 96.2 % | 98.6 % | 95.8 % | 90.2 % | 36.4 |
+| 80 % | 85.5 % | 90.9 % | 77.8 % | 81.3 % | 20.2 |
+| **90 % (deployed)** | **93.7 %** | 96.6 % | 89.6 % | **91.1 %** | 34.7 |
+| 95 % | 96.9 % | 98.6 % | 97.2 % | 92.0 % | 42.8 |
+
+**Why Mondrian.** With one set of margins, coverage held on average but not on severe teeth (82.1 % at the 90 %
+target, width 28.5): teeth the model reads as mild are sometimes severe. Keeping separate quantiles for teeth predicted
+below and at or above 25 % gives the low bin a wider upper margin. Checked over 50 random calibration splits before
+adopting it: stage III coverage 79.6 % -> 88.5 % on average (better in all 50), overall 91.0 % -> 92.5 %, width
+24.5 -> 26.8 points. The 25 % cut was fixed before the corrected-label test; 20 % and 30 % give similar gains.
 
 For the previous model the deployed 90 % row was 92.7 % overall and 86.1 % on stage III with a mean width of 38.9
 points: v3's intervals are about a quarter narrower at the same overall coverage, with somewhat lower coverage of
 severe teeth.
 
-(Calibration-script test pass; the app-path evaluation on 551 teeth gives 92.2 % overall and 82.1 % on stage III,
-`docs/RESULTS_WITH_CI.md`.) Coverage holds **on average**, not for every subgroup: severe teeth stay below 90 %. At
-90 %, 86 of 551 test teeth (15.6 %, was 7.6 %) get a single-stage set; the rest go to a dentist, by design.
+(The app-path evaluation on 551 teeth gives 93.6 % overall and 91.1 % on stage III, `docs/RESULTS_WITH_CI.md`.)
+At 90 %, 61 of 551 test teeth (11.1 %; 15.6 % with one bin) get a single-stage set; the rest go to a dentist, by design.
 **Severe (stage III) teeth called stage I: 0.9 % (1 of 112)**, the most dangerous error; the panoramic whole-film estimate does this for 3.7 % (2 of 54) of stage III
 films.
 

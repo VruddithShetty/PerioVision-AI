@@ -109,6 +109,8 @@ def main() -> int:
     ap.add_argument("--source", default="YOLO-pose validation split (see docs/DATASETS.md)")
     ap.add_argument("--image-type", default="periapical")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--mondrian-cut", type=float, default=25.0,
+                    help="separate margins for teeth predicted below / at or above this bone loss %% (0 = one bin)")
     args = ap.parse_args()
 
     if not container.tooth_detector().available:
@@ -126,6 +128,16 @@ def main() -> int:
     held_out = test if test else A                 # coverage on the test split, else the other half
     scores = np.array([abs(r["pred"] - r["ref"]) / sigma(spec, r["d"]) for r in B])
     signed = np.array([(r["ref"] - r["pred"]) / sigma(spec, r["d"]) for r in B])
+    b_pred = np.array([r["pred"] for r in B])
+    cut = args.mondrian_cut
+    mondrian = None
+    if cut > 0:
+        low, high = signed[b_pred < cut], signed[b_pred >= cut]
+        if min(len(low), len(high)) >= 39:          # enough scores for the 97.5 % tail of a 95 % interval
+            mondrian = {"cut_pct": cut, "signed_scores": {"low": [round(float(x), 5) for x in low],
+                                                          "high": [round(float(x), 5) for x in high]}}
+        else:
+            print(f"Mondrian bins too small ({len(low)} / {len(high)} scores); using one bin.")
     err = np.array([abs(r["pred"] - r["ref"]) for r in held_out])
     levels = {}
     for cov in LEVELS:
@@ -152,6 +164,17 @@ def main() -> int:
                                  "mean_width_pct": round(float(((q_dn + q_up) * ho_sig).mean()), 3),
                                  "coverage_by_reference_stage": {s: round(float(inside[ho_stage == s].mean()), 4)
                                                                  for s in ("I", "II", "III") if (ho_stage == s).any()}}
+        if mondrian:
+            dn_m, up_m = np.zeros(len(ho_pred)), np.zeros(len(ho_pred))
+            for side, sel in (("low", ho_pred < cut), ("high", ho_pred >= cut)):
+                s = np.asarray(mondrian["signed_scores"][side])
+                dn_m[sel] = max(0.0, float(conformal_quantile(-s, tail)))
+                up_m[sel] = max(0.0, float(conformal_quantile(s, tail)))
+            inside_m = (ho_ref >= ho_pred - dn_m * ho_sig) & (ho_ref <= ho_pred + up_m * ho_sig)
+            lvl["mondrian"] = {"cut_pct": cut, "coverage": round(float(inside_m.mean()), 4),
+                               "mean_width_pct": round(float(((dn_m + up_m) * ho_sig).mean()), 3),
+                               "coverage_by_reference_stage": {s: round(float(inside_m[ho_stage == s].mean()), 4)
+                                                               for s in ("I", "II", "III") if (ho_stage == s).any()}}
         if lvl["q_from_half"] is not None:
             sym = np.abs(ho_ref - ho_pred) <= lvl["q_from_half"] * ho_sig
             lvl["symmetric_coverage_by_reference_stage"] = {s: round(float(sym[ho_stage == s].mean()), 4)
@@ -169,6 +192,7 @@ def main() -> int:
         "n_scores": int(len(scores)),
         "scores": [round(float(s), 5) for s in scores],
         "signed_scores": [round(float(s), 5) for s in signed],
+        "mondrian": mondrian,
         "sigma": spec,
         "levels": levels,
         "mean_absolute_error_pct": round(float(np.mean(np.abs(ho_pred - ho_ref))), 3),
@@ -195,6 +219,8 @@ def main() -> int:
               f"  mean half-width = {lvl['mean_half_width_pct']}  by stage {lvl.get('symmetric_coverage_by_reference_stage')}")
         if "asymmetric" in lvl:
             print(f"    asymmetric: {lvl['asymmetric']}")
+        if "mondrian" in lvl:
+            print(f"    mondrian (deployed): {lvl['mondrian']}")
     return 0
 
 

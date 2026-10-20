@@ -289,8 +289,12 @@ def test_risk_comes_from_the_trained_coefficients():
     m = load_model()["models"]["with_hba1c"]
     c = {"age": 50, "sex": "male", "smoking_status": "current", "cigarettes_per_day": 9, "diabetic": True, "hba1c": 7.0}
     x = {"age": 50, "male": 1, "current_smoker": 1, "former_smoker": 0, "log_cigs": math.log1p(9), "diabetic": 1, "hba1c": 7.0}
-    expected = 1 / (1 + math.exp(-(m["intercept"] + sum(m["coefficients"][k] * x[k] for k in m["features"]))))
+    shift = (m.get("recalibration") or {}).get("intercept_shift", 0.0)     # temporal recalibration, applied
+    lp = m["intercept"] + sum(m["coefficients"][k] * x[k] for k in m["features"])
+    expected = 1 / (1 + math.exp(-(lp + shift)))
     assert predict_patient_risk(c)["probability"] == round(expected, 3)
+    if shift:   # the shift lowers the probability toward the newer cycle's prevalence
+        assert predict_patient_risk(c)["probability"] < round(1 / (1 + math.exp(-lp)), 3)
     no_lab = predict_patient_risk({**c, "hba1c": None})
     assert no_lab["variant"] == "without_hba1c" and no_lab["probability"] is not None
 
@@ -397,8 +401,9 @@ def test_self_report_model_is_used_only_with_all_eight_answers():
     m = load_model()["models"]["selfreport_with_hba1c"]
     x = {"age": 52, "male": 0, "current_smoker": 0, "former_smoker": 0, "log_cigs": 0, "diabetic": 0, "hba1c": 5.6,
          **{k: float(v) for k, v in SELF_REPORT.items()}}
-    expected = 1 / (1 + math.exp(-(m["intercept"] + sum(m["coefficients"][k] * x[k] for k in m["features"]))))
-    assert r["probability"] == round(expected, 3)                                  # exactly the signed coefficients
+    shift = (m.get("recalibration") or {}).get("intercept_shift", 0.0)
+    expected = 1 / (1 + math.exp(-(m["intercept"] + shift + sum(m["coefficients"][k] * x[k] for k in m["features"]))))
+    assert r["probability"] == round(expected, 3)          # exactly the signed coefficients + the signed recalibration
     partial = predict_patient_risk({**c, **{**SELF_REPORT, "sr_floss_days": None}})
     assert partial["variant"] == "with_hba1c"                                       # one answer missing -> old model
     assert any("gum-health questions" in m for m in partial["missing_inputs"])
