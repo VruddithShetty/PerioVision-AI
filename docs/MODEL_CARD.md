@@ -238,4 +238,4 @@ per film.
 
 ## Ethical notes
 
-No real patient data is stored in the repository. An early public commit contained a radiograph set whose file names include personal names; it is gone from the working tree but remains in the git history until the owner rewrites history (see `docs/PROJECT_REPORT.md`, phase 0).
+No real patient data is stored in the repository. An early public commit contained a radiograph set whose file names include personal names; it is gone from the working tree but remains in the git history until the owner rewrites history (see `docs/SECURITY.md`).

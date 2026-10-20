@@ -13,7 +13,7 @@ numbers below were re-measured on the deployed files; CIs are in `docs/RESULTS_W
 | 6 | Detector fine-tune on AKU folders 1+3 (D) | `export_panoramic-20261004T040402Z…zip` | **Yes** (installed 2026-10-04 09:53, commit `0930bd2`) | AKU folder 2, same hospital: F1 94.5 % (93.0–95.8); DENTEX official disease test: 89.1 % (86.6–91.3) found with the right number |
 | 7 | Per-tooth bone-loss detector, PDCNN (C) | `export_panoramic-20261004T082745Z…zip` | **No, deliberately** | See below |
 | 8 | Clinical risk model, NHANES (`scripts/train_risk_model_nhanes.py`) | `app/ml/fusion/risk_model_nhanes.json` | **Yes** | AUC 0.650 (0.633–0.668) on a later survey cycle |
-| 9 | Two-site landmark model (`train_landmarks_twosite_colab`) | `export_twosite-20261006…zip` | **Replaced** by #10 on 2026-10-18; kept in `weights_backup/20261018-120014/` | DenPAR test, corrected reference: MAE **6.64** points (5.9–7.5), stage agreement **75.9 %** (72.3–79.4); paired vs #2 on the old reference: −0.94 points (−1.51 to −0.39) |
+| 9 | Two-site landmark model (`train_landmarks_twosite_colab`) | `export_twosite-20261006…zip` | **Replaced** by #10 on 2026-10-18; its weights are in git history (`git show fae244b^:backend/weights/dental_landmark_yolov8n-pose.pt`) | DenPAR test, corrected reference: MAE **6.64** points (5.9–7.5), stage agreement **75.9 %** (72.3–79.4); paired vs #2 on the old reference: −0.94 points (−1.51 to −0.39) |
 | 10 | Two-site models v3 on corrected labels: large / medium, 1280 / 1024 px, ensemble (`train_landmarks_v3_colab`) | `export_v3-20261018…zip` | **Yes** (medium 1024 px, chosen on validation; installed 2026-10-18, signed) | DenPAR test, corrected reference: MAE **5.48** points (4.8–6.2), stage agreement **80.4 %** (76.5–84.3); paired vs #9 on the same 536 teeth: −1.00 points (−1.55 to −0.46), stage +3.7 points (+0.4 to +7.1) |
 | 11 | Root-crop second stage for the CEJ / crest, yolo11s-pose 768 px (`train_landmarks_crop_colab`) | `export_crop-20261019…zip` | **No, deliberately** | Worse than v3 alone: paired +0.54 points (95 % CI +0.13 to +0.96), stage II recall 57.1 vs 58.6 %; as an average with v3: −0.19 (−0.47 to +0.08), no clear difference, and worse on validation (`docs/evidence/crop_stage_*_2026-10-19.json`) |
 
@@ -29,3 +29,6 @@ its most severe tooth grade per film agrees with the expert stage only **52 %** 
 That is with the most favourable mapping of its four grades to stages, which was picked after seeing the results.
 The installed whole-film model (#5) reaches **68.5 %** (kappa 0.70) on the same patients. PDCNN also publishes no
 licence. So Model C would make the panoramic result worse and adds a licence risk.
+
+The notebooks of #9 and #11 (`train_landmarks_twosite_colab`, `train_landmarks_crop_colab`) were removed from the
+working tree on 2026-10-20 (replaced / not adopted); restore with `git checkout 01577ff -- notebooks/`.

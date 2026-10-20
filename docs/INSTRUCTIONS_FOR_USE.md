@@ -53,7 +53,7 @@ A dentist's corrections are printed in the signed report next to the model's val
 
 ## 7. Security responsibilities of the clinic
 - Run the production configuration (`docs/DEPLOYMENT.md`) behind an HTTPS reverse proxy, with MongoDB authentication and fresh keys.
-- Keep the private signing key and `.env.production` off shared drives. Rotate keys as described in `docs/KEY_ROTATION.md`.
+- Keep the private signing key and `.env.production` off shared drives. Rotate keys as described in section 7 of `docs/SECURITY.md`.
 - An auditor should run **Security center → Verify chain** regularly. Investigate any `MODEL_LOAD_REFUSED`, `HONEYPOT_TRIGGERED` or tamper alert.
 
 ## 8. Checking the system yourself

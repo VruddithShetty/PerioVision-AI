@@ -109,7 +109,7 @@ function KeysPanel() {
             <Badge key={k} tone={k === data.encryption.active_key_id ? "brand" : "neutral"}>{k}{k === data.encryption.active_key_id ? " · active" : " · decrypt only"}</Badge>
           ))}
         </div>
-        <p className="mt-4 text-xs text-mist-500">Rotate by adding a new key to FIELD_ENCRYPTION_KEYS in .env, then run scripts/rotate_keys.py (see docs/KEY_ROTATION.md).</p>
+        <p className="mt-4 text-xs text-mist-500">Rotate by adding a new key to FIELD_ENCRYPTION_KEYS in .env, then run scripts/rotate_keys.py (see section 7 of docs/SECURITY.md).</p>
       </Card>
       <Card>
         <CardTitle icon={<KeyRound className="h-4 w-4" />}>Model and report signing</CardTitle>

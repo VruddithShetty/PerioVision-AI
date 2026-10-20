@@ -13,26 +13,12 @@ test-set metrics, and saves everything to `MyDrive/PerioVision/export/`. Bring t
 `.\run.ps1 install-models -From <folder>`, which backs up the old weights, installs and signs the new ones, and
 runs the tests.
 
-## train_landmarks_twosite_colab.ipynb
-
-Trained the first two-site landmark model on DenPAR (CC BY 4.0): CEJ and bone crest on both sides of each tooth
-plus the apex. Replaced by v3 on 2026-10-18; kept as the record of how it was made.
-
 ## train_landmarks_v3_colab.ipynb
 
 Trained the **deployed** landmark model (v3, installed 2026-10-18), on the corrected labels: up to three models (large / medium, 1280 / 1024 px), each
 resumable across sessions, plus their ensemble. Chooses on validation films, compares against the deployed model on
 the same test teeth and exports to `MyDrive/PerioVision/export_v3/`. Needs the deployed model in
 `MyDrive/PerioVision/current/`.
-
-## train_landmarks_crop_colab.ipynb
-
-**Evaluated 2026-10-19 and not adopted** (worse than v3 alone; no clear gain as an average with v3; see
-`docs/TRAINING_INVENTORY.md` #11). Experimental second stage for the landmark reading: a model that re-reads the CEJ and bone crest on a zoomed
-crop of each tooth's root region (about 1.7x the detail at 768 px), with the deployed v3 model as stage A. Aims
-at stage II recall. Same paired comparison against v3 on the same test teeth; exports to
-`MyDrive/PerioVision/export_crop/`. Install only if its verdict is REAL IMPROVEMENT (the app then needs the
-two-stage code). Needs v3 in `MyDrive/PerioVision/current/`.
 
 ## priority1_eval_colab.ipynb
 
@@ -45,3 +31,8 @@ Trains the panoramic models on open data it downloads itself: a per-jaw bone-los
 1,747 films; evaluated and not adopted) and a fine-tune of the tooth detector (Aga Khan OPG;
 deployed, also as `train_panoramic_D_colab.ipynb`). Every model is tested on held-out
 films; results go to `MyDrive/PerioVision/export_panoramic/`.
+
+## Retired notebooks
+
+The first two-site landmark notebook (replaced by v3) and the root-crop experiment (tested 2026-10-19, worse than
+v3, not adopted) are recorded in `docs/TRAINING_INVENTORY.md` (#9, #11) and kept in git history.

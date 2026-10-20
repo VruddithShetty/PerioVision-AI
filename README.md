@@ -1,10 +1,28 @@
 # PerioVision AI
 
-**Secure, explainable decision support for periodontal bone-loss detection.** PerioVision reads dental radiographs tooth by tooth: it finds each tooth by FDI number, locates the cemento-enamel junction and the alveolar crest, measures bone loss, suggests a periodontitis stage and grade, tracks every tooth across visits, and puts an honest uncertainty range on each finding. Anything doubtful goes to a dentist for sign-off before a signed report can be issued. Around it sits a security layer built for a cybersecurity thesis: AES-256-GCM encryption, RSA-PSS signed models and reports, JWT + TOTP MFA, four-role RBAC with Zero Trust checks on every request, and a hash-chained, Merkle-anchored audit trail.
+**Secure, explainable AI decision support for periodontal bone loss on dental X-rays.**
 
-> **Decision support, clinician in the loop.** Not a certified medical device. Model accuracy is reported only from held-out test data (see the model card). Security controls are *aligned with* HIPAA safeguards, not certified.
+PerioVision reads a dental radiograph tooth by tooth. For each tooth it:
+- finds the tooth and gives its FDI number;
+- locates the cemento-enamel junction (CEJ), the bone crest and the root apex;
+- measures bone loss and suggests a periodontitis stage and grade (2017 AAP/EFP);
+- tracks the tooth across visits.
 
-![Analysis viewer: FDI-numbered teeth, landmarks, conformal interval and the review banner (screenshot taken before panoramic bone-loss numbers were switched off; they are now shown for periapical films only)](docs/reference/screenshots/analysis-viewer.jpg)
+Every number comes with an honest uncertainty range. Anything doubtful goes to a dentist, and a signed report can only be
+issued after the dentist signs off.
+
+Around the AI sits a security layer built for a cybersecurity thesis:
+- AES-256-GCM encryption;
+- RSA-PSS signed models and reports;
+- JWT login with TOTP multi-factor authentication;
+- four roles with Zero Trust checks on every request;
+- a tamper-evident, Merkle-anchored audit trail.
+
+> **Decision support with a clinician in the loop.** PerioVision is not a certified medical device. Every accuracy figure below is
+> measured on X-rays the models never saw during training. The security controls are *aligned with* HIPAA safeguards,
+> not certified against them.
+
+![Analysis viewer: FDI-numbered teeth, landmarks, uncertainty interval and the review banner](docs/reference/screenshots/analysis-viewer.jpg)
 
 | | |
 |---|---|
@@ -12,157 +30,139 @@
 | ![3D dental arch](docs/reference/screenshots/3d-arch.jpg) | ![Progression across visits](docs/reference/screenshots/progression.jpg) |
 | ![Six-point periodontal chart](docs/reference/screenshots/perio-chart.jpg) | ![Security Lab: 7 of 7 attacks blocked](docs/reference/screenshots/security-lab.jpg) |
 
-## Features
+## The problem and the idea
 
-**Clinical AI (synopsis objectives O1–O5)**
-- Image-quality gate, CLAHE, YOLO11m tooth detection with FDI numbers, CEJ / crest / apex landmarks
-- Per-tooth bone loss %, Stage I–IV and Grade A–C suggestions (2017 AAP/EFP)
-- Grad-CAM-family heatmaps with LayerCAM weighting (5× better localisation on a tooth than classic Grad-CAM, measured), for all teeth or for one selected tooth, and a per-tooth periodontal-attention check
-- Adaptive split-conformal uncertainty (each tooth's interval widens when its normal and mirrored readings disagree), stage sets, mandatory clinician review router
-- Longitudinal progression: registration that must line up the teeth themselves, then a same-site comparison with a repeatability threshold calibrated on re-take pairs (bench: 95 % of unchanged teeth stay silent, 84 % of 20-point losses detected; see [docs/PROGRESSION.md](docs/PROGRESSION.md))
-- Risk fusion: a clinical model trained on CDC NHANES (tested on a later cycle of the same survey, plain-language odds ratios) combined with the radiograph's measured stage by a documented rule
-- Panoramic films: tooth detection and FDI numbering (tested on another hospital's films: 89.6 % with the previous detector; the deployed one, fine-tuned on that hospital, 94.5 % on its unseen films) plus a whole-film estimate tested on held-out films of its training datasets (bone loss per jaw, worst-tooth bone loss and stage, with its own conformal interval that drives review); per-tooth bone loss is measured on periapical films only. About 11 s per panoramic film on a laptop CPU
-- No invented numbers: anything unmeasured shows as "not measured" or "insufficient data", enforced by a build-time test
+Periodontitis destroys the bone that holds teeth. Dentists judge the bone loss by eye on X-rays, which is slow, varies
+between examiners and is hard to compare across visits. PerioVision turns each X-ray into per-tooth measurements and
+says how sure it is about each one. When it is unsure, it says so and hands the case to the dentist. Clinical data
+stays encrypted, signed and audited from upload to the signed report.
 
-**Security (O6)**
-- AES-256-GCM with key IDs and rotation for fields, radiographs and reports
-- RSA-PSS signed model manifest (unsigned models refused) and signed, QR-verifiable PDF reports
-- bcrypt, 15-minute JWT + rotating refresh cookie, TOTP MFA, lockout, rate limits
-- Admin / dentist / technician / auditor permission matrix, Zero Trust request guard, decoy records
-- Tamper-evident audit log that pinpoints the first edited entry; Security Lab with 7 live attack demos
-
-**Clinical workflow (O7) and chairside tools**
-- Login → patient → upload → analysis → review → signed report → audit, in a React app with 3D visuals
-- Six-point periodontal chart with clinical-vs-radiographic concordance, EFP care plan with prognosis and referral letter, patient explainer with a "what if" forecast, clinic recall board
-
-## Architecture
+## How it works
 
 ```
-React app (frontend/) ──HTTPS──▶ Flask API (backend/app)
-                                  ├─ Zero Trust guard → RBAC permission → route
-                                  ├─ ml/: quality → CLAHE → YOLO11m → landmarks → staging → Grad-CAM → conformal → risk
-                                  ├─ security/: AES-GCM · RSA-PSS · JWT/MFA · audit chain · upload guard
-                                  └─ MongoDB (or in-memory demo DB) + encrypted blob store + external audit anchors
-```
-Full diagram and data flow: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
-## Run it (step by step, Windows)
-
-1. **Install the tools** (once):
-   - Python 3.11 or newer: https://www.python.org/downloads/ (tick "Add python.exe to PATH")
-   - Node.js 20 or newer (LTS): https://nodejs.org/
-2. **Open PowerShell in the project folder** (`Dental_progression`).
-3. **Create your settings file:**
-   ```powershell
-   copy .env.example .env
-   ```
-   Open `.env` and set `DB_MODE=demo`. Generate each secret with `python -c "import secrets; print(secrets.token_hex(32))"` and paste it in. Then fill in the `DEMO_*` accounts. Passwords need 12+ characters with upper- and lower-case letters and a digit, and these accounts are for demos only.
-4. **Install everything:**
-   ```powershell
-   .\run.ps1 setup
-   ```
-5. **Start the backend** (terminal 1):
-   ```powershell
-   .\run.ps1 demo
-   ```
-6. **Start the web app** (terminal 2):
-   ```powershell
-   .\run.ps1 frontend
-   ```
-7. **Open http://localhost:5173** and sign in with a `DEMO_*_EMAIL` / `DEMO_*_PASSWORD` from your `.env`.
-
-On macOS/Linux use `make setup`, `make demo`, `make frontend`, `make test`.
-
-**Ports:** backend `5000`, frontend `5173`. **API docs:** http://127.0.0.1:5000/api/docs (OpenAPI) and [docs/API.md](docs/API.md).
-**Tests:** `.\run.ps1 test` (backend) and `cd frontend; npm run build; npm run lint`. With trained weights in `backend/weights/`, `cd backend; python -m pytest tests_live -q` also checks the real models on real radiographs (see `docs/VERIFICATION_REPORT.md`).
-
-### Demo tour
-1. Landing page: drag the scan bar across the panoramic X-ray; move the staging slider.
-2. Sign in as the **dentist**: Dashboard → Patients → *Demo Patient B* → Progression, Perio chart (see the discordant teeth), Care plan, Explain to patient.
-3. Open an analysis: switch between Radiograph, Dental chart and 3D arch; click teeth.
-4. Review queue: correct a tooth and sign off; then generate a **Signed report** and verify it.
-5. Sign in as the **auditor**: Security center → Verify chain; Security lab → Run all attacks.
-
-### Optional: real models and HTTPS
-- Train on a free Colab GPU with the notebooks in `notebooks/` (tooth detector, landmarks, panoramic models; see `notebooks/README.md`), then run `.\run.ps1 install-models -From <export folder>` (installs, signs, tests). Or put weights in `backend/weights/` and run `cd backend; python scripts/sign_model.py`. Unsigned files are refused.
-- Calibrate uncertainty on a held-out, per-tooth-annotated set: `python scripts/calibrate_conformal.py --images … --labels …`.
-- Live deployment (fresh secrets, real MongoDB, production server): see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
-- Local HTTPS: `python scripts/make_dev_cert.py`, then set `TLS_CERT=keys/dev-tls.crt` and `TLS_KEY=keys/dev-tls.key` in `.env`.
-
-### Optional: put it online
-
-**Full working system** (live mode: real accounts with MFA, MongoDB, encrypted storage, signed reports, HTTPS,
-nightly backups) on one free Oracle Cloud server or any Ubuntu server: `bash deploy/server/setup.sh <your-domain>`;
-step-by-step guide in [deploy/server/README.md](deploy/server/README.md).
-
-**Demo only**: web app on Vercel, backend in a free Hugging Face Docker Space (demo mode); see [deploy/README.md](deploy/README.md):
-
-```powershell
-.\deploy\make_hf_space.ps1 -Space <hf-username>/<space-name>
-.\deploy\deploy_vercel.ps1 -BackendUrl https://<hf-username>-<space-name>.hf.space
+X-ray ─▶ quality gate ─▶ contrast enhancement (CLAHE) ─▶ tooth detector (YOLO11m, FDI numbers)
+      ─▶ landmark model (YOLO11m-pose: CEJ + crest on both sides, apex) ─▶ bone loss % ─▶ stage I–IV, grade A–C
+      ─▶ Grad-CAM heatmap  ─▶ conformal uncertainty interval ─▶ review router ─▶ dentist sign-off ─▶ signed PDF + QR
+patient record (age, smoking, diabetes, 8 gum-health questions) ─▶ NHANES risk model ─▶ combined risk level
+earlier visit ─▶ registration ─▶ same-site comparison against a calibrated threshold ─▶ stable / progressing
 ```
 
-## Troubleshooting
-
-| Problem | Fix |
+| Part | What it does |
 |---|---|
-| `Cannot reach the PerioVision server` in the browser | The backend isn't running: start `.\run.ps1 demo` first. |
-| Backend exits saying a key is missing | Fill in `JWT_SECRET_KEY`, `AUDIT_ANCHOR_KEY` and `FIELD_ENCRYPTION_KEY` in `.env` (demo mode tolerates missing ones). |
-| Login says "Invalid email or password" | Use the exact `DEMO_*` values from `.env`; demo data resets on every backend restart. |
-| "Account locked" | 5 wrong passwords lock an account for 15 minutes; restart the demo backend to reset. |
-| Everything says "Mandatory clinician review" / "uncalibrated" | Expected until the model is calibrated on annotated data; see the model card. |
-| 3D scenes don't show | Your device has no WebGL, few CPU cores, or reduced motion on; a static image is shown instead. |
-| `.\run.ps1` is blocked | Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once, or run the commands inside `run.ps1` by hand. |
+| **Detection and measurement (O1)** | Image-quality gate, CLAHE, tooth detection with FDI numbers, two-site landmarks, bone loss %, stage and grade suggestion per tooth |
+| **Progression (O2)** | Registration must line up the teeth themselves. A change counts only when the same side of a tooth moves by more than its measured repeatability (2.9–5.4 points) |
+| **Explainability (O3)** | LayerCAM-weighted Grad-CAM for all teeth or one selected tooth, plus a check that the model looked at the periodontal region |
+| **Uncertainty (O4)** | Adaptive split-conformal intervals with separate calibration for mild and severe teeth, stage prediction sets, and mandatory review when unsure |
+| **Risk (O5)** | Logistic regression on CDC NHANES (age, sex, smoking, diabetes, HbA1c, and when answered the 8 CDC/AAP gum-health questions), combined with the X-ray's stage by a documented rule |
+| **Security (O6)** | AES-256-GCM with key rotation, RSA-PSS signed models and reports, bcrypt, short-lived JWT, TOTP MFA, lockout, rate limits, four-role permissions, a Zero Trust guard, decoy records, a hash-chained audit log, and a Security Lab with 7 live attack demos |
+| **Clinical workflow (O7)** | Login → patient → upload → analysis → review → signed report → audit, in a React app with 3D views. Chairside tools: 6-point perio chart with clinical-vs-X-ray concordance, EFP care plan, patient explainer, recall board |
+| **Panoramic films** | Tooth detection and numbering, plus whole-film estimates: bone loss per jaw, and the worst tooth's bone loss and stage. Per-tooth bone-loss numbers are given on periapical films only |
+
+Full design: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Results
 
-**In one line:** on held-out periapical X-rays PerioVision measures radiographic bone loss to within 5.5 percentage
-points on average and agrees with the specialist's stage for 80 % of teeth, refers every uncertain tooth to a dentist,
-and is decision support, not a diagnosis; it has not yet been validated at another clinic or on real follow-up X-rays.
+**In one line:** on unseen periapical X-rays, PerioVision measures bone loss to within **5.5 percentage points** on
+average and agrees with the specialist's stage for **80 %** of teeth. Its 90 % uncertainty range really contains the
+specialist's value **94 %** of the time, and it sends every uncertain tooth to a dentist.
 
-All numbers are on films the models never trained on, with 95 % confidence intervals; full tables in
-[docs/RESULTS_WITH_CI.md](docs/RESULTS_WITH_CI.md), failure analysis in [docs/ANALYSES.md](docs/ANALYSES.md).
+All results are on held-out data, with 95 % confidence intervals. Full tables are in
+[docs/RESULTS_WITH_CI.md](docs/RESULTS_WITH_CI.md) and failure analysis in [docs/ANALYSES.md](docs/ANALYSES.md).
 
-| Task | Result (95 % CI) | Tested on | What this means |
+| Task | Result (95 % CI) | Tested on | What it means |
 |---|---|---|---|
-| Find each tooth and give its FDI number (panoramic) | 89.6 % (88.3-90.8) | 250 films from a hospital the detector was not trained on | About 9 in 10 teeth are found and correctly numbered at a new hospital |
-| Same, after fine-tuning on part of that hospital's films | 94.5 % (93.0-95.8) | 96 unseen films, same hospital | Adapting to a new site's images helps a lot |
-| Bone loss per tooth (periapical) | 5.5 points error (4.8-6.2) | 551 teeth, 199 DenPAR test films | Half of teeth are within 3.5 points of the specialist; the average miss is 5.5 points |
-| Periodontitis stage per tooth (periapical) | 80 % exact (77-84), 99.8 % within one stage | same | Stage I and III are mostly right; stage II is right 58 % of the time |
-| Uncertainty range at 90 % | covers 92 % (90-95) | same | The stated range really contains the specialist's value about 9 times in 10 |
-| Bone loss per jaw (panoramic screen) | AUC 0.85 / 0.87 (approximate CI 0.81-0.89 / 0.84-0.91) | 450 films | Good at flagging which jaws need a closer look |
-| Worst tooth's bone loss (panoramic) | 11.4 points error (9.5-13.5), 68.5 % stage | 149 patients | Patient-level estimate only; per-tooth numbers are not given on panoramic films |
-| Change between two visits (bench) | 95 % of unchanged teeth stay silent; 83 % of 20-point and 63 % of 10-point losses flagged | simulated re-takes and bone loss, 100 test films | Large changes are caught, most medium ones too; small yearly changes are not, and real follow-up X-rays are still untested |
-| Clinical risk from age, sex, smoking, diabetes | AUC 0.65 (0.63-0.67) | 3,855 people, later survey cycle | Context only; it never overrides what the X-ray shows |
-| Same, plus the 8 CDC/AAP gum-health questions | AUC 0.73 (0.71-0.75); +0.079 (0.066-0.092) on the same 3,757 people | later survey cycle | Used when all eight answers are on the patient record |
+| Find each tooth with the right FDI number (panoramic, new hospital) | 89.6 % (88.3–90.8) | 250 films from a hospital the detector never saw | About 9 in 10 teeth are found and correctly numbered at a new site |
+| Same, after fine-tuning on part of that hospital | **94.5 %** (93.0–95.8) | 96 unseen films, same hospital | The deployed detector |
+| Bone loss per tooth (periapical) | **5.48 points** error (4.8–6.2); median 3.45 | 551 teeth, 199 DenPAR test films | The average miss is about 5.5 points of root length |
+| Stage per tooth (periapical) | **80.4 %** exact (76.5–84.3) | same | Stage I 91 %, stage II 58 %, stage III 83 %. Severe teeth were called mild only 0.9 % of the time |
+| 90 % uncertainty range | covers **93.6 %** (91.4–95.7); severe teeth 91.1 % | same | The stated range can be trusted, including for severe cases |
+| Bone loss per jaw (panoramic screen) | AUC 0.85 / 0.87 (0.81–0.89 / 0.84–0.91) | 450 MM-OPG test films | Good at flagging which jaw needs a closer look |
+| Worst tooth's bone loss (panoramic) | 11.4 points error (9.4–13.5); 68.5 % stage | 149 patients | A patient-level estimate only |
+| Change between two visits (bench) | 95 % of unchanged teeth stay silent; 83 % of 20-point and 63 % of 10-point losses flagged | simulated re-takes, 100 test films | Large changes are caught; real follow-up X-rays are still untested |
+| Clinical risk (age, sex, smoking, diabetes) | AUC 0.65 (0.63–0.67) | 3,855 people, a later NHANES survey cycle | Context only; it never overrides the X-ray |
+| Same, plus the 8 gum-health questions | **AUC 0.73** (0.71–0.75) | 3,757 people, same later cycle | Used when all eight answers are on the patient record |
 
-## Known limitations (honest)
+How the deployed models were chosen: every candidate was compared on validation data, and the test set was used
+once. [docs/TRAINING_INVENTORY.md](docs/TRAINING_INVENTORY.md) lists everything that was trained, including models
+that were rejected, such as a root-crop landmark model that was worse on test.
 
-- Measured on held-out data ([docs/MODEL_CARD.md](docs/MODEL_CARD.md); re-run commands in [docs/VERIFICATION_REPORT.md](docs/VERIFICATION_REPORT.md)): tooth detector: 89.6 % (95 % CI 88.3–90.8) found-and-correctly-numbered on 250 films from a hospital it was not trained on; after fine-tuning on part of that hospital's films, 94.5 % on its 96 unseen films (the deployed model) and 89.1 % of diseased teeth on the DENTEX official test; periapical bone-loss error 5.5 points (95 % CI 4.8–6.2), 80 % stage agreement, 92 % interval coverage (DenPAR test, v3 two-site landmark model installed 2026-10-18, corrected reference; see [docs/LIMITATIONS.md](docs/LIMITATIONS.md)).
-- Panoramic films get no per-tooth bone-loss numbers (not accurate enough against expert grading of 240 films). Instead whole-film models give a patient-level estimate: bone loss per jaw (test AUC 0.85 / 0.87) and the worst tooth's bone loss (error 11 points, 69 % stage agreement).
-- Uncertainty intervals are honest but wide (on average ±16 points at 90 %), so most teeth still go to dentist review.
-- Risk: the clinical model (trained on NHANES; AUC 0.65, or 0.73 when the patient answers the eight gum-health questions) does not read the radiograph; the radiograph's measured stage is combined with it by a documented rule (the higher level wins), not a learned weight. Neither part predicts future progression.
-- Progression: a change counts when the same side of a tooth moves by more than 2.9-5.4 points (repeatability, calibrated on validation re-takes). On a bench of simulated re-takes and simulated bone loss: 95 % specificity, sensitivity 83 % at 20, 76 % at 15 and 63 % at 10 points of root length. Not yet tested on real follow-up radiographs ([docs/PROGRESSION.md](docs/PROGRESSION.md)). The demo patients' trends use planted synthetic values and are labelled as such on every page.
-- Demo mode uses an in-memory database; nothing persists after a restart.
-- The development server is HTTP unless you enable the local certificate; production needs a TLS reverse proxy.
+## Run it on your computer (Windows)
+
+1. **Install, once:** [Python 3.11+](https://www.python.org/downloads/) (tick "Add python.exe to PATH") and
+   [Node.js 20+](https://nodejs.org/).
+2. **Open PowerShell in this folder** and run:
+   ```powershell
+   .\run.ps1 setup       # installs everything, creates .env with fresh secrets and demo logins (in demo_logins.txt)
+   ```
+3. **Start the backend** (terminal 1) and **the web app** (terminal 2):
+   ```powershell
+   .\run.ps1 demo
+   .\run.ps1 frontend
+   ```
+4. **Open http://localhost:5173** and sign in with a login from `demo_logins.txt` (created in this folder by setup).
+
+On macOS / Linux use `make setup`, `make demo` and `make frontend`. The backend runs on port 5000 and its API docs are
+at http://127.0.0.1:5000/api/docs. Demo mode keeps data in memory, so everything resets when the backend restarts.
+
+**Five-minute tour:**
+1. Landing page: drag the scan bar across the X-ray.
+2. Sign in as the **dentist**, then go to Patients → *Demo Patient B*: open Progression, Perio chart, Care plan and Explain to patient.
+3. **New analysis:** upload a periapical X-ray and open the result. Switch between Radiograph, Dental chart and 3D arch, and click a tooth.
+4. **Review queue:** correct a tooth and sign off. Then generate a **signed report** and verify it on the Verify page.
+5. Sign in as the **auditor**: Security center → Verify chain, then Security lab → Run all attacks.
+
+**Tests:**
+- Backend: `.\run.ps1 test` (ruff and pytest).
+- Frontend: `cd frontend; npm run build; npm run lint`.
+- With the trained weights present, `cd backend; python -m pytest tests_live -q` also checks the real models on real X-rays.
+
+## Put it online
+
+| Option | What you get | Guide |
+|---|---|---|
+| **Full system** on one free Oracle Cloud server (or any Ubuntu server) | Live mode: real accounts with MFA, MongoDB, encrypted storage, signed reports, HTTPS on your own address, nightly backups | [deploy/server/README.md](deploy/server/README.md): `bash deploy/server/setup.sh <your-domain>` |
+| **Demo** on Vercel + a free Hugging Face Space | The demo-mode app online, with data in memory | [deploy/README.md](deploy/README.md) |
+| **Live mode on your own machine** | Real MongoDB and production keys, behind your own HTTPS proxy | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
+
+## Retrain or update the models
+
+1. Train on a free Colab GPU with the notebooks in [notebooks/](notebooks/README.md).
+2. Install the exported models with `.\run.ps1 install-models -From <export folder>`. It backs up the old models, installs and signs the new ones, and runs the tests.
+3. If you use live mode, run `.\run.ps1 resign-prod`.
+
+The app refuses unsigned or altered model files.
+
+## Known limitations
+
+- **Stage II is the weak spot**: it is called correctly 58 % of the time. Its band (15–33 % bone loss) is narrow next to the 5.5-point average error.
+- **External validation:** the periapical bone-loss results are from held-out films of the same public dataset (DenPAR). Nothing has yet been tested at another clinic.
+- **Panoramic films** get patient-level estimates only. Per-tooth panoramic numbers were not accurate enough against expert grading.
+- **Progression** is tested on simulated re-takes. It has not been tested on real follow-up X-rays. Demo patients' trends are planted values and are labelled as such.
+- **Risk** comes from questionnaire-type data. It does not read the X-ray, and neither part predicts future progression.
+
+Each of these is listed in [docs/LIMITATIONS.md](docs/LIMITATIONS.md), with what was done about it.
 
 ## Documentation
 
-[Architecture](docs/ARCHITECTURE.md) · [Security](docs/SECURITY.md) · [API](docs/API.md) · [Deployment](docs/DEPLOYMENT.md) · [Model card](docs/MODEL_CARD.md) · [Datasets](docs/DATASETS.md) · [Verification report](docs/VERIFICATION_REPORT.md) · [Instructions for use](docs/INSTRUCTIONS_FOR_USE.md) · [Key rotation](docs/KEY_ROTATION.md) · [Traceability](docs/TRACEABILITY.md) · [Project report](docs/PROJECT_REPORT.md) · [All docs](docs/README.md)
+[Architecture](docs/ARCHITECTURE.md) · [Model card](docs/MODEL_CARD.md) · [Results with CI](docs/RESULTS_WITH_CI.md) ·
+[Limitations](docs/LIMITATIONS.md) · [Security](docs/SECURITY.md) · [OWASP Top 10](docs/OWASP_TOP10.md) ·
+[API](docs/API.md) · [Instructions for use](docs/INSTRUCTIONS_FOR_USE.md) · [Traceability](docs/TRACEABILITY.md) ·
+[All docs](docs/README.md)
 
 ## Repository layout
 
 ```
-backend/        Flask API
-  app/          api/ (routes) · services/ (workflow) · ml/ (models, uncertainty, risk) · security/ · models/ (DB) · schemas/
-  config/       thresholds.json: every clinical / ML threshold in one place
-  scripts/      setup, model install / signing, evaluation and calibration tools
-  tests/        fast test suite (no weights needed) · tests_live/: checks with the real trained models
-  weights/      model files (not in git; see weights/README.md) · keys/: signing keys (not in git)
-frontend/       React 18 + Vite + TypeScript web app
-notebooks/      one-click Colab training notebooks
-docs/           documentation, evidence/ (raw evaluation outputs), reference/screenshots/
-data/           local data, gitignored (sample/ = synthetic demo images)
-deploy/         Hugging Face Space + Vercel scripts for the online demo
-run.ps1 · Makefile · docker-compose.yml   run / build / deploy entry points
+backend/            Flask API
+  app/              api/ routes · services/ workflow · ml/ models, uncertainty, risk · security/ · models/ DB · schemas/
+  config/           thresholds.json: every clinical and ML threshold in one place
+  research/         evaluation and statistics tools that regenerate every published number
+  scripts/          setup, model install and signing, calibration, dataset converters, evaluators
+  tests/            fast test suite (no weights needed) · tests_live/: checks with the real trained models
+  weights/          signed model files and their held-out metrics
+frontend/           React 18 + Vite + TypeScript web app
+notebooks/          Colab training notebooks for the deployed models
+deploy/             server/ (full online system) · Hugging Face + Vercel demo scripts
+docs/               documentation · evidence/ (raw outputs of every evaluation) · reference/screenshots/
+data/sample/        synthetic demo X-rays
+run.ps1 · Makefile · docker-compose.yml   entry points
 ```
