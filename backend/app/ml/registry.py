@@ -31,6 +31,9 @@ MODEL_SPECS = {
                          "purpose": "Panoramic generalised bone loss per jaw (ConvNeXt-T, ToothXpert MM-OPG)"},
     "panoramic_severity": {"file": "panoramic_severity.pt", "task": "torch_state_dict", "optional": True,
                            "purpose": "Panoramic worst-tooth bone loss % (ConvNeXt-T, BRAR)"},
+    # Per-tooth stage grade on panoramic films (small CNN on tooth crops; app/ml/panoramic/tooth_grade.py)
+    "panoramic_grade": {"file": "panoramic_grade.pt", "task": "torch_state_dict", "optional": True,
+                        "purpose": "Panoramic per-tooth grade healthy/mild/medium/severe (PDCNN dentist grades)"},
 }
 
 

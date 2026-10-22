@@ -81,6 +81,8 @@ export interface Tooth {
   cej_to_crest_mm: number | null;
   stage: string | null;
   uncertainty: Uncertainty;
+  /** Panoramic films only: dentist-graded bone-loss grade with a conformal set (no percentage). */
+  grade?: { grade: string; set: string[]; probabilities: Record<string, number>; target_coverage: number } | null;
   roi: [number, number, number, number] | null;
   roi_attention: number | null;
   flags: Record<string, boolean>;

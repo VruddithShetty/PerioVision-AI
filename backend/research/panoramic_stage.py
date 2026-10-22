@@ -176,8 +176,15 @@ def conformal_threshold(p_cal: np.ndarray, y_cal: np.ndarray, alpha: float) -> f
     return float(np.quantile(scores, level, method="higher"))
 
 
-def prediction_sets(p: np.ndarray, q: float) -> list[list[int]]:
-    return [[k for k in range(len(GRADES)) if 1.0 - row[k] <= q] for row in p]
+def classwise_thresholds(p_cal: np.ndarray, y_cal: np.ndarray, alpha: float) -> np.ndarray:
+    """One conformal threshold per TRUE grade (Mondrian by class), so each grade reaches the target on its own."""
+    return np.array([conformal_threshold(p_cal[y_cal == k], y_cal[y_cal == k], alpha) for k in range(len(GRADES))])
+
+
+def prediction_sets(p: np.ndarray, q) -> list[list[int]]:
+    """q is one threshold (marginal) or one per grade (classwise): the set keeps every grade scoring within q."""
+    qk = np.broadcast_to(np.asarray(q, dtype=float), (len(GRADES),))
+    return [[k for k in range(len(GRADES)) if 1.0 - row[k] <= qk[k]] for row in p]
 
 
 def _kappa_quadratic(y: np.ndarray, pred: np.ndarray) -> float:
@@ -198,7 +205,7 @@ def evaluate(data: Path, model_path: Path, out: Path, boot: int = 1000) -> None:
     p_cal = predict_proba(model_path, x[cal])
     p_test = predict_proba(model_path, x[test])
     y_cal, y_test = y[cal], y[test]
-    q = conformal_threshold(p_cal, y_cal, ALPHA)
+    q = classwise_thresholds(p_cal, y_cal, ALPHA)  # per-grade thresholds: the deployed rule
     sets = prediction_sets(p_test, q)
     covered = np.array([yt in s for yt, s in zip(y_test, sets)])
     size = np.array([len(s) for s in sets])
@@ -211,7 +218,8 @@ def evaluate(data: Path, model_path: Path, out: Path, boot: int = 1000) -> None:
     report = {
         "dataset": "PDCNN per-tooth grades (dentist labels), panoramic, split by film",
         "teeth_test": int(len(y_test)), "films_test": int(len(set(films[test]))),
-        "target_coverage": 1 - ALPHA, "conformal_threshold": q,
+        "target_coverage": 1 - ALPHA, "conformal_threshold_by_grade": {GRADES[k]: float(q[k]) for k in range(len(GRADES))},
+        "calibration_teeth_by_grade": {GRADES[k]: int((y_cal == k).sum()) for k in range(len(GRADES))},
         "coverage": float(covered.mean()), "coverage_ci95": cov_ci.tolist(),
         "coverage_by_grade": {GRADES[k]: float(covered[y_test == k].mean()) for k in range(len(GRADES))},
         "mean_set_size": float(size.mean()), "single_grade_share": float((size == 1).mean()),

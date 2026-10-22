@@ -177,3 +177,12 @@ Found while pushing 300 real films through the app's API to build demonstration 
 - The retrain on the corrected labels is done and deployed (v3, 2026-10-18): paired against the previous model on
   the same 536 test teeth it lowers the error by 1.00 point (95 % CI 0.46-1.55) and raises stage agreement by 3.7
   points (0.4-7.1); the uncertainty and progression thresholds were recalibrated for it on validation films.
+
+
+## Per-tooth grade on panoramic films (added 2026-10-22)
+
+- The grade is a dentist's category, not a measured bone-loss percentage. The app shows no percentage for panoramic teeth.
+- The only validation is an internal split of the PDCNN export (held-out films, not an external centre). Accuracy on another centre, scanner or population is unknown.
+- Severe teeth are the weakest class: recall 44 % on the test films. The per-grade conformal set still reaches 90 % coverage for severe teeth, but at the cost of wider sets, so a dentist must check the set.
+- The grader sees the crops of our tooth detector, not the doctors' boxes in PDCNN. The shift between the two box sources is not measured yet.
+- PDCNN has no stated licence. Ask the authors before any commercial use.

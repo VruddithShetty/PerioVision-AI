@@ -239,3 +239,16 @@ per film.
 ## Ethical notes
 
 No real patient data is stored in the repository. An early public commit contained a radiograph set whose file names include personal names; it is gone from the working tree but remains in the git history until the owner rewrites history (see `docs/SECURITY.md`).
+
+
+## Per-tooth bone-loss grade on panoramic films (added 2026-10-22)
+
+| | |
+|---|---|
+| Model | `weights/panoramic_grade.pt`, a small CNN on 96 px tooth crops (`backend/app/ml/panoramic/tooth_grade.py`; training in `backend/research/panoramic_stage.py`, Colab notebook `notebooks/train_panoramic_stage_colab.ipynb`) |
+| Output | a grade (healthy / mild / medium / severe) and a **conformal set** with one threshold per grade. **No bone-loss percentage** |
+| Training data | PDCNN per-tooth grades by dentists (1,747 panoramic films, 50,053 teeth), split by film 70 / 15 / 15 |
+| Calibration | the 15 % calibration films, one threshold per grade (class-conditional split conformal) |
+| Held-out result (test films, 7,513 teeth, 261 films) | accuracy 74.2 % (73.2–75.1); quadratic kappa 0.76; mean grade error 0.29; coverage at the 90 % target **91.1 %** (healthy 90.4, mild 91.6, medium 91.7, severe 90.3 per grade); mean set size 1.56; 52 % of teeth get a single grade. Evidence: `docs/evidence/panoramic_grade_pdcnn.json` |
+| Test type | **internal to PDCNN** (split by film): PDCNN is the training source of this model, so this is not an external test. The whole-film screen and severity models above are still tested on PDCNN as an external set, because they were not trained on it |
+| Review | a tooth whose set has more than one grade is flagged for mandatory clinician review (`panoramic_grade_ambiguous`) |

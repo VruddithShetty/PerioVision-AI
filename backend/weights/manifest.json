@@ -36,6 +36,14 @@
       "sha256": "0e8b484c8e9114c6da4feca2f5c2b782347e05d7509f8fc4882c025518b867d5",
       "size": 1962
     },
+    "panoramic_grade.pt": {
+      "sha256": "83bd8dd042e5a075667687053dea556138472f221f6cd7475fbe7a28df773988",
+      "size": 3385949
+    },
+    "panoramic_grade_metrics.json": {
+      "sha256": "4bdd3c724c4f133802f21873ed2b2b9d4db7df6401fee56715c16f1bb2bf3bb0",
+      "size": 1535
+    },
     "panoramic_screen.pt": {
       "sha256": "7826e5df1b4c57c7d867e0ba65aeb6607ab035ee87265f05fe4a8e9d4dc24887",
       "size": 55700463

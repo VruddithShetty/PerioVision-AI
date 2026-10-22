@@ -78,6 +78,20 @@ export function ToothPanel({ tooth, coverage }: { tooth: Tooth | null; coverage:
             </div>
           </div>
 
+          {tooth.grade && <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+            <p className="label">Bone-loss grade (panoramic film)</p>
+            <p className="mt-1 font-display text-2xl font-bold capitalize">{tooth.grade.grade}</p>
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <span className="text-xs text-mist-400">Grade set ({Math.round(tooth.grade.target_coverage * 100)}% target):</span>
+              {tooth.grade.set.map((g) => (
+                <span key={g} className="rounded-md bg-white/[0.06] px-2 py-0.5 text-xs font-semibold capitalize">{g}</span>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-mist-400">
+              A grade from dentist-graded panoramic data, not a percentage. {tooth.grade.set.length > 1 ? "The set has more than one grade: a dentist must check this tooth." : ""}
+            </p>
+          </div>}
+
           {tooth.bone_loss_pct !== null && <div>
             <p className="label mb-2">Conformal interval ({Math.round(coverage * 100)}% target coverage)</p>
             <IntervalBar value={tooth.bone_loss_pct} interval={tooth.uncertainty.interval} />

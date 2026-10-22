@@ -1,0 +1,54 @@
+{
+  "arch": "small_cnn_v1",
+  "input_size": 96,
+  "crop_margin": 0.15,
+  "grades": [
+    "healthy",
+    "mild",
+    "medium",
+    "severe"
+  ],
+  "dataset": "PDCNN per-tooth dentist grades (BL export, 1,747 panoramic films), split by film 70/15/15, seed 0",
+  "test_films": 261,
+  "test_teeth": 7513,
+  "conformal_target_coverage": 0.9,
+  "conformal_threshold_by_grade": {
+    "healthy": 0.6574275493621826,
+    "mild": 0.7516583800315857,
+    "medium": 0.8765959739685059,
+    "severe": 0.9542939066886902
+  },
+  "calibration_teeth_by_grade": {
+    "healthy": 2872,
+    "mild": 2879,
+    "medium": 1356,
+    "severe": 397
+  },
+  "test_coverage": 0.9105550379342473,
+  "test_coverage_ci95": [
+    0.9041661120724078,
+    0.9168141887395181
+  ],
+  "test_coverage_by_grade": {
+    "healthy": 0.9039896204995135,
+    "mild": 0.9161721068249258,
+    "medium": 0.9174528301886793,
+    "severe": 0.9025974025974026
+  },
+  "test_mean_set_size": 1.5550379342473046,
+  "test_single_grade_share": 0.5161719685877811,
+  "test_accuracy": 0.7415147078397445,
+  "test_accuracy_ci95": [
+    0.7321941967256755,
+    0.751364301876747
+  ],
+  "test_quadratic_kappa": 0.7552835498125591,
+  "test_recall_by_grade": {
+    "healthy": 0.8361985079468051,
+    "mild": 0.7563056379821959,
+    "medium": 0.589622641509434,
+    "severe": 0.44155844155844154
+  },
+  "test_mean_absolute_grade_error": 0.2893651004924797,
+  "training": "Adam-family AdamW, OneCycle, 40 epochs max with early stopping, Colab T4"
+}

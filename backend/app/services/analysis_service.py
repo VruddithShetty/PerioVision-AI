@@ -28,6 +28,7 @@ from app.ml.inference_lock import with_model_lock
 from app.ml.landmarks.cej_abc_extractor import heuristic_landmarks
 from app.ml.measurement.bone_loss import bone_loss_for_tooth
 from app.ml.measurement.staging import grade_suggestion, stage_for_pct
+from app.ml.panoramic.tooth_grade import tooth_grader
 from app.ml.preprocessing.clahe import apply_clahe, compute_phash
 from app.ml.preprocessing.quality_check import assess_quality
 from app.ml.uncertainty import calibration
@@ -311,10 +312,19 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
     enhanced, bgr = found["enhanced"], found["bgr"]
     heatmap = found["explain_model"].gradcam_heatmap(bgr, detections) if found["explain_model"] else None
     panoramic_assessment = None
+    # Panoramic films: a per-tooth bone-loss GRADE (healthy / mild / medium / severe) with a conformal set.
+    # Dentist grades, not measurements: no percentage is produced for these teeth.
+    grades = tooth_grader().grade_teeth(gray, found["detections"]) if live and image_type == "panoramic" else {}
     extra_review = []
     if found.get("film_type_uncertain"):
         extra_review.append({"code": "film_type_uncertain",
                              "message": found["film_type_uncertain"] + " Check that the film type is right."})
+    if grades:
+        ambiguous = sorted(tid for tid, g in grades.items() if len(g["set"]) > 1)
+        if ambiguous:
+            extra_review.append({"code": "panoramic_grade_ambiguous",
+                                 "message": "Panoramic grade sets with more than one grade for teeth "
+                                            + ", ".join(ambiguous) + ". A dentist must check these teeth."})
     if live and image_type == "panoramic":
         # Per-tooth panoramic bone loss is not reported; the tested whole-film models give a patient-level estimate.
         from app.ml.panoramic.whole_film import whole_film
@@ -381,6 +391,7 @@ def run_analysis(png_bytes: bytes, patient_doc: dict, user: dict, visit_date: st
             "bone_loss_pct": pct,
             "cej_to_crest_mm": bl.get("cej_to_crest_mm"),
             "stage": stage_for_pct(pct, clinical.get("teeth_lost_perio")),
+            "grade": grades.get(det["tooth_id"]),
             "uncertainty": _interval(pct, lm),
             "roi": list(roi) if roi else None,
             "roi_attention": attention,
