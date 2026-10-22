@@ -113,8 +113,8 @@ def train(data: Path, out: Path, epochs: int, batch: int = 128, lr: float = 2e-3
         tr, va = tr & keep, va & keep
     xt = torch.tensor(x[tr]).float().div(255).unsqueeze(1)
     yt = torch.tensor(y[tr])
-    xv = torch.tensor(x[va]).float().div(255).unsqueeze(1).to(dev)
-    yv = torch.tensor(y[va]).to(dev)
+    xv = torch.tensor(x[va]).float().div(255).unsqueeze(1)  # stays on CPU, moved to the GPU in batches
+    yv = torch.tensor(y[va])
     model = make_model().to(dev)
     opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=lr, total_steps=epochs * ((len(xt) + batch - 1) // batch))
@@ -137,7 +137,8 @@ def train(data: Path, out: Path, epochs: int, batch: int = 128, lr: float = 2e-3
             sched.step()
         model.eval()
         with torch.no_grad():
-            vloss = F.cross_entropy(model(xv), yv).item()
+            vloss = sum(F.cross_entropy(model(xv[i:i + batch].to(dev)), yv[i:i + batch].to(dev), reduction="sum").item()
+                        for i in range(0, len(xv), batch)) / len(xv)
         print(f"epoch {ep + 1}/{epochs} val_loss {vloss:.4f}", flush=True)
         if vloss < best - 1e-4:
             best, bad = vloss, 0
