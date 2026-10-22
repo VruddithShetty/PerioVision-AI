@@ -198,7 +198,8 @@ export default function AnalysisViewerPage() {
               </div>
               <div className="rounded-xl border border-white/[0.06] p-3">
                 <p className="label">Models</p>
-                {a.models.map((m) => (
+                {/* ensemble members that are not installed are hidden: the single landmark model is used */}
+                {a.models.filter((m) => m.present || !m.name.startsWith("landmarks_")).map((m) => (
                   <p key={m.name} className="text-xs">
                     {m.signature_valid ? (
                       <span className="text-teal-400">✓ signed</span>

@@ -56,7 +56,8 @@ export default function ModelTrustPage() {
           <Card>
             <CardTitle icon={<FileLock2 className="h-4 w-4" />}>Model registry</CardTitle>
             <div className="space-y-2">
-              {data.models.map((m) => (
+              {/* ensemble members that are not installed are hidden: the single landmark model is used */}
+              {data.models.filter((m) => m.present || !m.name.startsWith("landmarks_")).map((m) => (
                 <div key={m.name} className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
                   {m.signature_valid ? (
                     <BadgeCheck className="mt-0.5 h-5 w-5 text-teal-400" />

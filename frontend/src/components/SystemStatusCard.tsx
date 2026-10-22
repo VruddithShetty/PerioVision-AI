@@ -31,7 +31,7 @@ export function SystemStatusCard({ status }: { status?: SystemStatus }) {
           <Row
             ok={status.models_verified}
             label="Model signatures"
-            detail={status.models.map((m) => `${m.name}: ${m.signature_valid ? "valid" : m.optional && !m.present ? "optional, not installed" : m.reason ?? "missing"}`).join(" · ")}
+            detail={status.models.filter((m) => m.present || !m.name.startsWith("landmarks_")).map((m) => `${m.name}:${m.signature_valid ? "valid" : m.optional && !m.present ? "optional, not installed" : m.reason ?? "missing"}`).join(" · ")}
             icon={<FileLock2 className="h-4 w-4" />}
           />
           <Row ok={status.audit_chain_intact} label="Audit chain" detail={`${status.audit_entries} entries verified`} icon={<Activity className="h-4 w-4" />} />
