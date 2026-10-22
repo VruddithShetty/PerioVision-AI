@@ -56,7 +56,10 @@ switch ($Target) {
         Write-Host "PerioVision (live mode) on http://127.0.0.1:5000 via waitress. Put an HTTPS reverse proxy in front for real use."
         # waitress drops X-Forwarded-* by default; with TRUST_PROXY_HOPS set, accept them from the local proxy only
         $hops = $env:TRUST_PROXY_HOPS
-        if (-not $hops) { $hops = ((Select-String -Path "$Root\.env.production" -Pattern '^TRUST_PROXY_HOPS=(\d+)' | Select-Object -First 1).Matches.Groups[1].Value) }
+        if (-not $hops) {
+            $m = Select-String -Path "$Root\.env.production" -Pattern '^TRUST_PROXY_HOPS=(\d+)' | Select-Object -First 1
+            if ($m) { $hops = $m.Matches[0].Groups[1].Value }
+        }
         $proxy = @()
         if ([int]("0$hops") -gt 0) { $proxy = @("--trusted-proxy=127.0.0.1", "--trusted-proxy-count=$([int]$hops)", "--trusted-proxy-headers=x-forwarded-for x-forwarded-proto x-forwarded-host") }
         python -m waitress --host=127.0.0.1 --port=5000 --threads=8 --ident=PerioVision @proxy wsgi:app

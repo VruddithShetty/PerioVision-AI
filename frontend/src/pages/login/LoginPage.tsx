@@ -68,6 +68,14 @@ export default function LoginPage() {
   const [mfaToken, setMfaToken] = useState("");
   const [error, setError] = useState<{ message: string; locked?: boolean } | null>(null);
   const [busy, setBusy] = useState(false);
+  // the demo-account hint only makes sense when the backend really runs in demo mode
+  const [serverMode, setServerMode] = useState<string | null>(null);
+  useEffect(() => {
+    fetch("/api/health")
+      .then((r) => r.json())
+      .then((j: { mode?: string }) => setServerMode(j.mode ?? null))
+      .catch(() => setServerMode(null));
+  }, []);
 
   const finish = async (token: string) => {
     setSession(token);
@@ -175,10 +183,12 @@ export default function LoginPage() {
                 <Button type="submit" size="lg" className="w-full" loading={busy}>
                   Continue
                 </Button>
-                <p className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-xs text-mist-500">
-                  Demo mode: sign in with a <span className="font-mono text-mist-300">DEMO_*_EMAIL</span> account from your
-                  <span className="font-mono text-mist-300"> .env</span> (dentist, technician, auditor or admin). Demo accounts are for presentations only.
-                </p>
+                {serverMode === "demo" && (
+                  <p className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 text-xs text-mist-500">
+                    Demo mode: sign in with a <span className="font-mono text-mist-300">DEMO_*_EMAIL</span> account from your
+                    <span className="font-mono text-mist-300"> .env</span> (dentist, technician, auditor or admin). Demo accounts are for presentations only.
+                  </p>
+                )}
               </motion.form>
             ) : (
               <motion.form key="mfa" onSubmit={submitCode} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} className="space-y-6">
