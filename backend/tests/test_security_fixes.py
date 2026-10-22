@@ -218,3 +218,20 @@ def test_forwarded_https_is_trusted_only_when_configured(client, monkeypatch):
     assert r.status_code == 200
     assert "Secure" in r.headers["Set-Cookie"] and "HttpOnly" in r.headers["Set-Cookie"]
     assert r.headers["Strict-Transport-Security"].startswith("max-age=")
+
+
+# ------------------------------------------------------------------ Security Lab isolation (2026-10-22)
+def test_security_lab_never_writes_the_real_anchor_file_in_live_mode(app, monkeypatch, tmp_path):
+    """Running the audit-tamper attack in live mode used to append its throwaway anchors to the real
+    merkle_anchors.jsonl, so the real audit chain then reported 'broken'."""
+    from app import config
+    from app.services import security_lab
+
+    monkeypatch.setattr(config, "IS_DEMO", False)
+    monkeypatch.setattr(config, "LOGS_DIR", tmp_path)
+    real = AnchorStore()                                   # file-backed, as in live mode
+    monkeypatch.setattr(audit_log, "_anchor_store", real)
+    steps = security_lab.audit_tamper()
+    assert all(s["passed"] for s in steps)                 # the attack is still detected
+    assert not (tmp_path / "merkle_anchors.jsonl").exists()
+    assert audit_log._anchor_store is real                 # the real store is restored afterwards

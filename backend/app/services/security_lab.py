@@ -72,7 +72,7 @@ def audit_tamper() -> list[dict]:
 
     steps = []
     saved_store = audit_module._anchor_store
-    audit_module._anchor_store = AnchorStore()  # isolated, in-memory anchors
+    audit_module._anchor_store = AnchorStore(in_memory=True)  # isolated, in-memory anchors (also in live mode)
     name = f"lab_audit_{uuid.uuid4().hex[:8]}"
     try:
         log = MerkleAuditLog()

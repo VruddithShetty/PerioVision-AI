@@ -116,14 +116,15 @@ def hash_ip(ip: str | None) -> str | None:
 class AnchorStore:
     """Where Merkle roots are anchored, kept apart from the audit collection."""
 
-    def __init__(self):
+    def __init__(self, in_memory: bool = False):
         self.path = config.LOGS_DIR / "merkle_anchors.jsonl"
         self._memory: list[dict] = []
+        self._in_memory = in_memory   # throwaway logs (Security Lab) must never touch the real anchor file
         witness = os.getenv("AUDIT_ANCHOR_WITNESS_DIR")
-        self.witness_path = (Path(witness) / "merkle_anchors_witness.jsonl") if witness else None
+        self.witness_path = (Path(witness) / "merkle_anchors_witness.jsonl") if witness and not in_memory else None
 
     def _uses_file(self) -> bool:
-        return not config.IS_DEMO  # demo data is in-memory, so its anchors are too
+        return not (self._in_memory or config.IS_DEMO)  # demo data is in-memory, so its anchors are too
 
     def append(self, anchor: dict) -> None:
         if self._uses_file():
