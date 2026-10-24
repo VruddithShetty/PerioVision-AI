@@ -8,7 +8,7 @@ type ButtonVariant = "primary" | "ghost" | "outline" | "danger" | "subtle";
 
 const BUTTON: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-to-r from-brand-400 to-teal-400 text-onaccent font-semibold hover:brightness-110 shadow-glow disabled:shadow-none",
+    "bg-[length:200%_100%] bg-gradient-to-r from-brand-400 via-teal-400 to-brand-400 text-onaccent font-semibold shadow-glow hover:bg-right hover:shadow-[0_0_36px_-4px_rgb(var(--brand-400)/0.7)] disabled:shadow-none transition-[background-position,box-shadow] duration-500",
   ghost: "text-mist-300 hover:text-mist-100 hover:bg-white/5",
   outline: "border border-white/12 text-mist-100 hover:border-brand-400/50 hover:bg-brand-400/5",
   danger: "bg-critical-500/90 text-[#ffffff] hover:bg-critical-500",
